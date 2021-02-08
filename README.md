@@ -1,72 +1,72 @@
-# CloudSimPy 数据中心作业调度仿真框架
+# CloudSimPy data center job scheduling simulation framework
 
-*CloudSimPy* 基于离散事件仿真框架 [SimPy](https://simpy.readthedocs.io/en/latest/contents.html)，利用 *Python* 语言进行实现；
-*Python* 语言的科学计算、深度学习、机器学习生态相较于其他编程语言更加完善，*CloudSimPy* 可以与具有 *Python* 支持的深度学习框架（比如 *TensorFlow*，*PyTorch*）很好的结合，有助于研究基于机器学习或者深度学习的资源管理方法。
+*CloudSimPy* is based on the discrete event simulation framework [SimPy](https://simpy.readthedocs.io/en/latest/contents.html), implemented using *Python* language;
+The scientific computing, deep learning, and machine learning ecology of the *Python* language is more complete than other programming languages. *CloudSimPy* works well with deep learning frameworks with *Python* support (such as *TensorFlow*, *PyTorch*) The combination helps to study resource management methods based on machine learning or deep learning.
 
-在 `CloudSimPy/playground/Non_DAG/algorithm/DeepJS/DRL.py` 中的基于深度强化学习的数据中心作业调度算法由 *TensorFlow* 进行实现，并在其 *eager* 模式下进行推断和训练。
+The data center job scheduling algorithm based on deep reinforcement learning in `CloudSimPy/playground/Non_DAG/algorithm/DeepJS/DRL.py` is implemented by *TensorFlow*, and it is inferred and trained in its *eager* mode.
 
 ## CloudSimPy
-作为数据中心作业调度仿真框架 *CloudSimPy* 包含两个 *Python* 包 `core` 和 `playground`。
+As a data center job scheduling simulation framework *CloudSimPy* contains two *Python* packages `core` and` playground`.
 #### Core
-`core` 对数据中心作业调度问题中的各个实体（*entity*）进行了抽象和建模，`core` 包中含有以下模块：
+`core` abstracts and models each entity (*entity*) in the data center job scheduling problem. The`core` package contains the following modules:
 
-+ `config` 中 `TaskInstanceConfig`、`TaskConfig`、`JobConfig` 分别给出任务实例、任务、作业的配置（资源需求，持续时间等）
-+ `job` 中 `TaskInstance`、`Task`、`Job` 分别是对于任务实例、任务、作业的建模
-+ `machine` 是对机器的建模
-+ `cluster` 是对于计算集群的建模，类 `Cluster` 维护着集群的机器列表
-+ `alogrithm` 中定义了调度算法的接口，用户自定义的调度算法必须实现这一接口，是实现**策略模式**的关键
-+ `scheduler` 是对于调度器的建模，通过策略模式这一设计模式，不同的 `Scheduler` 实例可以使用不同的调度算法进行调度
-+ `broker` 实现了类 `Broker`，`Broker` 代替用户对计算集群提交作业
-+ `monitor` 实现了类 `Monitor`，`Monitor` 用于在仿真过程中对仿真的状态进行监测和记录
-+ `simulation` 是对一次仿真的建模，一次仿真必须构造一个集群 `Cluster` 实例；构造一系列作业配置 `JobConfig` 实例，利用这些作业配置实例构造一个 `Broker` 实例；
-构造一个调度器 `Scheduler` 实例。在一次仿真可以选择开是否使用一个 `Monitor` 实例进行仿真过程的监测
++ `TaskInstanceConfig`,` TaskConfig` and `JobConfig` in` config` give the configuration of task instances, tasks and jobs (resource requirements, duration, etc.)
++ `TaskInstance`,` Task` and `Job` in` job` are the modeling of task instances, tasks and jobs respectively
++ `machine` is to model the machine
++ `cluster` is a model for computing clusters, the class`Cluster` maintains a list of machines in the cluster
++ The interface of the scheduling algorithm is defined in `alogrithm`. The user-defined scheduling algorithm must implement this interface, which is the key to the realization of **strategic mode**
++ `scheduler` is the modeling of the scheduler. Through the design pattern of strategy mode, different` Scheduler` instances can be scheduled using different scheduling algorithms
++ `broker` implements the class` Broker`, `Broker` replaces users to submit jobs to the computing cluster
++ `Monitor` implements the class` Monitor`, which is used to monitor and record the state of the simulation during the simulation process
++ `simulation` is the modeling of a simulation. A simulation must construct a cluster` Cluster` instance; construct a series of job configuration `JobConfig` instances, and use these job configuration instances to construct a` Broker` instance;
+Construct a scheduler `Scheduler` instance. In a simulation, you can choose whether to use a `Monitor` instance to monitor the simulation process
 ![CloudSimPy](images/cloudsimpy-arch.png)
 
 #### Playground
-`playground` 包设计用于方便软件包用户进行试验，主要包含 `DAG` 包、`Non_DAG` 包（分别支持考虑任务间依赖关系和不考虑任务间依赖关系情况下的仿真实验）、`auxiliary` 包。
-`DAG` 与 `Non_DAG` 均分别预先实现了一些启发式作业调度算法及基于深度强化学习的作业调度算法。
-例如在 `Non_DAG/algorithm/DeepJS` 中实现的基于深度强化学习的数据中心作业调度算法：
-+ agent 智能体，实现了强化学习中的*策略梯度*
-+ brain *TensorFlow* 实现的神经网络结构
-+ DRL 基于深度强化学习的数据中心作业调度算法
-+ reward_giver 强化学习奖励函数
+The `playground` package is designed to be convenient for software package users to conduct experiments. It mainly includes the` DAG` package and the `Non_DAG` package (supports simulation experiments when considering dependencies between tasks and without considering dependencies between tasks), and auxiliary package.
+Both `DAG` and` Non_DAG` pre-implement some heuristic job scheduling algorithms and job scheduling algorithms based on deep reinforcement learning.
+For example, the data center job scheduling algorithm based on deep reinforcement learning implemented in `Non_DAG/algorithm/DeepJS`:
++ agent agent, which realizes *strategy gradient* in reinforcement learning
++ brain *TensorFlow* implemented neural network structure
++ DRL data center job scheduling algorithm based on deep reinforcement learning
++ reward_giver reinforcement learning reward function
 
-`auxiliary` 包提供了一些辅助类和函数： 
-+ `episode` 中的 `Episode` 类用于 **episodic** 方式的仿真实验
-+ `tools` 中的 `multiprocessing_run` 用于**多进程模式**的训练；`average_slowdown` 和 `average_completion` 用于从一个 `Episode` 类的对象中抽取计算统计信息
+The auxiliary package provides some auxiliary classes and functions:
++ The `Episode` class in` episode` is used for **episodic** simulation experiments
++ `multiprocessing_run` in` tools` is used for training in **multi-process mode**; `average_slowdown` and` average_completion` are used to extract calculation statistics from an object of class `Episode`
 
-## 高性能仿真
-由于在数据中心中任务实例 `TaskInstance` 是实际的资源消耗者也是实际业务逻辑的执行者，因此在概念上将 `core` 包 `job` 模块中的 `TaskInstance` 设计为一个 *SimPy* 中的进程（`Process`），
-而类 `Task` 设计为 `TaskInstance` 的集合，类 `Job` 设计为 `Task` 的集合。`Job`，`Task` 的运行状态利用 *Python* 下的 `property` 特性实现，
-并采用如下图所示的信息传递机制实现 `Task`，`Job` 状态的合成。
+## High-performance simulation
+In the data center, the task instance `TaskInstance` is the actual resource consumer and the executor of the actual business logic, so conceptually the` TaskInstance` in the `core` package` job module is designed as a * SimPy * Process (`Process`),
+The class `Task` is designed as a collection of` TaskInstance`, and the class `Job` is designed as a collection of` Task`. The running status of `Job` and` Task` is implemented using the `property` feature under *Python*,
+And use the information transmission mechanism shown in the following figure to realize the synthesis of `Task` and` Job` states.
 
 ![msg_pass](images/msg.png)
 
-当我们询问一个 `Job` 的状态是，`Job` 实例会询问它的 `Task` 实例们的状态，`Task` 实例则会去询问它们各自的 `TaskInstance` 实例们的状态，
-`Task` 实例根据各自的 `TaskInstance` 实例们的状态合成自己的状态，然后 `Job` 实例根据它的 `Task` 实例们的状态合成自己的状态，即状态信息反向传播最终回到 `Job` 实例。
-这样的设计不仅可以保证 `Job` 和 `Task` 状态信息的准确性和一致性，更重要的是没有在每个仿真时间步主动维护 `Job` 和 `Task` 的状态信息，
-而是将 `Job` 和 `Task` 状态的获得推迟到 `Job` 和 `Task` 状态的被动询问时，这允许我们在关闭监测功能（也就是不询问 `Job` 和 `Task` 的状态）时让仿真快速高效的进行。
-被动询问取代主动维护，实现了仿真过程中 **hotpath** 的优化，让 **hotpath** 上的执行的操作尽可能的少尽可能的快。
+When we ask about the status of a `Job`, the` Job` instance will ask about the status of its `Task` instances, and the` Task` instance will ask about the status of their respective `TaskInstance` instances,
+The `Task` instance synthesizes its own state according to the state of the respective` TaskInstance` instances, and then the `Job` instance synthesizes its own state according to the state of its` Task` instances, that is, the state information backpropagates and finally returns to the `Job` `Examples.
+This design can not only ensure the accuracy and consistency of the status information of `Job` and` Task`, but more importantly, it does not actively maintain the status information of `Job` and` Task` at every simulation time step.
+Instead, the acquisition of the status of `Job` and` Task` is postponed to the passive inquiry of the status of `Job` and` Task`, which allows us to turn off the monitoring function (that is, not to query the status of `Job` and` Task`) Let the simulation run quickly and efficiently.
+Passive query replaces active maintenance, and **hotpath** is optimized during the simulation process, so that the operations performed on **hotpath** are as few and fast as possible.
 
-除了 `TaskInstance` 在概念上设计为一个 *SimPy* 进程，`Broker`、`Scheduler`、`Monitor` 也被设计为 *SimPy* 进程。
-`Broker` 进程不断地按照作业的提交时间将作业配置列表所描述的作业提交至集群 `Cluster` 实例，直至所有的作业提交完毕，`Broker` 停止提交并销毁。
-`Scheduler` 按照调度时间步不断地进行调度，直到仿真 `Simulation` 被标记为结束（当 `Broker` 被销毁（即不会有新的作业到达）且所有已提交的作业都执行完毕时，
-`Simulation` 被标记为结束）。`Monitor` 按照监测时间步不断地进行仿真状态的监测和记录，直到仿真 `Simulation` 被标记为结束。
+In addition to `TaskInstance` being conceptually designed as a *SimPy* process,` Broker`, `Scheduler`, and` Monitor` are also designed as *SimPy* processes.
+The `Broker` process continuously submits the jobs described in the job configuration list to the cluster` Cluster` instance according to the job submission time. Until all jobs are submitted, `Broker` stops submitting and destroying them.
+The `Scheduler` is continuously scheduled according to the scheduling time step until the simulation` Simulation` is marked as ended (when `Broker` is destroyed (ie no new jobs will arrive) and all submitted jobs are executed,
+`Simulation` is marked as end). `Monitor` continuously monitors and records the simulation status according to the monitoring time step until the simulation` Simulation` is marked as end.
 
-另外的数据中心作业调度问题中的实体 `Simulation`，`Cluster`，`Machine`，`Task`，`Job` 就是普通的类的概念，仅仅作为相关信息的管理器。
+In addition, the entities `Simulation`,`Cluster`, `Machine`,` Task`, and `Job` in the job scheduling problem of the data center are common class concepts, and serve only as managers of related information.
 
-## 策略模式
-策略模式是一种行为设计模式，在策略模式中定义一系列算法，将每个算法放入一个单独的类中，并使这些类的对象可相互互换。
-在策略模式中，我们有一个类，它可以以不同方式执行特定操作，比如此处的调度器 `Scheduker` 类它可以以不同的调度算法（调度策略）执行调度，我们可以将所有这些算法提取到一个个称为策略的单独的类中。原始类（称为上下文）持有一个对策略的引用，并将工作委托给该策略，而不是自己去直接执行工作。原始类不负责选择适当的算法，相反，用户将所需的策略传递给它。事实上，原始类对策略知之甚少，它通过相同的通用的接口调用所有的策略。
-这样，上下文就变得独立于具体策略，我们可以添加新算法或修改现有算法，而无需更改原始类或其他策略的代码。
+## Strategy Mode
+The strategy pattern is a behavioral design pattern. A series of algorithms are defined in the strategy pattern, each algorithm is placed in a separate class, and objects of these classes are interchangeable.
+In the strategy mode, we have a class that can perform specific operations in different ways, such as the scheduler `Scheduler` class here. It can perform scheduling with different scheduling algorithms (scheduling strategies), we can extract all these Into individual classes called strategies. The original class (called the context) holds a reference to the strategy and delegates the work to the strategy instead of directly performing the work on its own. The original class is not responsible for selecting the appropriate algorithm, instead, the user passes the required strategy to it. In fact, the original class knows very little about strategy, it calls all strategies through the same common interface.
+In this way, the context becomes independent of the specific strategy, and we can add new algorithms or modify existing algorithms without changing the code of the original class or other strategies.
 
-通过使用策略设计模式，在 *CloudSimPy* 中将 `Scheduler` 的实现和 `Scheduler` 所使用的调度算法的实现独立开来，
-并分别放在了 `core` 包中和 `playground/DAG/algorithm`、`playground/Non_DAG/algorithm` 包中。
+By using the strategy design pattern, the implementation of `Scheduler` and the implementation of the scheduling algorithm used by` Scheduler` are separated in *CloudSimPy*,
+And put them in the `core` package and the` playground/DAG/algorithm` and `playground/Non_DAG/algorithm` packages respectively.
 
-在`layground/DAG/algorithm/DeepJS/reward_giver.py` 中也使用了策略模式为具有不同优化目标的基于深度强化学习的作业调度模型提供不同的奖励计算方法：
-+ MakespanRewardGiver 给出用于优化完工时间（Makespan）的奖励
-+ AverageSlowDownRewardGiver 给出用于优化平均 SlowDown 的奖励
-+ AverageCompletionRewardGiver 给出用于优化平均完成时间的奖励
+The strategy mode is also used in `layground/DAG/algorithm/DeepJS/reward_giver.py` to provide different reward calculation methods for job scheduling models based on deep reinforcement learning with different optimization goals:
++ MakespanRewardGiver gives rewards for optimizing completion time (Makespan)
++ AverageSlowDownRewardGiver gives the reward for optimizing the average SlowDown
++ AverageCompletionRewardGiver gives rewards for optimizing average completion time
 
 ## Papers using CloudSimPy
 1. [DeepJS: Job Scheduling Based on Deep Reinforcement Learning in Cloud Data Center](./playground/paper/F0049-4.19.pdf)

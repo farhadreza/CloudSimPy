@@ -66,3 +66,19 @@ docs/_build/
 
 # PyBuilder
 target/
+
+src/wodeutil/
+src/wodeutil/*
+*/wodeutil/
+*/gitignored/
+*/gitignored/*
+gitignored/
+gitignored/*
+
+temp/
+temp/*
+external/
+external/*
+
+examples/
+examples/*
