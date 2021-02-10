@@ -1,0 +1,6 @@
+there are some tensorflow v2 and v1 issues
+also, need to install some extra libs like simpy
+
+add the the absolute directory path to CouldSimPy to variable name PYTHONPATH
+export PYTHONPATH=/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy
+echo $PYTHONPATH

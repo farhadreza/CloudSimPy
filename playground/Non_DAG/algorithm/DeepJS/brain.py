@@ -1,5 +1,6 @@
-import tensorflow as tf
-
+# import tensorflow as tf
+import tensorflow._api.v2.compat.v1 as tf  # for compatibility issues
+tf.disable_v2_behavior()
 
 class BrainBig(tf.keras.Model):
     name = 'BrainBig'

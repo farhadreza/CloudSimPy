@@ -1,7 +1,11 @@
 import time
 import copy
 import numpy as np
-import tensorflow as tf
+# import tensorflow as tf
+import tensorflow._api.v2.compat.v1 as tf # for compatibility issues
+tf.disable_v2_behavior()
+import tensorflow as tf2
+
 
 
 class Agent(object):
@@ -13,11 +17,14 @@ class Agent(object):
         self.reward_to_go = reward_to_go
         self.baseline = nn_baseline
         self.normalize_advantages = normalize_advantages
-        self.optimizer = tf.train.AdamOptimizer(learning_rate=0.001)
+        self.optimizer = tf.train.AdamOptimizer(learning_rate=0.001) # compatability issue
+        # self.optimizer=tf.optimizers.Adam(learning_rate=0.001)
         self.global_step = tf.train.get_or_create_global_step()
         self.summary_path = summary_path if summary_path is not None else './tensorboard/%s--%s' % (
             name, time.strftime('%Y-%m-%d-%H-%M-%S', time.localtime()))
-        self.summary_writer = tf.contrib.summary.create_file_writer(self.summary_path)
+        # self.summary_writer = tf.contrib.summary.create_file_writer(self.summary_path)
+        self.summary_writer = tf2.summary.create_file_writer(self.summary_path)
+
 
         self.brain = brain
         self.checkpoint = tf.train.Checkpoint(brain=self.brain)
@@ -225,5 +232,7 @@ class Agent(object):
         self.optimizer.apply_gradients(zip(average_grads, self.brain.variables), self.global_step)
 
     def log(self, name, loss_value, step):
-        with self.summary_writer.as_default(), tf.contrib.summary.always_record_summaries():
-            tf.contrib.summary.scalar(name, loss_value, step=step)
+        # with self.summary_writer.as_default(), tf2.contrib.summary.always_record_summaries():
+        #     tf2.contrib.summary.scalar(name, loss_value, step=step)
+        with self.summary_writer.as_default(), tf2.summary.always_record_summaries():
+            tf2.summary.scalar(name, loss_value, step=step)
