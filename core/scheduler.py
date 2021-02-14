@@ -13,11 +13,11 @@ class Scheduler(object):
 
     def make_decision(self):
         while True:
-            machine, task = self.algorithm(self.cluster, self.env.now)
+            machine, task = self.algorithm(self.cluster, self.env.now) # the algorithm picks the best fit <task, machine> pair
             if machine is None or task is None:
                 break
             else:
-                task.start_task_instance(machine)
+                task.start_task_instance(machine) # this consumes the machine resource and time
 
     def run(self):
         while not self.simulation.finished:

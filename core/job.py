@@ -57,7 +57,7 @@ class Task(object):
 
     # the most heavy
     def start_task_instance(self, machine):
-        self.task_instances[self.next_instance_pointer].schedule(machine)
+        self.task_instances[self.next_instance_pointer].schedule(machine) # this machine is from the <task, machine> pair
         self.next_instance_pointer += 1
 
     @property
