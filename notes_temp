@@ -1,0 +1,8 @@
+export PYTHONPATH=/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/Local_Playground/CloudSimPy
+
+echo $PYTHONPATH
+
+cd playground/...
+python main-makespan.py
+
+
