@@ -29,7 +29,8 @@ tf.random.set_random_seed(41)
 # ************************ Parameters Setting Start ************************
 machines_number = 5
 jobs_len = 10
-n_iter = 100
+# n_iter = 100
+n_iter = 2
 n_episode = 12
 jobs_csv = '../jobs_files/jobs.csv'
 
@@ -70,58 +71,67 @@ episode = Episode(machine_configs, jobs_configs, algorithm, None)
 episode.run()
 print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
 
-for itr in range(n_iter):
-    tic = time.time()
-    print("********** Iteration %i ************" % itr)
-    processes = []
+def main_body():
+    for itr in range(n_iter):
+        tic = time.time()
+        print("********** Iteration %i ************" % itr)
+        processes = []
 
-    manager = Manager()
-    trajectories = manager.list([])
-    makespans = manager.list([])
-    average_completions = manager.list([])
-    average_slowdowns = manager.list([])
-    for i in range(n_episode):
-        algorithm = RLAlgorithm(agent, reward_giver, features_extract_func=features_extract_func,
-                                features_normalize_func=features_normalize_func)
-        episode = Episode(machine_configs, jobs_configs, algorithm, None)
-        algorithm.reward_giver.attach(episode.simulation)
-        p = Process(target=multiprocessing_run,
-                    args=(episode, trajectories, makespans, average_completions, average_slowdowns))
+        manager = Manager()
+        trajectories = manager.list([])
+        makespans = manager.list([])
+        average_completions = manager.list([])
+        average_slowdowns = manager.list([])
+        for i in range(n_episode):
+            algorithm = RLAlgorithm(agent, reward_giver, features_extract_func=features_extract_func,
+                                    features_normalize_func=features_normalize_func)
+            episode = Episode(machine_configs, jobs_configs, algorithm, None)
+            algorithm.reward_giver.attach(episode.simulation)
+            p = Process(target=multiprocessing_run,
+                        args=(episode, trajectories, makespans, average_completions, average_slowdowns))
 
-        processes.append(p)
+            processes.append(p)
 
-    for p in processes:
-        p.start()
+        for p in processes:
+            p.start()
 
-    for p in processes:
-        p.join()
+        for p in processes:
+            p.join()
 
-    agent.log('makespan', np.mean(makespans), agent.global_step)
-    agent.log('average_completions', np.mean(average_completions), agent.global_step)
-    agent.log('average_slowdowns', np.mean(average_slowdowns), agent.global_step)
+        agent.log('makespan', np.mean(makespans), agent.global_step)
+        agent.log('average_completions', np.mean(average_completions), agent.global_step)
+        agent.log('average_slowdowns', np.mean(average_slowdowns), agent.global_step)
 
-    toc = time.time()
+        toc = time.time()
 
-    print(np.mean(makespans), toc - tic, np.mean(average_completions), np.mean(average_slowdowns))
+        print(np.mean(makespans), toc - tic, np.mean(average_completions), np.mean(average_slowdowns))
 
-    all_observations = []
-    all_actions = []
-    all_rewards = []
-    for trajectory in trajectories:
-        observations = []
-        actions = []
-        rewards = []
-        for node in trajectory:
-            observations.append(node.observation)
-            actions.append(node.action)
-            rewards.append(node.reward)
+        all_observations = []
+        all_actions = []
+        all_rewards = []
+        for trajectory in trajectories:
+            observations = []
+            actions = []
+            rewards = []
+            for node in trajectory:
+                observations.append(node.observation)
+                actions.append(node.action)
+                rewards.append(node.reward)
 
-        all_observations.append(observations)
-        all_actions.append(actions)
-        all_rewards.append(rewards)
+            all_observations.append(observations)
+            all_actions.append(actions)
+            all_rewards.append(rewards)
 
-    all_q_s, all_advantages = agent.estimate_return(all_rewards)
+        all_q_s, all_advantages = agent.estimate_return(all_rewards)
 
-    agent.update_parameters(all_observations, all_actions, all_advantages)
+        agent.update_parameters(all_observations, all_actions, all_advantages)
 
-agent.save()
+    agent.save()
+
+
+if __name__ == '__main__':
+    main_body()
+
+
+
+
