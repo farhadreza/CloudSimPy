@@ -82,3 +82,5 @@ external/*
 
 examples/
 examples/*
+/tensorboard/*
+/gitignored/tensorflow/
