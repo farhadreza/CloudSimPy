@@ -53,25 +53,31 @@ machine_configs = [MachineConfig(64, 1, 1) for i in range(machines_number)]
 csv_reader = CSVReader(jobs_csv)
 jobs_configs = csv_reader.generate(0, jobs_len)
 
-tic = time.time()
-algorithm = RandomAlgorithm()
-episode = Episode(machine_configs, jobs_configs, algorithm, None)
-episode.run()
-print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
+def algo_random():
+    tic = time.time()
+    algorithm = RandomAlgorithm()
+    episode = Episode(machine_configs, jobs_configs, algorithm, None)
+    episode.run()
+    print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
 
-tic = time.time()
-algorithm = FirstFitAlgorithm()
-episode = Episode(machine_configs, jobs_configs, algorithm, None)
-episode.run()
-print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
 
-tic = time.time()
-algorithm = Tetris()
-episode = Episode(machine_configs, jobs_configs, algorithm, None)
-episode.run()
-print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
+def algo_first_fit():
+    tic = time.time()
+    algorithm = FirstFitAlgorithm()
+    episode = Episode(machine_configs, jobs_configs, algorithm, None)
+    episode.run()
+    print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
 
-def main_body():
+
+def algo_tetris():
+    tic = time.time()
+    algorithm = Tetris()
+    episode = Episode(machine_configs, jobs_configs, algorithm, None)
+    episode.run()
+    print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
+
+
+def algo_deep_js():
     for itr in range(n_iter):
         tic = time.time()
         print("********** Iteration %i ************" % itr)
@@ -128,9 +134,14 @@ def main_body():
 
     agent.save()
 
+def run_all_algo():
+    algo_random()
+    algo_first_fit()
+    algo_tetris()
+    algo_deep_js()
 
 if __name__ == '__main__':
-    main_body()
+    run_all_algo()
 
 
 

@@ -52,78 +52,94 @@ machine_configs = [MachineConfig(2, 1, 1) for i in range(machines_number)]
 csv_reader = CSVReader(jobs_csv)
 jobs_configs = csv_reader.generate(0, jobs_len)
 
-tic = time.time()
-algorithm = RandomAlgorithm()
-episode = Episode(machine_configs, jobs_configs, algorithm, None)
-episode.run()
-print('RandomAlgorithm')
-print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
-
-tic = time.time()
-algorithm = Tetris()
-episode = Episode(machine_configs, jobs_configs, algorithm, None)
-episode.run()
-print('Tetris')
-print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
-
-tic = time.time()
-algorithm = FirstFitAlgorithm()
-episode = Episode(machine_configs, jobs_configs, algorithm, None)
-episode.run()
-print('FirstFitAlgorithm')
-print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
-
-tic = time.time()
-algorithm = MaxWeightAlgorithm()
-episode = Episode(machine_configs, jobs_configs, algorithm, None)
-episode.run()
-print('MaxWeightAlgorithm')
-print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
-
-for itr in range(n_iter):
-    print("********** Iteration %i ************" % itr)
-    all_observations = []
-    all_actions = []
-    all_rewards = []
-
-    makespans = []
-    average_completions = []
-    average_slowdowns = []
-    trajectories = []
-
+def algo_random():
     tic = time.time()
-    for i in range(12):
-        algorithm = RLAlgorithm(agent, reward_giver, features_extract_func=features_extract_func,
-                                features_normalize_func=features_normalize_func)
-        episode = Episode(machine_configs, jobs_configs, algorithm, None)
-        algorithm.reward_giver.attach(episode.simulation)
-        episode.run()
-        trajectories.append(episode.simulation.scheduler.algorithm.current_trajectory)
-        makespans.append(episode.simulation.env.now)
-        average_completions.append(average_completion(episode))
-        average_slowdowns.append(average_slowdown(episode))
+    algorithm = RandomAlgorithm()
+    episode = Episode(machine_configs, jobs_configs, algorithm, None)
+    episode.run()
+    print('RandomAlgorithm')
+    print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
 
-    agent.log('makespan', np.mean(makespans), agent.global_step)
-    agent.log('average_completions', np.mean(average_completions), agent.global_step)
-    agent.log('average_slowdowns', np.mean(average_slowdowns), agent.global_step)
+def algo_tetris():
+    tic = time.time()
+    algorithm = Tetris()
+    episode = Episode(machine_configs, jobs_configs, algorithm, None)
+    episode.run()
+    print('Tetris')
+    print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
 
-    toc = time.time()
-    print(np.mean(makespans), (toc - tic) / 12, np.mean(average_completions), np.mean(average_slowdowns))
+def algo_first_fit():
+    tic = time.time()
+    algorithm = FirstFitAlgorithm()
+    episode = Episode(machine_configs, jobs_configs, algorithm, None)
+    episode.run()
+    print('FirstFitAlgorithm')
+    print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
 
-    for trajectory in trajectories:
-        observations = []
-        actions = []
-        rewards = []
-        for node in trajectory:
-            observations.append(node.observation)
-            actions.append(node.action)
-            rewards.append(node.reward)
+def algo_max_weight():
+    tic = time.time()
+    algorithm = MaxWeightAlgorithm()
+    episode = Episode(machine_configs, jobs_configs, algorithm, None)
+    episode.run()
+    print('MaxWeightAlgorithm')
+    print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
 
-        all_observations.append(observations)
-        all_actions.append(actions)
-        all_rewards.append(rewards)
 
-    all_q_s, all_advantages = agent.estimate_return(all_rewards)
-    agent.update_parameters(all_observations, all_actions, all_advantages)
+def algo_deep_js():
+    for itr in range(n_iter):
+        print("********** Iteration %i ************" % itr)
+        all_observations = []
+        all_actions = []
+        all_rewards = []
 
-agent.save()
+        makespans = []
+        average_completions = []
+        average_slowdowns = []
+        trajectories = []
+
+        tic = time.time()
+        for i in range(12):
+            algorithm = RLAlgorithm(agent, reward_giver, features_extract_func=features_extract_func,
+                                    features_normalize_func=features_normalize_func)
+            episode = Episode(machine_configs, jobs_configs, algorithm, None)
+            algorithm.reward_giver.attach(episode.simulation)
+            episode.run()
+            trajectories.append(episode.simulation.scheduler.algorithm.current_trajectory)
+            makespans.append(episode.simulation.env.now)
+            average_completions.append(average_completion(episode))
+            average_slowdowns.append(average_slowdown(episode))
+
+        agent.log('makespan', np.mean(makespans), agent.global_step)
+        agent.log('average_completions', np.mean(average_completions), agent.global_step)
+        agent.log('average_slowdowns', np.mean(average_slowdowns), agent.global_step)
+
+        toc = time.time()
+        print(np.mean(makespans), (toc - tic) / 12, np.mean(average_completions), np.mean(average_slowdowns))
+
+        for trajectory in trajectories:
+            observations = []
+            actions = []
+            rewards = []
+            for node in trajectory:
+                observations.append(node.observation)
+                actions.append(node.action)
+                rewards.append(node.reward)
+
+            all_observations.append(observations)
+            all_actions.append(actions)
+            all_rewards.append(rewards)
+
+        all_q_s, all_advantages = agent.estimate_return(all_rewards)
+        agent.update_parameters(all_observations, all_actions, all_advantages)
+
+    agent.save()
+
+def run_all_algo():
+    algo_random()
+    algo_first_fit()
+    algo_tetris()
+    algo_max_weight()
+    algo_deep_js()
+
+if __name__ == '__main__':
+    run_all_algo()

@@ -1,4 +1,4 @@
-export PYTHONPATH=/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/Local_Playground/CloudSimPy
+export PYTHONPATH=/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy
 
 echo $PYTHONPATH
 
