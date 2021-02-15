@@ -29,7 +29,7 @@ tf.random.set_random_seed(41)
 # ************************ Parameters Setting Start ************************
 machines_number = 5
 jobs_len = 10
-n_iter = 100
+n_iter = 200
 # n_iter = 2
 n_episode = 12
 jobs_csv = '../jobs_files/jobs.csv'
@@ -63,7 +63,9 @@ def set_path():
 
 
 def save_train_info(agent: Agent, itr: int):
-    filename = 'chkpt_' + itr + '.pkl'
+    if not os.path.exists(train_info_dir):
+        os.makedirs(train_info_dir, exist_ok=True)
+    filename = 'chkpt_' + str(itr) + '.pkl'
     filepath = os.path.join(train_info_dir, filename)
     agent.save_chkpt(filepath)
 
@@ -92,13 +94,13 @@ def algo_tetris():
     print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
 
 
-save_chkpt_every = 40
+save_chkpt_every = 30
 
 
-def algo_deep_js():
+def train_algo_deep_js():
     for itr in range(n_iter):
         tic = time.time()
-        print("********** Iteration %i ************" % itr)
+        print("********** DeepJS Iteration %i ************" % itr)
         processes = []
 
         manager = Manager()
@@ -198,10 +200,11 @@ def run_all_algo():
     algo_random()
     algo_first_fit()
     algo_tetris()
-    algo_deep_js()
+    train_algo_deep_js()
 
 
 if __name__ == '__main__':
     # run_all_algo()
     # algo_deep_js()
-    set_path()  # for running on command line
+    # set_path()  # for running on command line
+    train_algo_deep_js()
