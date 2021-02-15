@@ -6,7 +6,7 @@ import tensorflow as tf
 
 class Agent(object):
     def __init__(self, name, brain, gamma, reward_to_go, nn_baseline, normalize_advantages, model_save_path=None,
-                 summary_path=None):
+                 summary_path=None, restore_path=None):
         super().__init__()
 
         self.gamma = gamma
@@ -22,6 +22,12 @@ class Agent(object):
         self.brain = brain
         self.checkpoint = tf.train.Checkpoint(brain=self.brain)
         self.model_save_path = model_save_path
+        if restore_path:  # use to save and restore more info later
+            self.restore(restore_path)
+
+    def save_chkpt(self, save_path=None):  # used for saving training checkpoint
+        if save_path:
+            self.checkpoint.save(save_path)
 
     def restore(self, model_path):
         self.checkpoint.restore(model_path)

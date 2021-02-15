@@ -29,8 +29,8 @@ tf.random.set_random_seed(41)
 # ************************ Parameters Setting Start ************************
 machines_number = 5
 jobs_len = 10
-# n_iter = 100
-n_iter = 2
+n_iter = 100
+# n_iter = 2
 n_episode = 12
 jobs_csv = '../jobs_files/jobs.csv'
 
@@ -41,6 +41,8 @@ features_normalize_func = features_normalize_func
 
 name = '%s-%s-m%d' % (reward_giver.name, brain.name, machines_number)
 model_dir = './agents/%s' % name
+
+train_info_dir = './agents/training/'
 # ************************ Parameters Setting End ************************
 
 if not os.path.isdir(model_dir):
@@ -52,6 +54,19 @@ agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_adv
 machine_configs = [MachineConfig(64, 1, 1) for i in range(machines_number)]
 csv_reader = CSVReader(jobs_csv)
 jobs_configs = csv_reader.generate(0, jobs_len)
+
+
+def set_path():
+    from dir_info import root_dir_abs
+    path = root_dir_abs()
+    os.environ['PYTHONPATH'] = root_dir_abs()
+
+
+def save_train_info(agent: Agent, itr: int):
+    filename = 'chkpt_' + itr + '.pkl'
+    filepath = os.path.join(train_info_dir, filename)
+    agent.save_chkpt(filepath)
+
 
 def algo_random():
     tic = time.time()
@@ -75,6 +90,9 @@ def algo_tetris():
     episode = Episode(machine_configs, jobs_configs, algorithm, None)
     episode.run()
     print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
+
+
+save_chkpt_every = 40
 
 
 def algo_deep_js():
@@ -132,7 +150,49 @@ def algo_deep_js():
 
         agent.update_parameters(all_observations, all_actions, all_advantages)
 
+        if itr % save_chkpt_every == 0:
+            save_train_info(agent, itr)
+
     agent.save()
+
+
+def eval_algo_deep_js():
+    chkpt_path = '%s/model.ckpt' % model_dir
+    agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
+                  model_save_path='%s/model.ckpt' % model_dir, restore_path=chkpt_path)
+    tic = time.time()
+    print("********** Eval DeepJS Agent ************")
+    processes = []
+
+    manager = Manager()
+    trajectories = manager.list([])
+    makespans = manager.list([])
+    average_completions = manager.list([])
+    average_slowdowns = manager.list([])
+    # for i in range(n_episode):
+    algorithm = RLAlgorithm(agent, reward_giver, features_extract_func=features_extract_func,
+                            features_normalize_func=features_normalize_func)
+    episode = Episode(machine_configs, jobs_configs, algorithm, None)
+    algorithm.reward_giver.attach(episode.simulation)
+    p = Process(target=multiprocessing_run,
+                args=(episode, trajectories, makespans, average_completions, average_slowdowns))
+
+    processes.append(p)
+
+    for p in processes:
+        p.start()
+
+    for p in processes:
+        p.join()
+
+    agent.log('makespan', np.mean(makespans), agent.global_step)
+    agent.log('average_completions', np.mean(average_completions), agent.global_step)
+    agent.log('average_slowdowns', np.mean(average_slowdowns), agent.global_step)
+
+    toc = time.time()
+
+    print(np.mean(makespans), toc - tic, np.mean(average_completions), np.mean(average_slowdowns))
+
 
 def run_all_algo():
     algo_random()
@@ -140,9 +200,8 @@ def run_all_algo():
     algo_tetris()
     algo_deep_js()
 
+
 if __name__ == '__main__':
-    run_all_algo()
-
-
-
-
+    # run_all_algo()
+    # algo_deep_js()
+    set_path()  # for running on command line
