@@ -5,4 +5,11 @@ echo $PYTHONPATH
 cd playground/...
 python main-makespan.py
 
+tensorboard --logdir=playground/Non_DAG/launch_scripts/tensorboard/Makespan-Brain-m5--2021-02-14-22-59-23
+
+
+when getting a restore checkpoint error, sstable...
+try renaming the model like model.ckpt-8.data-00000-of-00001 to model.ckpt-8, use the later name instead
+
+
 

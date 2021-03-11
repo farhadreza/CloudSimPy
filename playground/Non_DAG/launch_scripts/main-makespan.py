@@ -159,7 +159,10 @@ def train_algo_deep_js():
 
 
 def eval_algo_deep_js():
-    chkpt_path = '%s/model.ckpt' % model_dir
+    # chkpt_path = "playground/Non_DAG/launch_scripts/agents/Makespan-Brain-m5/checkpoint"
+    chkpt_path = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/playground/Non_DAG/launch_scripts/agents/Makespan-Brain-m5/model.ckpt-8"
+    # chkpt_path="/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/checkpoint-180"
+    # chkpt_path="/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/model.chkpt-8"
     agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
                   model_save_path='%s/model.ckpt' % model_dir, restore_path=chkpt_path)
     tic = time.time()
@@ -194,17 +197,31 @@ def eval_algo_deep_js():
     toc = time.time()
 
     print(np.mean(makespans), toc - tic, np.mean(average_completions), np.mean(average_slowdowns))
+    print(f"before makespans ({makespans})")
+    print(f"mean makespan: {np.mean(makespans)}")
+    print(f"toc - tic: {toc - tic}")
+    print(f"average_completions: {np.mean(average_completions)}")
+    print(f"average slowdowns: {np.mean(average_slowdowns)}")
 
 
 def run_all_algo():
     algo_random()
     algo_first_fit()
     algo_tetris()
-    train_algo_deep_js()
+    # train_algo_deep_js()
 
 
 if __name__ == '__main__':
     # run_all_algo()
     # algo_deep_js()
+    # eval_algo_deep_js()
     # set_path()  # for running on command line
-    train_algo_deep_js()
+    # train_algo_deep_js()
+    run_all_algo()
+
+# DeepJS
+# before makespans ([654])
+# mean makespan: 654.0
+# toc - tic: 2.6973419189453125
+# average_completions: 144.16438373244327
+# average slowdowns: 2.796577900344812
