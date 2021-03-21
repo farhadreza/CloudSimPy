@@ -29,12 +29,11 @@ tf.random.set_random_seed(41)
 # ************************ Parameters Setting Start ************************
 machines_number = 5
 jobs_len = 10
-n_iter = 2
+n_iter = 200
 # n_iter = 2
 n_episode = 12
 # jobs_csv = '../jobs_files/jobs.csv'
 jobs_csv = '../jobs_files/jobs_2017.csv'
-
 
 brain = Brain(6)
 reward_giver = MakespanRewardGiver(-1)
@@ -132,8 +131,9 @@ def train_algo_deep_js():
 
         toc = time.time()
 
-        print(np.mean(makespans), toc - tic, np.mean(average_completions), np.mean(average_slowdowns))
-
+        # print(np.mean(makespans), toc - tic, np.mean(average_completions), np.mean(average_slowdowns))
+        print(
+            f"mean makespans: {np.mean(makespans)} | 'toc-tic: {toc - tic} | avg_completions: {np.mean(average_completions)} | avg_slowdowns: {np.mean(average_slowdowns)}")
         all_observations = []
         all_actions = []
         all_rewards = []
