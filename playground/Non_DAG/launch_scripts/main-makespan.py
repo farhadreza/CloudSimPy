@@ -29,10 +29,12 @@ tf.random.set_random_seed(41)
 # ************************ Parameters Setting Start ************************
 machines_number = 5
 jobs_len = 10
-n_iter = 200
+n_iter = 2
 # n_iter = 2
 n_episode = 12
-jobs_csv = '../jobs_files/jobs.csv'
+# jobs_csv = '../jobs_files/jobs.csv'
+jobs_csv = '../jobs_files/jobs_2017.csv'
+
 
 brain = Brain(6)
 reward_giver = MakespanRewardGiver(-1)
@@ -160,9 +162,10 @@ def train_algo_deep_js():
 
 def eval_algo_deep_js():
     # chkpt_path = "playground/Non_DAG/launch_scripts/agents/Makespan-Brain-m5/checkpoint"
-    chkpt_path = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/playground/Non_DAG/launch_scripts/agents/Makespan-Brain-m5/model.ckpt-8"
+    # chkpt_path = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/playground/Non_DAG/launch_scripts/agents/Makespan-Brain-m5/model.ckpt-8"
     # chkpt_path="/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/checkpoint-180"
-    # chkpt_path="/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/model.chkpt-8"
+    # chkpt_path = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/chkpt_180.pkl-7"
+    chkpt_path = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/chkpt_120.pkl-5"
     agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
                   model_save_path='%s/model.ckpt' % model_dir, restore_path=chkpt_path)
     tic = time.time()
@@ -216,8 +219,8 @@ if __name__ == '__main__':
     # algo_deep_js()
     # eval_algo_deep_js()
     # set_path()  # for running on command line
-    # train_algo_deep_js()
-    run_all_algo()
+    train_algo_deep_js()
+    # run_all_algo()
 
 # DeepJS
 # before makespans ([654])
@@ -225,3 +228,26 @@ if __name__ == '__main__':
 # toc - tic: 2.6973419189453125
 # average_completions: 144.16438373244327
 # average slowdowns: 2.796577900344812
+
+
+# DeepJS chkpt-180
+# 612.0 2.818004846572876 182.63750201201316 4.002450774266493
+# before makespans ([612])
+# mean makespan: 612.0
+# toc - tic: 2.818004846572876
+# average_completions: 182.63750201201316
+# average slowdowns: 4.002450774266493
+
+# DeepJS chkpt-120
+# 663.0 2.9996590614318848 141.8202977109379 2.6516431444454556
+# before makespans ([663])
+# mean makespan: 663.0
+# toc - tic: 2.9996590614318848
+# average_completions: 141.8202977109379
+# average slowdowns: 2.6516431444454556
+
+
+# random, first fit, tetric
+# 641 0.4405100345611572 138.22889986147553 3.1337322343504233
+# 680 0.44473695755004883 62.05685685072286 1.4292964198242561
+# 689 1.2516517639160156 85.23965254964759 1.975667948996756
