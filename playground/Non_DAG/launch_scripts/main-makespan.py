@@ -43,14 +43,17 @@ features_normalize_func = features_normalize_func
 name = '%s-%s-m%d' % (reward_giver.name, brain.name, machines_number)
 model_dir = './agents/%s' % name
 
-train_info_dir = './agents/training/'
+# train_info_dir = './agents/training/'
+train_info_dir = "/content/drive/MyDrive/GoogleDrive/MyRepo/"
 # ************************ Parameters Setting End ************************
 
 if not os.path.isdir(model_dir):
     os.makedirs(model_dir)
 
+# agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
+#               model_save_path='%s/model.ckpt' % model_dir)
 agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
-              model_save_path='%s/model.ckpt' % model_dir)
+              model_save_path='%s/model.ckpt' % train_info_dir)
 
 machine_configs = [MachineConfig(64, 1, 1) for i in range(machines_number)]
 csv_reader = CSVReader(jobs_csv)
