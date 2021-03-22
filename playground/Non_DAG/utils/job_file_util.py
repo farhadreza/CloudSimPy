@@ -45,5 +45,19 @@ def collect_job_info():
     df_job.to_csv(save_to)
 
 
+def peek_data(job_path=""):
+    df = load_df(job_path)
+    print(f"len: {len(df)}")
+    jobids = df['job_id'].nunique()
+    print(f"unique job_id: {jobids}")
+
+
+def check_data():
+    path = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/playground/Non_DAG/jobs_files/jobs_2017.csv"
+    job_path = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/playground/Non_DAG/jobs_files/jobs.csv"
+    peek_data(job_path)
+
+
 if __name__ == '__main__':
-    collect_job_info()
+    # collect_job_info()
+    check_data()
