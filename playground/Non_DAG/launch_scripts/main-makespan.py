@@ -21,6 +21,8 @@ from playground.Non_DAG.utils.csv_reader import CSVReader
 from playground.Non_DAG.utils.feature_functions import features_extract_func, features_normalize_func
 from playground.Non_DAG.utils.tools import multiprocessing_run, average_completion, average_slowdown
 from playground.Non_DAG.utils.episode import Episode
+import pandas as pd
+from collections import defaultdict
 
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
@@ -29,11 +31,11 @@ tf.random.set_random_seed(41)
 # ************************ Parameters Setting Start ************************
 machines_number = 5
 jobs_len = 10
-n_iter = 200
+n_iter = 500
 # n_iter = 2
 n_episode = 12
-# jobs_csv = '../jobs_files/jobs.csv'
-jobs_csv = '../jobs_files/jobs_2017.csv'
+jobs_csv = '../jobs_files/jobs.csv'
+# jobs_csv = '../jobs_files/jobs_2017.csv'
 
 brain = Brain(6)
 reward_giver = MakespanRewardGiver(-1)
@@ -58,6 +60,7 @@ agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_adv
 machine_configs = [MachineConfig(64, 1, 1) for i in range(machines_number)]
 csv_reader = CSVReader(jobs_csv)
 jobs_configs = csv_reader.generate(0, jobs_len)
+hist = defaultdict(list)
 
 
 def set_path():
@@ -66,12 +69,17 @@ def set_path():
     os.environ['PYTHONPATH'] = root_dir_abs()
 
 
-def save_train_info(agent: Agent, itr: int):
+def save_train_info(agent: Agent, itr: int, reward_type="mkspan"):
     if not os.path.exists(train_info_dir):
         os.makedirs(train_info_dir, exist_ok=True)
-    filename = 'chkpt_' + str(itr) + '.pkl'
+    filename = 'chkpt_' + str(itr) + "_" + reward_type + '.pkl'
     filepath = os.path.join(train_info_dir, filename)
     agent.save_chkpt(filepath)
+    hist_name = f"hist_{reward_type}.csv"
+    hist_path = os.path.join(train_info_dir, hist_name)
+    df = pd.DataFrame(hist)
+    df.to_csv(hist_path)
+    print(f"save chkpt: {filename} | save hist: {hist_name}")
 
 
 def algo_random():
@@ -99,6 +107,10 @@ def algo_tetris():
 
 
 save_chkpt_every = 30
+
+
+def add_hist(name="", value=None):
+    hist[name].append(value)
 
 
 def train_algo_deep_js():
@@ -137,6 +149,11 @@ def train_algo_deep_js():
         # print(np.mean(makespans), toc - tic, np.mean(average_completions), np.mean(average_slowdowns))
         print(
             f"mean makespans: {np.mean(makespans)} | 'toc-tic: {toc - tic} | avg_completions: {np.mean(average_completions)} | avg_slowdowns: {np.mean(average_slowdowns)}")
+        hist['avg_makespans'].append(np.mean(makespans))
+        hist['tictoc'].append(toc - tic)
+        hist['avg_completions'].append(np.mean(average_completions))
+        hist['avg_slowdowns'].append(np.mean(average_slowdowns))
+
         all_observations = []
         all_actions = []
         all_rewards = []
@@ -152,6 +169,8 @@ def train_algo_deep_js():
             all_observations.append(observations)
             all_actions.append(actions)
             all_rewards.append(rewards)
+        add_hist('total_rewards', np.sum(rewards))
+        add_hist("avg_rewards", np.mean(rewards))
 
         all_q_s, all_advantages = agent.estimate_return(all_rewards)
 
@@ -221,7 +240,7 @@ if __name__ == '__main__':
     # run_all_algo()
     # algo_deep_js()
     # eval_algo_deep_js()
-    # set_path()  # for running on command line
+    set_path()  # for running on command line
     train_algo_deep_js()
     # run_all_algo()
 
