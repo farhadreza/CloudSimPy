@@ -15,7 +15,7 @@ from playground.Non_DAG.algorithm.DeepJS.DRL import RLAlgorithm
 from playground.Non_DAG.algorithm.DeepJS.agent import Agent
 from playground.Non_DAG.algorithm.DeepJS.brain import Brain
 
-from playground.Non_DAG.algorithm.DeepJS.reward_giver import MakespanRewardGiver
+from playground.Non_DAG.algorithm.DeepJS.reward_giver import MakespanRewardGiver,AverageCompletionRewardGiver
 
 from playground.Non_DAG.utils.csv_reader import CSVReader
 from playground.Non_DAG.utils.feature_functions import features_extract_func, features_normalize_func
@@ -38,15 +38,16 @@ jobs_csv = '../jobs_files/jobs.csv'
 # jobs_csv = '../jobs_files/jobs_2017.csv'
 
 brain = Brain(6)
-reward_giver = MakespanRewardGiver(-1)
+# reward_giver = MakespanRewardGiver(-1)
+reward_giver = AverageCompletionRewardGiver()
 features_extract_func = features_extract_func
 features_normalize_func = features_normalize_func
 
 name = '%s-%s-m%d' % (reward_giver.name, brain.name, machines_number)
 model_dir = './agents/%s' % name
 
-# train_info_dir = './agents/training/'
-train_info_dir = "/content/drive/MyDrive/GoogleDrive/MyRepo/"
+train_info_dir = './agents/training/avgCompletionReward'
+# train_info_dir = "/content/drive/MyDrive/GoogleDrive/MyRepo/"
 # ************************ Parameters Setting End ************************
 
 if not os.path.isdir(model_dir):
