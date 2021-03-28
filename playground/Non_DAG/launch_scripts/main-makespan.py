@@ -21,7 +21,7 @@ from playground.Non_DAG.utils.csv_reader import CSVReader
 from playground.Non_DAG.utils.feature_functions import features_extract_func, features_normalize_func
 from playground.Non_DAG.utils.tools import multiprocessing_run, average_completion, average_slowdown
 from playground.Non_DAG.utils.episode import Episode
-
+import pandas as pd
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
 np.random.seed(41)
@@ -67,12 +67,23 @@ def set_path():
     os.environ['PYTHONPATH'] = root_dir_abs()
 
 
-def save_train_info(agent: Agent, itr: int):
+# def save_train_info(agent: Agent, itr: int):
+#     if not os.path.exists(train_info_dir):
+#         os.makedirs(train_info_dir, exist_ok=True)
+#     filename = 'chkpt_' + str(itr) + '.pkl'
+#     filepath = os.path.join(train_info_dir, filename)
+#     agent.save_chkpt(filepath)
+def save_train_info(agent: Agent, itr: int, reward_type="mkspan"):
     if not os.path.exists(train_info_dir):
         os.makedirs(train_info_dir, exist_ok=True)
-    filename = 'chkpt_' + str(itr) + '.pkl'
+    filename = 'chkpt_' + str(itr) + "_" + reward_type + '.pkl'
     filepath = os.path.join(train_info_dir, filename)
     agent.save_chkpt(filepath)
+    hist_name = f"hist_{reward_type}.csv"
+    hist_path = os.path.join(train_info_dir, hist_name)
+    df = pd.DataFrame(hist)
+    df.to_csv(hist_path)
+    print(f"save chkpt: {filename} | save hist: {hist_name}")
 
 
 def algo_random():
