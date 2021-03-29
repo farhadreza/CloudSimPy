@@ -22,6 +22,8 @@ from playground.Non_DAG.utils.feature_functions import features_extract_func, fe
 from playground.Non_DAG.utils.tools import multiprocessing_run, average_completion, average_slowdown
 from playground.Non_DAG.utils.episode import Episode
 import pandas as pd
+from collections import defaultdict
+
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
 np.random.seed(41)
@@ -32,8 +34,8 @@ jobs_len = 10
 n_iter = 200
 # n_iter = 2
 n_episode = 12
-# jobs_csv = '../jobs_files/jobs.csv'
-jobs_csv = '../jobs_files/jobs_2017.csv'
+jobs_csv = '../jobs_files/jobs.csv'
+# jobs_csv = '../jobs_files/jobs_2017.csv'
 
 brain = Brain(6)
 # reward_giver = MakespanRewardGiver(-1)
@@ -59,6 +61,7 @@ agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_adv
 machine_configs = [MachineConfig(64, 1, 1) for i in range(machines_number)]
 csv_reader = CSVReader(jobs_csv)
 jobs_configs = csv_reader.generate(0, jobs_len)
+hist = defaultdict(list)
 
 
 def set_path():
@@ -110,7 +113,11 @@ def algo_tetris():
     print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
 
 
-save_chkpt_every = 30
+save_chkpt_every = 20
+
+
+def add_hist(name="", value=None):
+    hist[name].append(value)
 
 
 def train_algo_deep_js():
@@ -149,6 +156,11 @@ def train_algo_deep_js():
         # print(np.mean(makespans), toc - tic, np.mean(average_completions), np.mean(average_slowdowns))
         print(
             f"mean makespans: {np.mean(makespans)} | 'toc-tic: {toc - tic} | avg_completions: {np.mean(average_completions)} | avg_slowdowns: {np.mean(average_slowdowns)}")
+        hist['avg_makespans'].append(np.mean(makespans))
+        hist['tictoc'].append(toc - tic)
+        hist['avg_completions'].append(np.mean(average_completions))
+        hist['avg_slowdowns'].append(np.mean(average_slowdowns))
+
         all_observations = []
         all_actions = []
         all_rewards = []
@@ -164,6 +176,8 @@ def train_algo_deep_js():
             all_observations.append(observations)
             all_actions.append(actions)
             all_rewards.append(rewards)
+        add_hist('total_rewards', np.sum(rewards))
+        add_hist("avg_rewards", np.mean(rewards))
 
         all_q_s, all_advantages = agent.estimate_return(all_rewards)
 
