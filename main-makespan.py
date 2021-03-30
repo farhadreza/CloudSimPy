@@ -57,12 +57,12 @@ name = '%s-%s-m%d' % (reward_giver.name, brain.name, machines_number)
 model_dir = './agents/%s' % name
 
 # train_info_dir = './agents/training/avgCompletionReward'
-train_info_dir = './agents/train80/avgMakespan'
+train_info_dir = './agents/train200/RAM'
 # train_info_dir = "/content/drive/MyDrive/GoogleDrive/MyRepo/"
 # ************************ Parameters Setting End ************************
 
-if not os.path.isdir(model_dir):
-    os.makedirs(model_dir)
+if not os.path.isdir(train_info_dir):
+    os.makedirs(train_info_dir)
 
 # agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
 #               model_save_path='%s/model.ckpt' % model_dir)
@@ -73,6 +73,7 @@ machine_configs = [MachineConfig(64, 1, 1) for i in range(machines_number)]
 csv_reader = CSVReader(jobs_csv)
 single_jobs_configs = csv_reader.generate(0, jobs_len)
 hist = defaultdict(list)
+hist_rewards = defaultdict(list)
 
 
 def set_path():
@@ -94,10 +95,14 @@ def save_train_info(agent: Agent, itr: int, reward_type=curr_reward_signal_name)
     filepath = os.path.join(train_info_dir, filename)
     agent.save_chkpt(filepath)
     hist_name = f"hist_{reward_type}.csv"
+    hist_rewards_name = f"hist_reward_{reward_type}.csv"
     hist_path = os.path.join(train_info_dir, hist_name)
     df = pd.DataFrame(hist)
     df.to_csv(hist_path)
     print(f"save chkpt: {filename} | save hist: {hist_name}")
+    df_rewards = pd.DataFrame(hist_rewards)
+    df_rewards.to_csv(hist_rewards_name)
+    print(f"save hist_reward: {hist_rewards_name}")
 
 
 # def add_result_to_hist(algo_type, env_now, toctic, avg_completion, avg_slowdown):
@@ -265,8 +270,10 @@ def train_DeepJS_data200():
                 all_actions.append(actions)
                 all_rewards.append(rewards)
 
-                add_hist(curr_reward_signal_name + '_total_rewards', np.sum(rewards))
-                add_hist(curr_reward_signal_name + "_avg_rewards", np.mean(rewards))
+                hist_rewards[curr_reward_signal_name + '_total_rewards'].append(np.sum(rewards))
+                hist_rewards[curr_reward_signal_name + "_avg_rewards"].append(np.mean(rewards))
+                # add_hist(curr_reward_signal_name + '_total_rewards', np.sum(rewards))
+                # add_hist(curr_reward_signal_name + "_avg_rewards", np.mean(rewards))
             all_q_s, all_advantages = agent.estimate_return(all_rewards)
 
             agent.update_parameters(all_observations, all_actions, all_advantages)
