@@ -39,7 +39,7 @@ class CSVReader(object):
 
         self.job_configs = job_configs
 
-    def generate(self, offset, number):
+    def generate(self, offset, number, hist=None):
         number = number if offset + number < len(self.job_configs) else len(self.job_configs) - offset
         ret = self.job_configs[offset: offset + number]
         the_first_job_config = ret[0]
@@ -73,5 +73,15 @@ class CSVReader(object):
 
         print('Task instances duration mean: ', np.mean(task_instances_durations))
         print('Task instances duration std: ', np.std(task_instances_durations))
+        if not hist is None:
+            hist["job_no"].append(len(ret))
+            hist["task_no"].append(tasks_number)
+            hist["task_inst_num_mean"].append(np.mean(task_instances_numbers))
+            hist["task_inst_cpu_mean"].append(np.mean(task_instances_cpu))
+            hist["task_inst_cpu_std"].append(np.std(task_instances_cpu))
+            hist["task_memory_mean"].append(np.mean(task_instances_memory))
+            hist["task_memory_std"].append(np.std(task_instances_memory))
+            hist["task_inst_duration_mean"].append(np.mean(task_instances_durations))
+            hist["task_inst_duration_std"].append(np.std(task_instances_durations))
 
         return ret
