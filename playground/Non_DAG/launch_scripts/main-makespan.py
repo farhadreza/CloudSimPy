@@ -15,7 +15,8 @@ from playground.Non_DAG.algorithm.DeepJS.DRL import RLAlgorithm
 from playground.Non_DAG.algorithm.DeepJS.agent import Agent
 from playground.Non_DAG.algorithm.DeepJS.brain import Brain
 
-from playground.Non_DAG.algorithm.DeepJS.reward_giver import MakespanRewardGiver, AverageCompletionRewardGiver, AverageSlowDownRewardGiver
+from playground.Non_DAG.algorithm.DeepJS.reward_giver import MakespanRewardGiver, AverageCompletionRewardGiver, \
+    AverageSlowDownRewardGiver
 
 from playground.Non_DAG.utils.csv_reader import CSVReader
 from playground.Non_DAG.utils.feature_functions import features_extract_func, features_normalize_func
@@ -47,6 +48,7 @@ name = '%s-%s-m%d' % (reward_giver.name, brain.name, machines_number)
 model_dir = './agents/%s' % name
 
 train_info_dir = './agents/training/avgCompletionReward'
+# train_info_dir = './agents/train80/avgMakespan'
 # train_info_dir = "/content/drive/MyDrive/GoogleDrive/MyRepo/"
 # ************************ Parameters Setting End ************************
 
@@ -89,28 +91,50 @@ def save_train_info(agent: Agent, itr: int, reward_type="mkspan"):
     print(f"save chkpt: {filename} | save hist: {hist_name}")
 
 
-def algo_random():
+def add_result_to_hist(algo_type, env_now, toctic, avg_completion, avg_slowdown):
+    hist[algo_type + "_env_now"].append(env_now)
+    hist[algo_type + "_tictoc"].append(toctic)
+    hist[algo_type + "_avg_completions"].append(avg_completion)
+    hist[algo_type + "_avg_slowdowns"].append(avg_slowdown)
+
+
+def algo_random(print_stats=False):
     tic = time.time()
     algorithm = RandomAlgorithm()
     episode = Episode(machine_configs, jobs_configs, algorithm, None)
     episode.run()
-    print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
+    if print_stats:
+        print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
+        print(
+            f"episode_env_now: {episode.env.now} | 'toc-tic: {time.time() - tic} | avg_completions: {average_completion(episode)} | avg_slowdowns: {average_slowdown(episode)}")
+    add_result_to_hist(algo_type="random", env_now=episode.env.now, toctic=time.time() - tic,
+                       avg_completion=average_completion(episode), avg_slowdown=average_slowdown(episode))
 
 
-def algo_first_fit():
+def algo_first_fit(print_stats=False):
     tic = time.time()
     algorithm = FirstFitAlgorithm()
     episode = Episode(machine_configs, jobs_configs, algorithm, None)
     episode.run()
-    print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
+    if print_stats:
+        print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
+        print(
+            f"episode_env_now: {episode.env.now} | 'toc-tic: {time.time() - tic} | avg_completions: {average_completion(episode)} | avg_slowdowns: {average_slowdown(episode)}")
+    add_result_to_hist(algo_type="first_fit", env_now=episode.env.now, toctic=time.time() - tic,
+                       avg_completion=average_completion(episode), avg_slowdown=average_slowdown(episode))
 
 
-def algo_tetris():
+def algo_tetris(print_stats=False):
     tic = time.time()
     algorithm = Tetris()
     episode = Episode(machine_configs, jobs_configs, algorithm, None)
     episode.run()
-    print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
+    if print_stats:
+        print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
+        print(
+            f"episode_env_now: {episode.env.now} | 'toc-tic: {time.time() - tic} | avg_completions: {average_completion(episode)} | avg_slowdowns: {average_slowdown(episode)}")
+    add_result_to_hist(algo_type="tetris", env_now=episode.env.now, toctic=time.time() - tic,
+                       avg_completion=average_completion(episode), avg_slowdown=average_slowdown(episode))
 
 
 save_chkpt_every = 20
@@ -194,7 +218,8 @@ def eval_algo_deep_js():
     # chkpt_path = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/playground/Non_DAG/launch_scripts/agents/Makespan-Brain-m5/model.ckpt-8"
     # chkpt_path="/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/checkpoint-180"
     # chkpt_path = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/chkpt_180.pkl-7"
-    chkpt_path = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/chkpt_120.pkl-5"
+    # chkpt_path = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/chkpt_120.pkl-5"
+    chkpt_path="/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/avgCompletionReward/chkpt_180_mkspan.pkl-10"
     agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
                   model_save_path='%s/model.ckpt' % model_dir, restore_path=chkpt_path)
     tic = time.time()
@@ -236,11 +261,54 @@ def eval_algo_deep_js():
     print(f"average slowdowns: {np.mean(average_slowdowns)}")
 
 
-def run_all_algo():
+def run_other_algo():
     algo_random()
     algo_first_fit()
     algo_tetris()
     # train_algo_deep_js()
+    save_to = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/otherAlgo/hist_other_algo.csv"
+    df = pd.DataFrame(hist)
+    df.to_csv(save_to)
+    print(f"saved hist.")
+
+
+def save_other_algo_hist_to_csv(save_dir=""):
+    df_random = pd.DataFrame()
+    df_tetris = pd.DataFrame()
+    df_first_fit = pd.DataFrame()
+    for algo_name, value in hist.items():
+        if algo_name.startswith("random"):
+            df_random[algo_name] = value
+        elif algo_name.startswith("tetris"):
+            df_tetris[algo_name] = value
+        elif algo_name.startswith("first_fit"):
+            df_first_fit[algo_name] = value
+    random_path = os.path.join(save_dir, 'hist_random.csv')
+    tetris_path = os.path.join(save_dir, "hist_tetris.csv")
+    first_fit_path = os.path.join(save_dir, "hist_first_fit.csv")
+    df_random.to_csv(random_path)
+    df_tetris.to_csv(tetris_path)
+    df_first_fit.to_csv(first_fit_path)
+
+
+def run_other_algo_multiple_times():
+    """
+    run the scheduling algo multiple times to get a overrall performance
+    :return:
+    """
+    num_times = 180
+    for idx in range(num_times):
+        print(f"running random algo")
+        algo_random()
+    for idx in range(num_times):
+        print(f"running first fit algo")
+        algo_first_fit()
+    for idx in range(num_times):
+        print(f"running tetris algo")
+        algo_tetris()
+    save_dir = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/experiments/data/renamed_reward_files"
+    save_other_algo_hist_to_csv(save_dir=save_dir)
+    print(f"saved hist.")
 
 
 if __name__ == '__main__':
@@ -249,7 +317,7 @@ if __name__ == '__main__':
     # eval_algo_deep_js()
     # set_path()  # for running on command line
     train_algo_deep_js()
-    # run_all_algo()
+    # eval_algo_deep_js()
 
 # DeepJS
 # before makespans ([654])
