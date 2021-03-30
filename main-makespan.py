@@ -75,6 +75,7 @@ csv_reader = CSVReader(jobs_csv)
 single_jobs_configs = csv_reader.generate(0, jobs_len)
 hist = defaultdict(list)
 hist_rewards = defaultdict(list)
+hist_deepjs = defaultdict(list)
 
 
 def set_path():
@@ -96,14 +97,18 @@ def save_train_info(agent: Agent, itr: int, reward_type=curr_reward_signal_name)
     filepath = os.path.join(train_info_dir, filename)
     agent.save_chkpt(filepath)
     hist_name = f"hist_{reward_type}.csv"
-    hist_rewards_name = f"hist_reward_{reward_type}.csv"
     hist_path = os.path.join(train_info_dir, hist_name)
     df = pd.DataFrame(hist)
     df.to_csv(hist_path)
     print(f"save chkpt: {filename} | save hist: {hist_name}")
+    hist_rewards_name = f"hist_reward_{reward_type}.csv"
     df_rewards = pd.DataFrame(hist_rewards)
-    df_rewards.to_csv(hist_rewards_name)
+    df_rewards.to_csv(os.path.join(train_info_dir, hist_rewards_name))
     print(f"save hist_reward: {hist_rewards_name}")
+    hist_deepjs_name = f"hist_deepjs_train_{reward_type}.csv"
+    df_deepjs = pd.DataFrame(hist_deepjs)
+    df_deepjs.to_csv(os.path.join(train_info_dir, hist_deepjs_name))
+    print(f"save hist_deepjs: {hist_deepjs_name}")
 
 
 # def add_result_to_hist(algo_type, env_now, toctic, avg_completion, avg_slowdown):
@@ -152,7 +157,7 @@ def save_train_info(agent: Agent, itr: int, reward_type=curr_reward_signal_name)
 #                        avg_completion=average_completion(episode), avg_slowdown=average_slowdown(episode))
 
 
-save_chkpt_every = 20
+save_chkpt_every = 10
 
 
 def add_hist(name="", value=None):
@@ -248,11 +253,11 @@ def train_DeepJS_data200():
             # agent.log('average_completions', np.mean(average_completions), agent.global_step)
             # agent.log('average_slowdowns', np.mean(average_slowdowns), agent.global_step)
             toc = time.time()
-            hist[curr_reward_signal_name + "_avg_makespans"].append(np.mean(makespans))
-            hist[curr_reward_signal_name + "_avg_completions"].append(np.mean(average_completions))
-            hist[curr_reward_signal_name + "_avg_slowdowns"].append(np.mean(average_slowdowns))
-            hist[curr_reward_signal_name + "_global_step"].append(agent.global_step)
-            hist[curr_reward_signal_name + "_tictoc"].append(toc - tic)
+            hist_deepjs[curr_reward_signal_name + "_avg_makespans"].append(np.mean(makespans))
+            hist_deepjs[curr_reward_signal_name + "_avg_completions"].append(np.mean(average_completions))
+            hist_deepjs[curr_reward_signal_name + "_avg_slowdowns"].append(np.mean(average_slowdowns))
+            hist_deepjs[curr_reward_signal_name + "_global_step"].append(agent.global_step)
+            hist_deepjs[curr_reward_signal_name + "_tictoc"].append(toc - tic)
             print(np.mean(makespans), toc - tic, np.mean(average_completions), np.mean(average_slowdowns))
 
             all_observations = []
