@@ -67,6 +67,7 @@ eval_info_dir = "RAC"
 
 # agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
 #               model_save_path='%s/model.ckpt' % model_dir)
+restore_point=60
 restore_path = "/content/drive/MyDrive/GoogleDrive/MyRepo/agent_RAC/chkpt_60_RAC.pkl-67"  # restore last trained checkpoint
 agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
               model_save_path='%s/model.ckpt' % train_info_dir, restore_path=restore_path)
@@ -97,16 +98,16 @@ def save_train_info(agent: Agent, itr: int, reward_type=curr_reward_signal_name)
     filename = 'chkpt_' + str(itr) + "_" + reward_type + '.pkl'
     filepath = os.path.join(train_info_dir, filename)
     agent.save_chkpt(filepath)
-    hist_name = f"hist_{reward_type}.csv"
+    hist_name = f"hist_{reward_type}_{restore_point}.csv"
     hist_path = os.path.join(train_info_dir, hist_name)
     df = pd.DataFrame(hist)
     df.to_csv(hist_path)
     print(f"save chkpt: {filename} | save hist: {hist_name}")
-    hist_rewards_name = f"hist_reward_{reward_type}.csv"
+    hist_rewards_name = f"hist_reward_{reward_type}_{restore_point}.csv"
     df_rewards = pd.DataFrame(hist_rewards)
     df_rewards.to_csv(os.path.join(train_info_dir, hist_rewards_name))
     print(f"save hist_reward: {hist_rewards_name}")
-    hist_deepjs_name = f"hist_deepjs_train_{reward_type}.csv"
+    hist_deepjs_name = f"hist_deepjs_train_{reward_type}_{restore_point}.csv"
     df_deepjs = pd.DataFrame(hist_deepjs)
     df_deepjs.to_csv(os.path.join(train_info_dir, hist_deepjs_name))
     print(f"save hist_deepjs: {hist_deepjs_name}")
