@@ -23,7 +23,8 @@ class Agent(object):
         self.checkpoint = tf.train.Checkpoint(brain=self.brain)
         self.model_save_path = model_save_path
         if restore_path:  # use to save and restore more info later
-            self.restore(restore_path)
+            self.checkpoint.restore(restore_path)
+            # self.restore(restore_path)
 
     def save_chkpt(self, save_path=None):  # used for saving training checkpoint
         if save_path:
