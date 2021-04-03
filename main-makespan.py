@@ -68,8 +68,9 @@ eval_info_dir = "RAS"
 
 # agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
 #               model_save_path='%s/model.ckpt' % model_dir)
-restore_point=50
-restore_path = "/content/drive/MyDrive/GoogleDrive/MyRepo/agent_RAS/chkpt_50_RAS.pkl-56"
+restore_point = 51
+# restore_path = "/content/drive/MyDrive/GoogleDrive/MyRepo/agent_RAS/chkpt_50_RAS.pkl-56"
+restore_path = "agents/RAS/chkpt_50_RAS.pkl-112"
 agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
               model_save_path='%s/model.ckpt' % train_info_dir, restore_path=restore_path)
 
@@ -178,7 +179,7 @@ def add_train_stats_to_hist(algo_type, tictime, env_now, global_step, avg_compl,
 
 
 def train_DeepJS_data200():
-    for job_chunk in range(n_job_chunk):
+    for job_chunk in range(restore_point, n_job_chunk):
         jobs_configs = csv_reader.generate(job_chunk * jobs_len, jobs_len, hist=hist)
 
         tic = time.time()
