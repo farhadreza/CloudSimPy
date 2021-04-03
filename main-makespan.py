@@ -59,7 +59,7 @@ name = '%s-%s-m%d' % (reward_giver.name, brain.name, machines_number)
 
 # train_info_dir = './agents/training/avgCompletionReward'
 train_info_dir = '/content/drive/MyDrive/GoogleDrive/MyRepo/agent_RAS'
-eval_info_dir = "RAS"
+eval_info_dir = "agents/RAS"
 # train_info_dir = "/content/drive/MyDrive/GoogleDrive/MyRepo/"
 # ************************ Parameters Setting End ************************
 
