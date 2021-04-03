@@ -85,5 +85,9 @@ examples/*
 playground/Non_DAG/launch_scripts/tensorboard/*
 tensorboard/
 data/
-agents/
+
+agents/train80
+agents/train200
+!agents/RAC
+!agents/RAS
 
