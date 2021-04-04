@@ -68,9 +68,10 @@ eval_info_dir = "agents/RAS"
 
 # agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
 #               model_save_path='%s/model.ckpt' % model_dir)
-restore_point = 51
+restore_point = 101
 # restore_path = "/content/drive/MyDrive/GoogleDrive/MyRepo/agent_RAS/chkpt_50_RAS.pkl-56"
-restore_path = "agents/RAS/chkpt_50_RAS.pkl-112"
+# restore_path = "agents/RAS/chkpt_50_RAS.pkl-112"
+restore_path = "agents/RAS/chkpt_100_RAS.pkl-54"
 agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
               model_save_path='%s/model.ckpt' % train_info_dir, restore_path=restore_path)
 
