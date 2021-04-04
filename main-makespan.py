@@ -57,7 +57,7 @@ name = '%s-%s-m%d' % (reward_giver.name, brain.name, machines_number)
 # model_dir = './agents/%s' % name
 
 # train_info_dir = './agents/training/avgCompletionReward'
-train_info_dir = '/content/drive/MyDrive/'
+train_info_dir = '/content/drive/MyDrive/RAC'
 eval_info_dir = "agents/RAC"
 # train_info_dir = "/content/drive/MyDrive/GoogleDrive/MyRepo/"
 # ************************ Parameters Setting End ************************
@@ -160,7 +160,7 @@ def save_train_info(agent: Agent, itr: int, reward_type=curr_reward_signal_name)
 #                        avg_completion=average_completion(episode), avg_slowdown=average_slowdown(episode))
 
 
-save_chkpt_every = 1
+save_chkpt_every = 10
 
 
 def add_hist(name="", value=None):
