@@ -37,7 +37,7 @@ machines_number = 5
 n_job_chunk = 200
 jobs_len = 10
 n_iter = 10
-n_episode = 12
+# n_episode = 12
 
 # n_iter = 200
 # n_iter = 2
