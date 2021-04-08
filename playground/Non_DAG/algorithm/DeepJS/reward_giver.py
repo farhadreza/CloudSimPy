@@ -53,7 +53,7 @@ class AverageMix_RAC_RAS(RewardGiver):
     name = "Mix_AC_AS"
 
     def get_reward(self):
-        super().getReward()
+        super().get_reward()
         cluster = self.simulation.cluster
         unfinished_tasks = cluster.unfinished_tasks
         reward = 0
