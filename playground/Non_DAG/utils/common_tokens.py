@@ -22,6 +22,7 @@ other_algo_list = [algo_random, algo_first_fit, algo_first_fit]
 RAS = "RAS"
 RAM = "RAM"
 RAC = "RAC"
+MIX_AC_AS="MIX_AC_AS"
 
 
 def get_exp_file_path(file_type="", is_original=False, prefix="hist_"):

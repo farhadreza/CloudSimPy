@@ -47,8 +47,8 @@ jobs_csv = 'playground/Non_DAG/jobs_files/jobs.csv'
 
 brain = Brain(6)
 # reward_giver = MakespanRewardGiver(-1)
-reward_giver = AverageCompletionRewardGiver()
-curr_reward_signal_name = RAC
+reward_giver = AverageMix_RAC_RAS()
+curr_reward_signal_name = MIX_AC_AS
 
 features_extract_func = features_extract_func
 features_normalize_func = features_normalize_func
@@ -56,9 +56,9 @@ features_normalize_func = features_normalize_func
 name = '%s-%s-m%d' % (reward_giver.name, brain.name, machines_number)
 # model_dir = './agents/%s' % name
 
-train_info_dir = 'agents/RAC'
+train_info_dir = 'agents/MIX_AC_AS'
 # train_info_dir = '/content/drive/MyDrive/RAC'
-eval_info_dir = "agents/RAC"
+eval_info_dir = "agents/MIX_AC_AS"
 # train_info_dir = "/content/drive/MyDrive/GoogleDrive/MyRepo/"
 # ************************ Parameters Setting End ************************
 
@@ -67,10 +67,10 @@ eval_info_dir = "agents/RAC"
 
 # agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
 #               model_save_path='%s/model.ckpt' % model_dir)
-restore_point = 81
+restore_point = 0
 # restore_path = "/content/drive/MyDrive/GoogleDrive/MyRepo/agent_RAC/chkpt_60_RAC.pkl-67"  # restore last trained checkpoint
 # restore_path = "agents/RAC/chkpt_60_RAC.pkl-67"
-restore_path = "agents/RAC/chkpt_80_RAC.pkl-21"
+restore_path = None
 agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
               model_save_path='%s/model.ckpt' % train_info_dir, restore_path=restore_path)
 
@@ -108,11 +108,11 @@ def save_train_info(agent: Agent, itr: int, reward_type=curr_reward_signal_name)
     hist_rewards_name = f"hist_reward_{reward_type}_{restore_point}.csv"
     df_rewards = pd.DataFrame(hist_rewards)
     df_rewards.to_csv(os.path.join(train_info_dir, hist_rewards_name))
-    print(f"save hist_reward: {hist_rewards_name}")
+    # print(f"save hist_reward: {hist_rewards_name}")
     hist_deepjs_name = f"hist_deepjs_train_{reward_type}_{restore_point}.csv"
     df_deepjs = pd.DataFrame(hist_deepjs)
     df_deepjs.to_csv(os.path.join(train_info_dir, hist_deepjs_name))
-    print(f"save hist_deepjs: {hist_deepjs_name}")
+    # print(f"save hist_deepjs: {hist_deepjs_name}")
 
 
 # def add_result_to_hist(algo_type, env_now, toctic, avg_completion, avg_slowdown):
@@ -161,7 +161,7 @@ def save_train_info(agent: Agent, itr: int, reward_type=curr_reward_signal_name)
 #                        avg_completion=average_completion(episode), avg_slowdown=average_slowdown(episode))
 
 
-save_chkpt_every = 10
+save_chkpt_every = 20
 print_progress = False
 
 
