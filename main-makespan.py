@@ -17,7 +17,7 @@ from playground.Non_DAG.algorithm.DeepJS.agent import Agent
 from playground.Non_DAG.algorithm.DeepJS.brain import Brain
 
 from playground.Non_DAG.algorithm.DeepJS.reward_giver import MakespanRewardGiver, AverageCompletionRewardGiver, \
-    AverageSlowDownRewardGiver
+    AverageSlowDownRewardGiver, AverageMix_RAC_RAS
 
 from playground.Non_DAG.utils.csv_reader import CSVReader
 from playground.Non_DAG.utils.feature_functions import features_extract_func, features_normalize_func
@@ -56,8 +56,8 @@ features_normalize_func = features_normalize_func
 name = '%s-%s-m%d' % (reward_giver.name, brain.name, machines_number)
 # model_dir = './agents/%s' % name
 
-# train_info_dir = './agents/training/avgCompletionReward'
-train_info_dir = '/content/drive/MyDrive/RAC'
+train_info_dir = 'agents/RAC'
+# train_info_dir = '/content/drive/MyDrive/RAC'
 eval_info_dir = "agents/RAC"
 # train_info_dir = "/content/drive/MyDrive/GoogleDrive/MyRepo/"
 # ************************ Parameters Setting End ************************
@@ -67,9 +67,10 @@ eval_info_dir = "agents/RAC"
 
 # agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
 #               model_save_path='%s/model.ckpt' % model_dir)
-restore_point = 61
+restore_point = 81
 # restore_path = "/content/drive/MyDrive/GoogleDrive/MyRepo/agent_RAC/chkpt_60_RAC.pkl-67"  # restore last trained checkpoint
-restore_path = "agents/RAC/chkpt_60_RAC.pkl-67"
+# restore_path = "agents/RAC/chkpt_60_RAC.pkl-67"
+restore_path = "agents/RAC/chkpt_80_RAC.pkl-21"
 agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
               model_save_path='%s/model.ckpt' % train_info_dir, restore_path=restore_path)
 
@@ -103,7 +104,7 @@ def save_train_info(agent: Agent, itr: int, reward_type=curr_reward_signal_name)
     hist_path = os.path.join(train_info_dir, hist_name)
     df = pd.DataFrame(hist)
     df.to_csv(hist_path)
-    print(f"save chkpt: {filename} | save hist: {hist_name}")
+    print(f"save chkpt: {filepath} | save hist: {hist_path}")
     hist_rewards_name = f"hist_reward_{reward_type}_{restore_point}.csv"
     df_rewards = pd.DataFrame(hist_rewards)
     df_rewards.to_csv(os.path.join(train_info_dir, hist_rewards_name))
@@ -161,6 +162,7 @@ def save_train_info(agent: Agent, itr: int, reward_type=curr_reward_signal_name)
 
 
 save_chkpt_every = 10
+print_progress = False
 
 
 def add_hist(name="", value=None):
@@ -179,6 +181,7 @@ def add_train_stats_to_hist(algo_type, tictime, env_now, global_step, avg_compl,
 
 def train_DeepJS_data200():
     for job_chunk in range(restore_point, n_job_chunk):
+        print(f"************ Job_chunk: {job_chunk} ***************")
         jobs_configs = csv_reader.generate(job_chunk * jobs_len, jobs_len, hist=hist)
 
         tic = time.time()
@@ -192,9 +195,9 @@ def train_DeepJS_data200():
         hist["random_global_step"].append(agent.global_step)
         hist["random_avg_completions"].append(average_completion(episode))
         hist["random_avg_slowdowns"].append(average_slowdown(episode))
-
-        print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
-        agent.log('makespan-random', episode.env.now, agent.global_step)
+        if print_progress:
+            print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
+            agent.log('makespan-random', episode.env.now, agent.global_step)
 
         tic = time.time()
         algorithm = FirstFitAlgorithm()
@@ -206,9 +209,9 @@ def train_DeepJS_data200():
         hist["first_fit_global_step"].append(agent.global_step)
         hist["first_fit_avg_completions"].append(average_completion(episode))
         hist["first_fit_avg_slowdowns"].append(average_slowdown(episode))
-
-        print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
-        agent.log('makespan-ff', episode.env.now, agent.global_step)
+        if print_progress:
+            print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
+            agent.log('makespan-ff', episode.env.now, agent.global_step)
         # hist["makespan-ff_env_now"].append(episode.env.now)
         # hist["makespan-ff_global_step"].append(agent.global_step)
 
@@ -222,13 +225,14 @@ def train_DeepJS_data200():
         hist["tetris_global_step"].append(agent.global_step)
         hist["tetris_avg_completions"].append(average_completion(episode))
         hist["tetris_avg_slowdowns"].append(average_slowdown(episode))
-
-        print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
-        agent.log('makespan-tetris', episode.env.now, agent.global_step)
+        if print_progress:
+            print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
+            agent.log('makespan-tetris', episode.env.now, agent.global_step)
 
         for itr in range(n_iter):
             tic = time.time()
-            print("********** Iteration %i ************" % itr)
+            # if print_progress:
+            #     print("********** Iteration %i ************" % itr)
             processes = []
 
             manager = Manager()
@@ -261,7 +265,8 @@ def train_DeepJS_data200():
             hist_deepjs[curr_reward_signal_name + "_avg_slowdowns"].append(np.mean(average_slowdowns))
             hist_deepjs[curr_reward_signal_name + "_global_step"].append(agent.global_step)
             hist_deepjs[curr_reward_signal_name + "_tictoc"].append(toc - tic)
-            print(np.mean(makespans), toc - tic, np.mean(average_completions), np.mean(average_slowdowns))
+            if print_progress:
+                print(np.mean(makespans), toc - tic, np.mean(average_completions), np.mean(average_slowdowns))
 
             all_observations = []
             all_actions = []
@@ -288,7 +293,7 @@ def train_DeepJS_data200():
             agent.update_parameters(all_observations, all_actions, all_advantages)
         if job_chunk % save_chkpt_every == 0 or job_chunk == 200:
             save_train_info(agent, job_chunk)
-        agent.save()
+    agent.save()
 
 
 def train_algo_deep_js():
