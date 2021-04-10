@@ -338,8 +338,10 @@ def eval_DeepJS_data200(reward_type=curr_reward_signal_name):
     algorithm = RLAlgorithm(agent, reward_giver, features_extract_func=features_extract_func,
                             features_normalize_func=features_normalize_func)
     eval_dict = defaultdict(list)
-    for job_chunk in range(start_job_no, n_job_chunk):
-        print(f"************* job_chunk: {job_chunk} ***************")
+    print_progress = False
+    for job_chunk in range(start_job_no, eval_job_chunk):
+        if print_progress:
+            print(f"************* job_chunk: {job_chunk} ***************")
         jobs_configs = csv_reader.generate(job_chunk * jobs_len, jobs_len, hist=hist)
         #
         # tic = time.time()
@@ -388,8 +390,7 @@ def eval_DeepJS_data200(reward_type=curr_reward_signal_name):
         # agent.log('makespan-tetris', episode.env.now, agent.global_step)
 
         tic = time.time()
-        print(f"********** JobChunk {job_chunk} ************")
-        manager = Manager()
+        # manager = Manager()
         # trajectories = manager.list([])
         # makespans = manager.list([])
         # average_completions = manager.list([])
@@ -428,7 +429,6 @@ def eval_DeepJS_data200(reward_type=curr_reward_signal_name):
         eval_dict[curr_reward_signal_name + "_tictoc"].append(toc - tic)
         # print(np.mean(makespans), toc - tic, np.mean(average_completions), np.mean(average_slowdowns))
 
-    save_train_info(agent, job_chunk)
     save_name = f"hist_{reward_type}.csv"
     save_path = os.path.join(eval_info_dir, save_name)
     df_eval = pd.DataFrame(eval_dict)
@@ -617,7 +617,7 @@ if __name__ == '__main__':
     # algo_deep_js()
     # eval_algo_deep_js()
     # set_path()  # for running on command line
-    eval_all_other_algos()
+    eval_DeepJS_data200()
     # eval_algo_deep_js()
 
 # DeepJS
