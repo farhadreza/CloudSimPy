@@ -67,10 +67,11 @@ eval_info_dir = "agents/RAC"
 
 # agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
 #               model_save_path='%s/model.ckpt' % model_dir)
-restore_point = 81
+restore_point = 161
 # restore_path = "/content/drive/MyDrive/GoogleDrive/MyRepo/agent_RAC/chkpt_60_RAC.pkl-67"  # restore last trained checkpoint
 # restore_path = "agents/RAC/chkpt_60_RAC.pkl-67"
-restore_path = "agents/RAC/chkpt_80_RAC.pkl-21"
+# restore_path = "agents/RAC/chkpt_80_RAC.pkl-21"
+restore_path = "agents/RAC/chkpt_160_RAC.pkl-8"
 agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
               model_save_path='%s/model.ckpt' % train_info_dir, restore_path=restore_path)
 
@@ -293,7 +294,8 @@ def train_DeepJS_data200():
             agent.update_parameters(all_observations, all_actions, all_advantages)
         if job_chunk % save_chkpt_every == 0 or job_chunk == 200:
             save_train_info(agent, job_chunk)
-    agent.save()
+    # agent.save()
+    save_train_info(agent, 200)
 
 
 def train_algo_deep_js():
