@@ -188,7 +188,7 @@ def plot_reward_data(dfs, cols=None):
 
 
 def plot_single_stat_for_all_reward_signals(dfs, col_name=None, y_label=None, fig_dir=None, figsize=(10, 10),
-                                            excludes=None):
+                                            excludes=None, x_lable=None):
     if dfs and col_name:
         df_stats = pd.DataFrame()
         for reward_type, df in dfs:
@@ -212,6 +212,8 @@ def plot_single_stat_for_all_reward_signals(dfs, col_name=None, y_label=None, fi
             df_stats.plot(marker='.', figsize=figsize, ax=axs)
         if y_label:
             axs.set_ylabel(y_label)
+        if x_lable:
+            axs.set_xlabel(xlabel=x_lable)
         # for ax in axs:
         #     ax.label_outer()
         if fig_dir:
@@ -232,7 +234,7 @@ def get_coloumn_name_ends_with(cols, suffix=None):
 def plot_stat_difference_for_all_reward_signals(dfs, compare_stat=None, reward_signal_name="", y_label=None,
                                                 fig_dir=None,
                                                 figsize=(10, 10), excludes=None, df_compare_to=None,
-                                                compare_to_col_name="", suffix=""):
+                                                compare_to_col_name="", suffix="", x_lable=None):
     """
     this loops through each file and compare a specific stat (specified by the compare_stat) to the same
     stat trained for all other reward signals
@@ -275,6 +277,8 @@ def plot_stat_difference_for_all_reward_signals(dfs, compare_stat=None, reward_s
             df_stats.plot(marker='.', figsize=figsize, ax=axs)
         if y_label:
             axs.set_ylabel(y_label)
+        if x_lable:
+            axs.set_xlabel(xlabel=x_lable)
         # for ax in axs:
         #     ax.label_outer()
         if fig_dir:
@@ -306,11 +310,11 @@ def exp_results_by_reward_all_plots():
     excludes = []
     # avg completions data using different training reward
     plot_single_stat_for_all_reward_signals(dfs, col_name=avg_completions, y_label="Average Completions",
-                                            fig_dir=fig_dir)
+                                            fig_dir=fig_dir, x_lable="Job Chunk Number")
     # avg makespans data using different training reward
-    plot_single_stat_for_all_reward_signals(dfs, col_name=avg_makespans, y_label="Average Makespans", fig_dir=fig_dir)
+    plot_single_stat_for_all_reward_signals(dfs, col_name=avg_makespans, y_label="Average Makespans", fig_dir=fig_dir, x_lable="Job Chunk Number")
     # avg slowdosns data using different training reward
-    plot_single_stat_for_all_reward_signals(dfs, col_name=avg_slowdowns, y_label="Average Slowdowns", fig_dir=fig_dir)
+    plot_single_stat_for_all_reward_signals(dfs, col_name=avg_slowdowns, y_label="Average Slowdowns", fig_dir=fig_dir, x_lable="Job Chunk Number")
 
 
 def get_all_stats_df(range=0, exclude=None):
@@ -365,19 +369,19 @@ def exp_stats_diff_by_reward_all_plots():
                                                 y_label="Average Completions Difference",
                                                 fig_dir=fig_dir, df_compare_to=df_completion,
                                                 compare_to_col_name=f"{reward_avg_completions}_{avg_completions}",
-                                                suffix=suffix)
+                                                suffix=suffix, x_lable="Job Chunk Number")
     # avg makespans data using different training reward
     plot_stat_difference_for_all_reward_signals(dfs_makespans, compare_stat=avg_makespans,
                                                 y_label="Average Makespans Difference",
                                                 fig_dir=fig_dir, df_compare_to=df_makespan,
                                                 compare_to_col_name=f"{reward_avg_makespans}_{avg_makespans}",
-                                                suffix=suffix)
+                                                suffix=suffix, x_lable="Job Chunk Number")
     # # avg slowdosns data using different training reward
     plot_stat_difference_for_all_reward_signals(dfs_slowdowns, compare_stat=avg_slowdowns,
                                                 y_label="Average Slowdowns Difference",
                                                 fig_dir=fig_dir, df_compare_to=df_slowdown,
                                                 compare_to_col_name=f"{reward_avg_slowdowns}_{avg_slowdowns}",
-                                                suffix=suffix)
+                                                suffix=suffix, x_lable="Job Chunk Number")
 
 
 def get_job_stats(all_in_one_chart=False):

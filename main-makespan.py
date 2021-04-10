@@ -35,6 +35,7 @@ tf.random.set_random_seed(41)
 # ************************ Parameters Setting Start ************************
 machines_number = 5
 n_job_chunk = 200
+eval_job_chunk = 521
 jobs_len = 10
 n_iter = 10
 n_episode = 12
@@ -58,6 +59,9 @@ model_dir = './agents/%s' % name
 
 # train_info_dir = './agents/training/avgCompletionReward'
 train_info_dir = './agents/train80/avgMakespan'
+eval_info_dir = "experiments/data/eval/raw"
+
+trained_agent_path = "agents/trained_agents200/RAM/model.ckpt-200"
 # train_info_dir = "/content/drive/MyDrive/GoogleDrive/MyRepo/"
 # ************************ Parameters Setting End ************************
 
@@ -73,6 +77,7 @@ machine_configs = [MachineConfig(64, 1, 1) for i in range(machines_number)]
 csv_reader = CSVReader(jobs_csv)
 single_jobs_configs = csv_reader.generate(0, jobs_len)
 hist = defaultdict(list)
+hist_eval = defaultdict(list)
 
 
 def set_path():
@@ -98,6 +103,16 @@ def save_train_info(agent: Agent, itr: int, reward_type=curr_reward_signal_name)
     df = pd.DataFrame(hist)
     df.to_csv(hist_path)
     print(f"save chkpt: {filename} | save hist: {hist_name}")
+
+
+def save_eval_info(reward_type=curr_reward_signal_name):
+    if not os.path.exists(eval_info_dir):
+        os.makedirs(eval_info_dir, exist_ok=True)
+    hist_name = f"hist_{reward_type}_.csv"
+    hist_path = os.path.join(eval_info_dir, hist_name)
+    df = pd.DataFrame(hist_eval)
+    df.to_csv(hist_path)
+    print(f"save hist_eval to: {hist_path}")
 
 
 # def add_result_to_hist(algo_type, env_now, toctic, avg_completion, avg_slowdown):
@@ -275,73 +290,228 @@ def train_DeepJS_data200():
         agent.save()
 
 
-def train_algo_deep_js():
-    for itr in range(n_iter):
+def eval_other_algos_data200(algo_name="", algorithm=None, save_dir=None, print_progress=False):
+    start_job_no = 201
+    report_every = 10
+    eval_dict = defaultdict(list)
+    for job_chunk in range(start_job_no, eval_job_chunk):
+        if print_progress and job_chunk % report_every == 0:
+            print(f"************* job_chunk: {job_chunk} ***************")
+        jobs_configs = csv_reader.generate(job_chunk * jobs_len, jobs_len, print_stats=False)
+
         tic = time.time()
-        print("********** DeepJS Iteration %i ************" % itr)
-        processes = []
+        episode = Episode(machine_configs, jobs_configs, algorithm, None)
+        episode.run()
+        # add_train_stats_to_hist(algo_random,)
+        eval_dict[algo_name + "_tictoc"].append(time.time() - tic)
+        eval_dict[algo_name + "_avg_makespans"].append(episode.env.now)
+        eval_dict[algo_name + "_env_now"].append(episode.env.now)
+        # eval_dict["random_global_step"].append(agent.global_step)
+        eval_dict[algo_name + "_avg_completions"].append(average_completion(episode))
+        eval_dict[algo_name + "_avg_slowdowns"].append(average_slowdown(episode))
+    if save_dir:
+        save_name = f"hist_{algo_name}.csv"
+        save_path = os.path.join(save_dir, save_name)
+        df_eval = pd.DataFrame(eval_dict)
+        df_eval.to_csv(save_path)
+        print(f"saved {algo_name} algo to: {save_path}")
 
+
+def eval_all_other_algos():
+    """
+    evaluate all other algorithms other than DeepJS
+    save the result to eval_info_dir
+    :return:
+    """
+    save_dir = eval_info_dir
+
+    algorithm = RandomAlgorithm()
+    # eval_other_algos_data200(algo_name=algo_random, algorithm=algorithm, save_dir=save_dir)
+    algorithm = FirstFitAlgorithm()
+    # eval_other_algos_data200(algo_name=algo_first_fit, algorithm=algorithm, save_dir=save_dir)
+    algorithm = Tetris()
+    eval_other_algos_data200(algo_name=algo_tetris, algorithm=algorithm, save_dir=save_dir)
+
+
+def eval_DeepJS_data200(reward_type=curr_reward_signal_name):
+    start_job_no = 201
+    algorithm = RLAlgorithm(agent, reward_giver, features_extract_func=features_extract_func,
+                            features_normalize_func=features_normalize_func)
+    eval_dict = defaultdict(list)
+    for job_chunk in range(start_job_no, n_job_chunk):
+        print(f"************* job_chunk: {job_chunk} ***************")
+        jobs_configs = csv_reader.generate(job_chunk * jobs_len, jobs_len, hist=hist)
+        #
+        # tic = time.time()
+        # algorithm = RandomAlgorithm()
+        # episode = Episode(machine_configs, jobs_configs, algorithm, None)
+        # episode.run()
+        # # add_train_stats_to_hist(algo_random,)
+        # hist["random_tictoc"].append(time.time() - tic)
+        # hist["random_avg_makespans"].append(episode.env.now)
+        # hist["makespan-random_env_now"].append(episode.env.now)
+        # hist["random_global_step"].append(agent.global_step)
+        # hist["random_avg_completions"].append(average_completion(episode))
+        # hist["random_avg_slowdowns"].append(average_slowdown(episode))
+        #
+        # print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
+        # agent.log('makespan-random', episode.env.now, agent.global_step)
+        #
+        # tic = time.time()
+        # algorithm = FirstFitAlgorithm()
+        # episode = Episode(machine_configs, jobs_configs, algorithm, None)
+        # episode.run()
+        # hist["first_fit_tictoc"].append(time.time() - tic)
+        # hist["first_fit_avg_makespans"].append(episode.env.now)
+        # hist["makespan-ff_env_now"].append(episode.env.now)
+        # hist["first_fit_global_step"].append(agent.global_step)
+        # hist["first_fit_avg_completions"].append(average_completion(episode))
+        # hist["first_fit_avg_slowdowns"].append(average_slowdown(episode))
+        #
+        # print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
+        # agent.log('makespan-ff', episode.env.now, agent.global_step)
+        # # hist["makespan-ff_env_now"].append(episode.env.now)
+        # # hist["makespan-ff_global_step"].append(agent.global_step)
+        #
+        # tic = time.time()
+        # algorithm = Tetris()
+        # episode = Episode(machine_configs, jobs_configs, algorithm, None)
+        # episode.run()
+        # hist["tetris_tictoc"].append(time.time() - tic)
+        # hist["tetris_avg_makespans"].append(episode.env.now)
+        # hist["makespan-tetris_env_now"].append(episode.env.now)
+        # hist["tetris_global_step"].append(agent.global_step)
+        # hist["tetris_avg_completions"].append(average_completion(episode))
+        # hist["tetris_avg_slowdowns"].append(average_slowdown(episode))
+        #
+        # print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
+        # agent.log('makespan-tetris', episode.env.now, agent.global_step)
+
+        tic = time.time()
+        print(f"********** JobChunk {job_chunk} ************")
         manager = Manager()
-        trajectories = manager.list([])
-        makespans = manager.list([])
-        average_completions = manager.list([])
-        average_slowdowns = manager.list([])
-        for i in range(n_episode):
-            algorithm = RLAlgorithm(agent, reward_giver, features_extract_func=features_extract_func,
-                                    features_normalize_func=features_normalize_func)
-            episode = Episode(machine_configs, single_jobs_configs, algorithm, None)
-            algorithm.reward_giver.attach(episode.simulation)
-            p = Process(target=multiprocessing_run,
-                        args=(episode, trajectories, makespans, average_completions, average_slowdowns))
+        # trajectories = manager.list([])
+        # makespans = manager.list([])
+        # average_completions = manager.list([])
+        # average_slowdowns = manager.list([])
+        makespans = []
+        average_completions = []
+        average_slowdowns = []
 
-            processes.append(p)
+        episode = Episode(machine_configs, jobs_configs, algorithm, None)
+        algorithm.reward_giver.attach(episode.simulation)
+        # multiprocessing_run(episode, trajectories, makespans, average_completions, average_slowdowns)
 
-        for p in processes:
-            p.start()
+        episode.run()
+        makespans.append(episode.simulation.env.now)
+        average_completions.append(average_completion(episode))
+        average_slowdowns.append(average_slowdown(episode))
+        # p = Process(target=multiprocessing_run,
+        #             args=(episode, trajectories, makespans, average_completions, average_slowdowns))
+        #
+        # processes.append(p)
+        #
+        # for p in processes:
+        #     p.start()
+        #
+        # for p in processes:
+        #     p.join()
 
-        for p in processes:
-            p.join()
-
-        agent.log('makespan', np.mean(makespans), agent.global_step)
-        agent.log('average_completions', np.mean(average_completions), agent.global_step)
-        agent.log('average_slowdowns', np.mean(average_slowdowns), agent.global_step)
-
+        # agent.log('makespan', np.mean(makespans), agent.global_step)
+        # agent.log('average_completions', np.mean(average_completions), agent.global_step)
+        # agent.log('average_slowdowns', np.mean(average_slowdowns), agent.global_step)
         toc = time.time()
-
+        eval_dict[curr_reward_signal_name + "_avg_makespans"].append(np.mean(makespans))
+        eval_dict[curr_reward_signal_name + "_avg_completions"].append(np.mean(average_completions))
+        eval_dict[curr_reward_signal_name + "_avg_slowdowns"].append(np.mean(average_slowdowns))
+        # eval_dict[curr_reward_signal_name + "_global_step"].append(agent.global_step)
+        eval_dict[curr_reward_signal_name + "_tictoc"].append(toc - tic)
         # print(np.mean(makespans), toc - tic, np.mean(average_completions), np.mean(average_slowdowns))
-        print(
-            f"mean makespans: {np.mean(makespans)} | 'toc-tic: {toc - tic} | avg_completions: {np.mean(average_completions)} | avg_slowdowns: {np.mean(average_slowdowns)}")
-        hist['avg_makespans'].append(np.mean(makespans))
-        hist['tictoc'].append(toc - tic)
-        hist['avg_completions'].append(np.mean(average_completions))
-        hist['avg_slowdowns'].append(np.mean(average_slowdowns))
 
-        all_observations = []
-        all_actions = []
-        all_rewards = []
-        for trajectory in trajectories:
-            observations = []
-            actions = []
-            rewards = []
-            for node in trajectory:
-                observations.append(node.observation)
-                actions.append(node.action)
-                rewards.append(node.reward)
+    save_train_info(agent, job_chunk)
+    save_name = f"hist_{reward_type}.csv"
+    save_path = os.path.join(eval_info_dir, save_name)
+    df_eval = pd.DataFrame(eval_dict)
+    df_eval.to_csv(save_path)
 
-            all_observations.append(observations)
-            all_actions.append(actions)
-            all_rewards.append(rewards)
-        add_hist('total_rewards', np.sum(rewards))
-        add_hist("avg_rewards", np.mean(rewards))
 
-        all_q_s, all_advantages = agent.estimate_return(all_rewards)
+def exp_eval():
+    """
+    eval all algorithms for experiment
+    :return:
+    """
+    # eval_all_other_algos()
+    eval_DeepJS_data200()
 
-        agent.update_parameters(all_observations, all_actions, all_advantages)
 
-        if itr % save_chkpt_every == 0 or itr == n_iter:
-            save_train_info(agent, itr)
-
-    agent.save()
+#
+# def train_algo_deep_js():
+#     for itr in range(n_iter):
+#         tic = time.time()
+#         print("********** DeepJS Iteration %i ************" % itr)
+#         processes = []
+#
+#         manager = Manager()
+#         trajectories = manager.list([])
+#         makespans = manager.list([])
+#         average_completions = manager.list([])
+#         average_slowdowns = manager.list([])
+#         for i in range(n_episode):
+#             algorithm = RLAlgorithm(agent, reward_giver, features_extract_func=features_extract_func,
+#                                     features_normalize_func=features_normalize_func)
+#             episode = Episode(machine_configs, single_jobs_configs, algorithm, None)
+#             algorithm.reward_giver.attach(episode.simulation)
+#             p = Process(target=multiprocessing_run,
+#                         args=(episode, trajectories, makespans, average_completions, average_slowdowns))
+#
+#             processes.append(p)
+#
+#         for p in processes:
+#             p.start()
+#
+#         for p in processes:
+#             p.join()
+#
+#         agent.log('makespan', np.mean(makespans), agent.global_step)
+#         agent.log('average_completions', np.mean(average_completions), agent.global_step)
+#         agent.log('average_slowdowns', np.mean(average_slowdowns), agent.global_step)
+#
+#         toc = time.time()
+#
+#         # print(np.mean(makespans), toc - tic, np.mean(average_completions), np.mean(average_slowdowns))
+#         print(
+#             f"mean makespans: {np.mean(makespans)} | 'toc-tic: {toc - tic} | avg_completions: {np.mean(average_completions)} | avg_slowdowns: {np.mean(average_slowdowns)}")
+#         hist['avg_makespans'].append(np.mean(makespans))
+#         hist['tictoc'].append(toc - tic)
+#         hist['avg_completions'].append(np.mean(average_completions))
+#         hist['avg_slowdowns'].append(np.mean(average_slowdowns))
+#
+#         all_observations = []
+#         all_actions = []
+#         all_rewards = []
+#         for trajectory in trajectories:
+#             observations = []
+#             actions = []
+#             rewards = []
+#             for node in trajectory:
+#                 observations.append(node.observation)
+#                 actions.append(node.action)
+#                 rewards.append(node.reward)
+#
+#             all_observations.append(observations)
+#             all_actions.append(actions)
+#             all_rewards.append(rewards)
+#         add_hist('total_rewards', np.sum(rewards))
+#         add_hist("avg_rewards", np.mean(rewards))
+#
+#         all_q_s, all_advantages = agent.estimate_return(all_rewards)
+#
+#         agent.update_parameters(all_observations, all_actions, all_advantages)
+#
+#         if itr % save_chkpt_every == 0 or itr == n_iter:
+#             save_train_info(agent, itr)
+#
+#     agent.save()
 
 
 def eval_algo_deep_js():
@@ -447,7 +617,7 @@ if __name__ == '__main__':
     # algo_deep_js()
     # eval_algo_deep_js()
     # set_path()  # for running on command line
-    train_DeepJS_data200()
+    eval_all_other_algos()
     # eval_algo_deep_js()
 
 # DeepJS
