@@ -1,0 +1,2 @@
+model_checkpoint_path: "chkpt_199_RAM.pkl-1"
+all_model_checkpoint_paths: "chkpt_199_RAM.pkl-1"

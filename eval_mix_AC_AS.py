@@ -49,7 +49,7 @@ jobs_csv = 'playground/Non_DAG/jobs_files/jobs.csv'
 brain = Brain(6)
 reward_giver = MakespanRewardGiver(-1)
 # reward_giver = AverageCompletionRewardGiver()
-curr_reward_signal_name = RAM
+curr_reward_signal_name = MIX_AC_AS
 
 features_extract_func = features_extract_func
 features_normalize_func = features_normalize_func
@@ -58,17 +58,16 @@ name = '%s-%s-m%d' % (reward_giver.name, brain.name, machines_number)
 model_dir = './agents/%s' % name
 
 # train_info_dir = './agents/training/avgCompletionReward'
-train_info_dir = 'agents/train200'
+train_info_dir = './agents/train80/avgMakespan'
 eval_info_dir = "experiments/data/eval/raw"
 
-# trained_agent_path = "experiments/data/trained_chkpt200/RAM/model.ckpt-200"
-trained_agent_path = "experiments/data/trained_chkpt200/RAM/chkpt_199_RAM.pkl-1"
+trained_agent_path = "experiments/data/trained_chkpt200/MIX_AC_AS/chkpt_200_MIX_AC_AS.pkl-13"
 # train_info_dir = "/content/drive/MyDrive/GoogleDrive/MyRepo/"
 # ************************ Parameters Setting End ************************
 
 if not os.path.isdir(model_dir):
     os.makedirs(model_dir)
-restore_point = 191
+
 # agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
 #               model_save_path='%s/model.ckpt' % model_dir)
 agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
@@ -101,8 +100,8 @@ def save_train_info(agent: Agent, itr: int, reward_type=curr_reward_signal_name)
     agent.save_chkpt(filepath)
     hist_name = f"hist_{reward_type}.csv"
     hist_path = os.path.join(train_info_dir, hist_name)
-    # df = pd.DataFrame(hist)
-    # df.to_csv(hist_path)
+    df = pd.DataFrame(hist)
+    df.to_csv(hist_path)
     print(f"save chkpt: {filename} | save hist: {hist_name}")
 
 
@@ -180,8 +179,7 @@ def add_train_stats_to_hist(algo_type, tictime, env_now, global_step, avg_compl,
 
 
 def train_DeepJS_data200():
-    for job_chunk in range(restore_point, n_job_chunk):
-        print(f"************ Job_chunk: {job_chunk} ***************")
+    for job_chunk in range(n_job_chunk):
         jobs_configs = csv_reader.generate(job_chunk * jobs_len, jobs_len, hist=hist)
 
         tic = time.time()
@@ -231,8 +229,7 @@ def train_DeepJS_data200():
 
         for itr in range(n_iter):
             tic = time.time()
-            # if print_progress:
-            #     print("********** Iteration %i ************" % itr)
+            print("********** Iteration %i ************" % itr)
             processes = []
 
             manager = Manager()
@@ -288,10 +285,9 @@ def train_DeepJS_data200():
             all_q_s, all_advantages = agent.estimate_return(all_rewards)
 
             agent.update_parameters(all_observations, all_actions, all_advantages)
-        # if job_chunk % save_chkpt_every == 0 or job_chunk == 199:
-        #     save_train_info(agent, job_chunk)
-        # agent.save()
-    save_train_info(agent, job_chunk)
+        if job_chunk % save_chkpt_every == 0 or job_chunk == 200:
+            save_train_info(agent, job_chunk)
+        agent.save()
 
 
 def eval_other_algos_data200(algo_name="", algorithm=None, save_dir=None, print_progress=False):
@@ -621,7 +617,6 @@ if __name__ == '__main__':
     # algo_deep_js()
     # eval_algo_deep_js()
     # set_path()  # for running on command line
-    # eval_DeepJS_data200()
     eval_DeepJS_data200()
     # eval_algo_deep_js()
 
