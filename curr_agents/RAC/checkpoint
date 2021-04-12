@@ -1,0 +1,2 @@
+model_checkpoint_path: "chkpt_50_RAC.pkl-1"
+all_model_checkpoint_paths: "chkpt_50_RAC.pkl-1"

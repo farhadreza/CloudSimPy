@@ -1,0 +1,11 @@
+,RAC_avg_makespans,RAC_avg_completions,RAC_avg_slowdowns,RAC_global_step,RAC_tictoc
+0,605.0,58.05053753330039,1.6691082501251577,"<tf.Variable 'global_step:0' shape=() dtype=int64, numpy=26>",1.5685360431671143
+1,820.0,113.10632715582207,4.816139793924114,"<tf.Variable 'global_step:0' shape=() dtype=int64, numpy=26>",1.7283401489257812
+2,499.0,133.5844701569238,9.856216893407169,"<tf.Variable 'global_step:0' shape=() dtype=int64, numpy=26>",1.3522539138793945
+3,1716.0,257.21562243421033,3.341909578832784,"<tf.Variable 'global_step:0' shape=() dtype=int64, numpy=26>",2.7707161903381348
+4,560.0,49.0837237994703,1.940999158577235,"<tf.Variable 'global_step:0' shape=() dtype=int64, numpy=26>",2.0338919162750244
+5,370.0,45.00813625847475,1.3174371212981404,"<tf.Variable 'global_step:0' shape=() dtype=int64, numpy=26>",1.396134853363037
+6,372.0,31.77576980694831,1.0,"<tf.Variable 'global_step:0' shape=() dtype=int64, numpy=26>",1.1114819049835205
+7,785.0,101.16934738189684,1.669665013736445,"<tf.Variable 'global_step:0' shape=() dtype=int64, numpy=26>",2.319998025894165
+8,514.0,188.76422516734442,3.262967347109069,"<tf.Variable 'global_step:0' shape=() dtype=int64, numpy=26>",2.2566819190979004
+9,364.0,37.827042274863544,1.0937226904970616,"<tf.Variable 'global_step:0' shape=() dtype=int64, numpy=26>",0.8651509284973145
