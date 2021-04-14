@@ -14,7 +14,7 @@ from playground.Non_DAG.algorithm.tetris import Tetris
 from playground.Non_DAG.algorithm.first_fit import FirstFitAlgorithm
 from playground.Non_DAG.algorithm.DeepJS.DRL import RLAlgorithm
 from playground.Non_DAG.algorithm.DeepJS.agent import Agent
-from playground.Non_DAG.algorithm.DeepJS.brain import Brain
+from playground.Non_DAG.algorithm.DeepJS.brain import Brain, BrainSmall
 
 from playground.Non_DAG.algorithm.DeepJS.reward_giver import MakespanRewardGiver, AverageCompletionRewardGiver, \
     AverageSlowDownRewardGiver
@@ -46,7 +46,8 @@ n_episode = 12
 jobs_csv = 'playground/Non_DAG/jobs_files/jobs.csv'
 # jobs_csv = '../jobs_files/jobs_2017.csv'
 
-brain = Brain(6)
+# brain = Brain(6)
+brain = BrainSmall(6)
 reward_giver = AverageCompletionRewardGiver()
 # reward_giver = AverageCompletionRewardGiver()
 curr_reward_signal_name = RAC
@@ -58,10 +59,10 @@ name = '%s-%s-m%d' % (reward_giver.name, brain.name, machines_number)
 model_dir = './agents/%s' % name
 
 # train_info_dir = './agents/training/avgCompletionReward'
-train_info_dir = './agents/train80/avgMakespan'
-eval_info_dir = "experiments/data/eval/raw"
+train_info_dir = 'curr_agents/RAC'
+eval_info_dir = "experiments/data/eval"
 
-trained_agent_path = "experiments/data/trained_chkpt200/RAC/chkpt_200_RAC.pkl-4"
+trained_agent_path = "experiments/data/trained_chkpt200/brain_RAC_200.pkl"
 # train_info_dir = "/content/drive/MyDrive/GoogleDrive/MyRepo/"
 # ************************ Parameters Setting End ************************
 
@@ -71,7 +72,7 @@ if not os.path.isdir(model_dir):
 # agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
 #               model_save_path='%s/model.ckpt' % model_dir)
 agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
-              model_save_path='%s/model.ckpt' % train_info_dir,restore_path=trained_agent_path)
+              model_save_path='%s/model.ckpt' % train_info_dir, restore_path=trained_agent_path)
 
 machine_configs = [MachineConfig(64, 1, 1) for i in range(machines_number)]
 csv_reader = CSVReader(jobs_csv)
@@ -339,6 +340,7 @@ def eval_DeepJS_data200(reward_type=curr_reward_signal_name):
                             features_normalize_func=features_normalize_func)
     eval_dict = defaultdict(list)
     print_progress = False
+    print(f"******* start evaluating *********")
     for job_chunk in range(start_job_no, eval_job_chunk):
         if print_progress:
             print(f"************* job_chunk: {job_chunk} ***************")
@@ -433,6 +435,8 @@ def eval_DeepJS_data200(reward_type=curr_reward_signal_name):
     save_path = os.path.join(eval_info_dir, save_name)
     df_eval = pd.DataFrame(eval_dict)
     df_eval.to_csv(save_path)
+    print(f"saved to {save_path}")
+    print(f"******* finish evaluating *********")
 
 
 def exp_eval():
