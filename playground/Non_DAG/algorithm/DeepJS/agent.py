@@ -54,6 +54,13 @@ class Agent(object):
             save_path = os.path.join(save_dir, savename)
             dill.dump(self.brain, file=open(save_path, "wb"))
 
+    def brain_restore(self, save_dir=None, reward_type="", iter_num=None):
+        if save_dir:
+            savename = f"brain_{reward_type}_{str(iter_num)}.pkl"
+            save_path = os.path.join(save_dir, savename)
+            dill.dump(self.brain, file=open(save_path, "wb"))
+
+
     def restore(self, model_path):
         self.checkpoint.restore(model_path).assert_consumed()
         # status = checkpoint.restore(tf.train.latest_checkpoint(checkpoint_directory))
