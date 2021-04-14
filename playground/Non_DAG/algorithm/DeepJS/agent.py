@@ -54,7 +54,7 @@ class Agent(object):
             savename = f"brain_{reward_type}_{str(iter_num)}.pkl"
             save_path = os.path.join(save_dir, savename)
             print(f"********** saved brain ****************")
-            print(self.brain.variable)
+            print(self.brain.variables)
             dill.dump(self.brain, file=open(save_path, "wb"))
 
     def brain_restore(self, load_path=None):
