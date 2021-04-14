@@ -26,7 +26,8 @@ class Agent(object):
         self.model_save_path = model_save_path
         if restore_path:  # use to save and restore more info later
             # self.checkpoint.restore(restore_path).assert_consumed()
-            self.restore_brain(restore_path)
+            # self.restore_brain(restore_path)
+            self.brain_restore(restore_path)
 
     def save_chkpt(self, save_path=None):  # used for saving training checkpoint
         if save_path:
@@ -52,14 +53,19 @@ class Agent(object):
         if save_dir:
             savename = f"brain_{reward_type}_{str(iter_num)}.pkl"
             save_path = os.path.join(save_dir, savename)
+            print(f"********** saved brain ****************")
+            print(self.brain.variable)
             dill.dump(self.brain, file=open(save_path, "wb"))
 
-    def brain_restore(self, save_dir=None, reward_type="", iter_num=None):
-        if save_dir:
-            savename = f"brain_{reward_type}_{str(iter_num)}.pkl"
-            save_path = os.path.join(save_dir, savename)
-            dill.dump(self.brain, file=open(save_path, "wb"))
-
+    def brain_restore(self, load_path=None):
+        if load_path:
+            # savename = f"brain_{reward_type}_{str(iter_num)}.pkl"
+            # path = os.path.join(save_dir, savename)
+            print(f"******* before loading brain **************")
+            print(self.brain.variables)
+            self.brain = dill.load(open(load_path, "rb"))
+            print(f"******* loaded brain *************")
+            print(self.brain.variables)
 
     def restore(self, model_path):
         self.checkpoint.restore(model_path).assert_consumed()
