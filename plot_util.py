@@ -34,22 +34,58 @@ def rename_df_col(df, prefix="", save_to=""):
 
 
 def hist_deepjs_avg():
-    hist_rac_path = ""
+    hist_rac_path = "data/trained_stats/RAC/hist_deepjs_train_RAC_41.csv"
     df = load_df(hist_rac_path)
     hist_rac = defaultdict(list)
-    niters = 10
-    total_len = len(hist_rac)
-    start = 0
+
     cols = ["RAC_avg_makespans", "RAC_avg_completions", "RAC_avg_slowdowns"]
     for col in cols:
+        niters = 9
+        total_len = len(df)
+        start = 0
+        end = niters
         for step in range(0, total_len, niters):
+            # if step == 0:
+            #     end = 9
+            # else:
+            if end == len(df) or end > len(df):
+                continue
             end = start + niters
-            ls = df.loc[start:end, col]
-            hist_rac[col].append(sum(ls) / len(ls))
+            ls = df.loc[start:end, col].values.tolist()
+            if len(ls) == 0:
+                print(f"col: {col}, step: {step}")
+                print(f"start: {start}, end: {end}")
+                # print(f"min: {min(ls)}")
+                continue
+            else:
+                if col == "RAC_avg_makespans":
+                    hist_rac[col].append(min(ls))
+                else:
+                    hist_rac[col].append(sum(ls) / len(ls))
+
+            start = end + 1
 
     df_avg = pd.DataFrame(hist_rac)
-    save_to = "curr_agents/hist_rac_deepjs40.csv"
+    save_to = "curr_agents/hist_rac_deepjs40_min.csv"
     df_avg.to_csv(save_to)
+
+
+def plot_train_deepjs_stats():
+    # deepjs_path = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/curr_agents/hist_rac_deepjs40.csv"
+    deepjs_path = "curr_agents/hist_rac_deepjs40_min.csv"
+    df_deepjs = load_df(deepjs_path)
+    other_path = "data/trained_stats/RAC/hist_RAC_41.csv"
+    df_other = load_df(other_path)
+    other_cols = ["random_avg_makespans", "random_avg_completions", "random_avg_slowdowns"]
+    cols = ["RAC_avg_makespans", "RAC_avg_completions", "RAC_avg_slowdowns"]
+
+    comp1 = "first_fit_avg_makespans"
+    comp2 = "RAC_avg_makespans"
+    df = pd.DataFrame()
+    # df[comp1] = df_other[comp1]
+    # df[comp2] = df_deepjs[comp2]
+    df[comp2]=df_other[comp1] - df_deepjs[comp2]
+    plot_lines_from_df(df, logy=False)
 
 
 def rename_add_reward_type():
@@ -74,7 +110,7 @@ def rename_add_reward_type():
     print(f"renamed columns.")
 
 
-def plot_lines_from_df(df, cols=None, title=None, y_label=None):
+def plot_lines_from_df(df, cols=None, title=None, y_label=None, logy=False):
     # if not cols is None:
     #     cols = df.columns.values.tolist()
     fig = plt.figure()
@@ -87,7 +123,7 @@ def plot_lines_from_df(df, cols=None, title=None, y_label=None):
     figsize = (8, 8)
     if num_sub_plots == 1:
         # df.plot(marker='.', figsize=figsize, ax=axs, color=get_column_color(df1))
-        df.plot(marker='.', figsize=figsize, ax=axs)
+        df.plot(marker='.', figsize=figsize, ax=axs,logy=logy)
     if title:
         axs.set_title(title)
     if y_label:
@@ -442,4 +478,5 @@ if __name__ == '__main__':
     # plot_training_stats_for_reward_all()
     # exp_results_by_reward_all_plots()
     # get_job_stats()
-    hist_deepjs_avg()
+    # hist_deepjs_avg()
+    plot_train_deepjs_stats()
