@@ -1,4 +1,6 @@
 import os, re
+from collections import defaultdict
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -29,6 +31,25 @@ def rename_df_col(df, prefix="", save_to=""):
                 df_renamed[col] = df[col]
         if save_to:
             df_renamed.to_csv(save_to, index=False)
+
+
+def hist_deepjs_avg():
+    hist_rac_path = ""
+    df = load_df(hist_rac_path)
+    hist_rac = defaultdict(list)
+    niters = 10
+    total_len = len(hist_rac)
+    start = 0
+    cols = ["RAC_avg_makespans", "RAC_avg_completions", "RAC_avg_slowdowns"]
+    for col in cols:
+        for step in range(0, total_len, niters):
+            end = start + niters
+            ls = df.loc[start:end, col]
+            hist_rac[col].append(sum(ls) / len(ls))
+
+    df_avg = pd.DataFrame(hist_rac)
+    save_to = "curr_agents/hist_rac_deepjs40.csv"
+    df_avg.to_csv(save_to)
 
 
 def rename_add_reward_type():
@@ -421,4 +442,4 @@ if __name__ == '__main__':
     # plot_training_stats_for_reward_all()
     # exp_results_by_reward_all_plots()
     # get_job_stats()
-    exp_stats_diff_by_reward_all_plots()
+    hist_deepjs_avg()
