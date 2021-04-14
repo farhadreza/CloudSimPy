@@ -63,7 +63,7 @@ model_dir = './agents/%s' % name
 # train_info_dir = './agents/training/avgCompletionReward'
 # train_info_dir = 'agents/train200'
 # train_info_dir = 'curr_agents/RAM'
-eval_info_dir = "experiments/data/eval/raw"
+eval_info_dir = "experiments/data/eval"
 
 # trained_agent_path = "experiments/data/trained_chkpt200/RAM/model.ckpt-200"
 trained_agent_path = "curr_agents/RAM/brain_RAM_20.pkl"
