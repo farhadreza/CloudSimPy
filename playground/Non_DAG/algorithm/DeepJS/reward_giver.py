@@ -34,8 +34,23 @@ class AverageSlowDownRewardGiver(RewardGiver):
         cluster = self.simulation.cluster
         unfinished_tasks = cluster.unfinished_tasks
         reward = 0
+        # ??????
+        # this looks like if we want to maximize the reward we need to maximize the total duration, which doesn't make sense
         for task in unfinished_tasks:
             reward += (- 1 / task.task_config.duration)
+        return reward
+
+
+class MyAverageSlowDownRewardGiver(RewardGiver):
+    name = 'MyAS'
+
+    def get_reward(self):
+        super().get_reward()
+        cluster = self.simulation.cluster
+        unfinished_tasks = cluster.unfinished_tasks
+        reward = 0
+        for task in unfinished_tasks:
+            reward += 1 / task.task_config.duration
         return reward
 
 

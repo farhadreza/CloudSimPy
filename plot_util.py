@@ -1,17 +1,16 @@
 import os, re
-from collections import defaultdict
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from playground.Non_DAG.utils.common_tokens import *
+from scipy.stats import pearsonr, spearmanr, kendalltau
 
 total_iters = 180
 
 
 def load_df(csv_path=None, ignore_idx=False):
-    if csv_path:
+    if csv_path and os.path.exists(csv_path):
         if ignore_idx:
             df = pd.read_csv(csv_path, index_col=[0])
         else:
@@ -33,59 +32,22 @@ def rename_df_col(df, prefix="", save_to=""):
             df_renamed.to_csv(save_to, index=False)
 
 
-def hist_deepjs_avg():
-    hist_rac_path = "data/trained_stats/RAC/hist_deepjs_train_RAC_41.csv"
-    df = load_df(hist_rac_path)
-    hist_rac = defaultdict(list)
-
-    cols = ["RAC_avg_makespans", "RAC_avg_completions", "RAC_avg_slowdowns"]
-    for col in cols:
-        niters = 9
-        total_len = len(df)
-        start = 0
-        end = niters
-        for step in range(0, total_len, niters):
-            # if step == 0:
-            #     end = 9
-            # else:
-            if end == len(df) or end > len(df):
-                continue
-            end = start + niters
-            ls = df.loc[start:end, col].values.tolist()
-            if len(ls) == 0:
-                print(f"col: {col}, step: {step}")
-                print(f"start: {start}, end: {end}")
-                # print(f"min: {min(ls)}")
-                continue
-            else:
-                if col == "RAC_avg_makespans":
-                    hist_rac[col].append(min(ls))
-                else:
-                    hist_rac[col].append(sum(ls) / len(ls))
-
-            start = end + 1
-
-    df_avg = pd.DataFrame(hist_rac)
-    save_to = "curr_agents/hist_rac_deepjs40_min.csv"
-    df_avg.to_csv(save_to)
-
-
-def plot_train_deepjs_stats():
-    # deepjs_path = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/curr_agents/hist_rac_deepjs40.csv"
-    deepjs_path = "curr_agents/hist_rac_deepjs40_min.csv"
-    df_deepjs = load_df(deepjs_path)
-    other_path = "data/trained_stats/RAC/hist_RAC_41.csv"
-    df_other = load_df(other_path)
-    other_cols = ["random_avg_makespans", "random_avg_completions", "random_avg_slowdowns"]
-    cols = ["RAC_avg_makespans", "RAC_avg_completions", "RAC_avg_slowdowns"]
-
-    comp1 = "first_fit_avg_makespans"
-    comp2 = "RAC_avg_makespans"
-    df = pd.DataFrame()
-    # df[comp1] = df_other[comp1]
-    # df[comp2] = df_deepjs[comp2]
-    df[comp2]=df_other[comp1] - df_deepjs[comp2]
-    plot_lines_from_df(df, logy=False)
+def get_corr_pvalue(x, y, corr_type="pearsonr", col_value=""):
+    if x and y:
+        try:
+            if corr_type == "pearsonr":
+                return pearsonr(x, y)
+            elif corr_type == "spearmanr":
+                return spearmanr(x, y)
+            elif corr_type == "kendalltau":
+                return kendalltau(x, y)
+        except Exception as e:
+            print(e)
+            print("colvalue cause the error:", col_value)
+            print(f"corr type: {corr_type}")
+            print(f'x type: {type(x)} ; y type: {type(y)}')
+            print(x)
+            print(y)
 
 
 def rename_add_reward_type():
@@ -110,7 +72,7 @@ def rename_add_reward_type():
     print(f"renamed columns.")
 
 
-def plot_lines_from_df(df, cols=None, title=None, y_label=None, logy=False):
+def plot_lines_from_df(df, cols=None, title=None, y_label=None):
     # if not cols is None:
     #     cols = df.columns.values.tolist()
     fig = plt.figure()
@@ -123,7 +85,7 @@ def plot_lines_from_df(df, cols=None, title=None, y_label=None, logy=False):
     figsize = (8, 8)
     if num_sub_plots == 1:
         # df.plot(marker='.', figsize=figsize, ax=axs, color=get_column_color(df1))
-        df.plot(marker='.', figsize=figsize, ax=axs,logy=logy)
+        df.plot(marker='.', figsize=figsize, ax=axs)
     if title:
         axs.set_title(title)
     if y_label:
@@ -244,8 +206,9 @@ def plot_reward_data(dfs, cols=None):
         plot_lines_from_df(df_stats)
 
 
-def plot_single_stat_for_all_reward_signals(dfs, col_name=None, y_label=None, fig_dir=None, figsize=(10, 10),
-                                            excludes=None, x_lable=None):
+def plot_single_stat_for_all_reward_signals(dfs, col_name=None, y_label=None, curr_fig_dir=None, figsize=(10, 10),
+                                            excludes=None, x_lable=None, ceiling=None, fig_name=None, ylim_low=None,
+                                            ylim_high=None, logy=False):
     if dfs and col_name:
         df_stats = pd.DataFrame()
         for reward_type, df in dfs:
@@ -264,17 +227,68 @@ def plot_single_stat_for_all_reward_signals(dfs, col_name=None, y_label=None, fi
         axs = gs.subplots()
         # fig.suptitle("this is the super title")
 
-        if num_sub_plots == 1:
-            # df.plot(marker='.', figsize=figsize, ax=axs, color=get_column_color(df1))
-            df_stats.plot(marker='.', figsize=figsize, ax=axs)
+        if not ceiling is None:
+            df_stats = df_stats[df_stats[reward_type] < ceiling].copy()
         if y_label:
             axs.set_ylabel(y_label)
         if x_lable:
             axs.set_xlabel(xlabel=x_lable)
+        if ylim_low and ylim_high:
+            axs.set_ylim(ylim_low, ylim_high)
+
+        if num_sub_plots == 1:
+            # df.plot(marker='.', figsize=figsize, ax=axs, color=get_column_color(df1))
+            df_stats.plot(marker='.', figsize=figsize, ax=axs, logy=logy)
         # for ax in axs:
         #     ax.label_outer()
-        if fig_dir:
-            figpath = os.path.join(fig_dir, "stats_" + col_name + ".png")
+        if curr_fig_dir:
+            if fig_name is None:
+                fig_name = "stats_" + col_name + ".png"
+            figpath = os.path.join(curr_fig_dir, fig_name)
+            plt.savefig(figpath)
+        else:
+            plt.show()
+
+
+def plot_box_single_stat_for_all_reward_signals(dfs, col_name=None, y_label=None, curr_fig_dir=None, figsize=(10, 10),
+                                                excludes=None, x_lable=None, ceiling=None, fig_name=None, ylim_low=None,
+                                                ylim_high=None, logy=False):
+    if dfs and col_name:
+        df_stats = pd.DataFrame()
+        for reward_type, df in dfs:
+            cols = df.columns.values.tolist()
+            for col in cols:
+                if reward_type in other_algo_list and col_name == avg_makespans:
+                    col_name = "env_now"
+                if col and col.endswith(col_name):
+                    if excludes and col in excludes:  # don't plot certain stats if specified
+                        continue
+                    df_stats[reward_type] = df[col]
+        fig = plt.figure()
+        num_sub_plots = 1
+        gs = fig.add_gridspec(num_sub_plots, hspace=0)
+        # axs = gs.subplots(sharex=True, sharey=True)
+        axs = gs.subplots()
+        # fig.suptitle("this is the super title")
+
+        if not ceiling is None:
+            df_stats = df_stats[df_stats[reward_type] < ceiling].copy()
+        if y_label:
+            axs.set_ylabel(y_label)
+        if x_lable:
+            axs.set_xlabel(xlabel=x_lable)
+        if ylim_low and ylim_high:
+            axs.set_ylim(ylim_low, ylim_high)
+
+        if num_sub_plots == 1:
+            # df.plot(marker='.', figsize=figsize, ax=axs, color=get_column_color(df1))
+            df_stats.plot.box(figsize=figsize, ax=axs)
+        # for ax in axs:
+        #     ax.label_outer()
+        if curr_fig_dir:
+            if fig_name is None:
+                fig_name = "stats_" + col_name + ".png"
+            figpath = os.path.join(curr_fig_dir, fig_name)
             plt.savefig(figpath)
         else:
             plt.show()
@@ -288,10 +302,11 @@ def get_coloumn_name_ends_with(cols, suffix=None):
             return name[0]
 
 
-def plot_stat_difference_for_all_reward_signals(dfs, compare_stat=None, reward_signal_name="", y_label=None,
-                                                fig_dir=None,
-                                                figsize=(10, 10), excludes=None, df_compare_to=None,
-                                                compare_to_col_name="", suffix="", x_lable=None):
+def plot_box_stat_difference_for_all_reward_signals(dfs, compare_stat=None, reward_signal_name="", y_label=None,
+                                                    curr_fig_dir=None,
+                                                    figsize=(10, 10), excludes=None, df_compare_to=None,
+                                                    compare_to_col_name="", suffix="", x_lable=None, ylim_low=None,
+                                                    ylim_high=None):
     """
     this loops through each file and compare a specific stat (specified by the compare_stat) to the same
     stat trained for all other reward signals
@@ -299,7 +314,7 @@ def plot_stat_difference_for_all_reward_signals(dfs, compare_stat=None, reward_s
     :param compare_stat:
     :param reward_signal_name:
     :param y_label:
-    :param fig_dir:
+    :param curr_fig_dir:
     :param figsize:
     :param excludes:
     :param df_compare_to:
@@ -329,18 +344,87 @@ def plot_stat_difference_for_all_reward_signals(dfs, compare_stat=None, reward_s
         axs = gs.subplots()
         # fig.suptitle("this is the super title")
 
-        if num_sub_plots == 1:
-            # df.plot(marker='.', figsize=figsize, ax=axs, color=get_column_color(df1))
-            df_stats.plot(marker='.', figsize=figsize, ax=axs)
         if y_label:
             axs.set_ylabel(y_label)
         if x_lable:
             axs.set_xlabel(xlabel=x_lable)
+        if ylim_low and ylim_high:
+            axs.set_ylim(ylim_low, ylim_high)
+        if num_sub_plots == 1:
+            # df.plot(marker='.', figsize=figsize, ax=axs, color=get_column_color(df1))
+            df_stats.plot.box(figsize=figsize, ax=axs)
+
         # for ax in axs:
         #     ax.label_outer()
-        if fig_dir:
+        if curr_fig_dir:
             fname = reward_signal_name if reward_signal_name else compare_stat
-            figpath = os.path.join(fig_dir, "stat_diff_" + fname + suffix + ".png")
+            figpath = os.path.join(curr_fig_dir, "stat_diff_" + fname + suffix + ".png")
+            plt.savefig(figpath)
+        else:
+            plt.show()
+
+
+def plot_stat_difference_for_all_reward_signals(dfs, compare_stat=None, reward_signal_name="", y_label=None,
+                                                curr_fig_dir=None,
+                                                figsize=(10, 10), excludes=None, df_compare_to=None,
+                                                compare_to_col_name="", suffix="", x_lable=None, ylim_low=None,
+                                                ylim_high=None, logy=False, fig_name=None):
+    """
+    this loops through each file and compare a specific stat (specified by the compare_stat) to the same
+    stat trained for all other reward signals
+    :param dfs:
+    :param compare_stat:
+    :param reward_signal_name:
+    :param y_label:
+    :param curr_fig_dir:
+    :param figsize:
+    :param excludes:
+    :param df_compare_to:
+    :return:
+    """
+    if dfs and compare_stat and not df_compare_to is None:
+        df_stats = pd.DataFrame()
+        for reward_type, df in dfs:
+            cols = df.columns.values.tolist()
+            for col in cols:
+                if reward_type in other_algo_list and compare_stat == avg_makespans:
+                    compare_stat = "env_now"
+                if col and col.endswith(compare_stat):
+                    if excludes and col in excludes:  # don't plot certain stats if specified
+                        continue
+                    # others minus the current stats to get the difference between performance
+                    if reward_type in other_algo_list and col == avg_makespans:  # used a different name for other algo, so need to accomadate it
+                        # col_name=reward_type + "_env_now"
+                        df_stats[reward_type] = df[reward_type + "_env_now"] - df_compare_to[compare_to_col_name]
+                        # df_stats[reward_type] = df[reward_type + "_env_now"] - df_compare_to[compare_to_col_name]
+                    else:
+                        curr_col = get_coloumn_name_ends_with(cols, suffix=compare_stat)
+                        df_stats[reward_type] = df[curr_col] - df_compare_to[compare_to_col_name]
+                        # df_stats[reward_type] = df[curr_col] - df_compare_to[compare_to_col_name]
+        fig = plt.figure()
+        num_sub_plots = 1
+        gs = fig.add_gridspec(num_sub_plots, hspace=0)
+        # axs = gs.subplots(sharex=True, sharey=True)
+        axs = gs.subplots()
+        # fig.suptitle("this is the super title")
+
+        if num_sub_plots == 1:
+            # df.plot(marker='.', figsize=figsize, ax=axs, color=get_column_color(df1))
+            df_stats.plot(marker='.', figsize=figsize, ax=axs, logy=logy)
+        if y_label:
+            axs.set_ylabel(y_label)
+        if x_lable:
+            axs.set_xlabel(xlabel=x_lable)
+        if ylim_low and ylim_high:
+            axs.set_ylim(ylim_low, ylim_high)
+
+        # for ax in axs:
+        #     ax.label_outer()
+        if curr_fig_dir:
+            if fig_name is None:
+                fname = reward_signal_name if reward_signal_name else compare_stat
+                fig_name = "stat_diff_" + fname + suffix + ".png"
+            figpath = os.path.join(curr_fig_dir, fig_name)
             plt.savefig(figpath)
         else:
             plt.show()
@@ -353,27 +437,75 @@ def exp_results_by_reward_all_plots():
     :return:
     """
     # if fig dir is specified, the figs will be save to the dir
-    # fig_dir = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/experiments/figs/by_reward/all_stat"
-    df_completion = load_df(get_exp_file_path(file_type=avg_completions))
-    df_makespan = load_df(get_exp_file_path(file_type=avg_makespans))
-    df_slowdown = load_df(get_exp_file_path(file_type=avg_slowdowns))
+    # curr_fig_dir = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/experiments/figs/by_reward/all_stat"
+    df_completion = load_df(get_exp_file_path(file_type=RAC))
+    df_makespan = load_df(get_exp_file_path(file_type=RAM))
+    df_slowdown = load_df(get_exp_file_path(file_type=RAS))
+    df_mix_acas = load_df(get_exp_file_path(file_type=MIX_AC_AS))
     # df_others = load_df(get_exp_file_path(file_type=other_algo))
     df_tetris = load_df(get_exp_file_path(file_type=algo_tetris))
     df_random = load_df(get_exp_file_path(file_type=algo_random))
     df_first_fit = load_df(get_exp_file_path(file_type=algo_first_fit))
-    dfs = [(RAC, df_completion), (RAM, df_makespan), (RAS, df_slowdown), (algo_random, df_random),
-           (algo_first_fit, df_first_fit),
-           (algo_tetris, df_tetris)]
+    range = None
+    figname_prefix = "RAC_"
+    curr_fig_dir = "experiments/figs/by_reward/comparisons"
+    # curr_fig_dir="experiments/figs/by_reward/comparisons/with_random"
+    curr_fig_dir = "experiments/figs/by_reward/comparisons/all_rewards"
+    if range is None:
+        dfs = [(RAC, df_completion), (RAM, df_makespan), (RAS, df_slowdown), (MIX_AC_AS, df_mix_acas),
+               (algo_random, df_random),
+               (algo_first_fit, df_first_fit),
+               (algo_tetris, df_tetris)]
+        dfs = [(RAC, df_completion), (RAM, df_makespan), (RAS, df_slowdown), (MIX_AC_AS, df_mix_acas)]
+        dfs = [
+            # (RAM, df_makespan),
+            (RAC, df_completion),
+            # (RAS, df_slowdown),
+            # (MIX_AC_AS, df_mix_acas),
+            (algo_random, df_random),
+            (algo_first_fit, df_first_fit),
+            (algo_tetris, df_tetris)
+        ]
+    else:
+        dfs = [(RAC, df_completion[:range]), (RAM, df_makespan[:range]), (RAS, df_slowdown[:range]),
+               (MIX_AC_AS, df_mix_acas[:range])]
+        dfs = [(RAC, df_completion[:range]), (RAM, df_makespan[:range]), (RAS, df_slowdown[:range]),
+               (MIX_AC_AS, df_mix_acas[:range]),
+               (algo_random, df_random[:range]),
+               (algo_first_fit, df_first_fit[:range]),
+               (algo_tetris, df_tetris[:range])]
+        dfs = [
+            # (RAM, df_makespan[:range]),
+            #    (RAC, df_completion[:range]),
+            # (RAS, df_slowdown[:range]),
+            # (MIX_AC_AS, df_mix_acas[:range]),
+            (algo_random, df_random[:range]),
+            # (algo_first_fit, df_first_fit[:range]),
+            # (algo_tetris, df_tetris[:range])
+        ]
     excludes = []
+    y1 = 0
+    y2 = 100
+
+    log_y = True
     # avg completions data using different training reward
     plot_single_stat_for_all_reward_signals(dfs, col_name=avg_completions, y_label="Average Completions",
-                                            fig_dir=fig_dir, x_lable="Job Chunk Number")
+                                            curr_fig_dir=curr_fig_dir, x_lable="Job Chunk Number", ceiling=None,
+                                            ylim_low=y1, ylim_high=y2, logy=log_y,
+                                            fig_name=figname_prefix + "_completions.png")
     # avg makespans data using different training reward
-    plot_single_stat_for_all_reward_signals(dfs, col_name=avg_makespans, y_label="Average Makespans", fig_dir=fig_dir,
-                                            x_lable="Job Chunk Number")
+    plot_single_stat_for_all_reward_signals(dfs, col_name=avg_makespans, y_label="Average Makespans",
+                                            curr_fig_dir=curr_fig_dir, ceiling=None,
+                                            x_lable="Job Chunk Number", ylim_low=y1, ylim_high=y2, logy=log_y,
+                                            fig_name=figname_prefix + "_makespans.png")
     # avg slowdosns data using different training reward
-    plot_single_stat_for_all_reward_signals(dfs, col_name=avg_slowdowns, y_label="Average Slowdowns", fig_dir=fig_dir,
-                                            x_lable="Job Chunk Number")
+    plot_single_stat_for_all_reward_signals(dfs, col_name=avg_slowdowns, y_label="Average Slowdowns",
+                                            curr_fig_dir=curr_fig_dir, ceiling=None,
+                                            x_lable="Job Chunk Number", ylim_low=y1, ylim_high=y2, logy=log_y,
+                                            fig_name=figname_prefix + "_slowdowns.png")
+    # plot_box_single_stat_for_all_reward_signals(dfs, col_name=avg_completions, y_label="Average Makespans",
+    #                                             curr_fig_dir=curr_fig_dir, ceiling=None,
+    #                                             x_lable="Job Chunk Number")
 
 
 def get_all_stats_df_old(range=0, exclude=None):
@@ -414,50 +546,127 @@ def exp_stats_diff_by_reward_all_plots():
     :return:
     """
     # if fig dir is specified, the figs will be save to the dir
-    # fig_dir = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/experiments/figs/stats_diff"
-    # fig_dir = None
-    # df_completion = load_df(get_exp_file_path(file_type=avg_completions))
-    # df_makespan = load_df(get_exp_file_path(file_type=avg_makespans))
-    # df_slowdown = load_df(get_exp_file_path(file_type=avg_slowdowns))
-    # # df_others = load_df(get_exp_file_path(file_type=other_algo))
-    # df_tetris = load_df(get_exp_file_path(file_type=algo_tetris))
-    # df_random = load_df(get_exp_file_path(file_type=algo_random))
-    # df_first_fit = load_df(get_exp_file_path(file_type=algo_first_fit))
-    df_completion, df_makespan, df_slowdown, df_tetris, df_random, df_first_fit = get_all_stats_df_old(range=180)
+    # curr_fig_dir = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/experiments/figs/stats_diff"
+    # curr_fig_dir = None
+    range = None
+    if range is None:
+        df_completion, df_makespan, df_slowdown, df_mix_acas, df_tetris, df_random, df_first_fit = get_all_stats_df()
+    else:
+        df_completion, df_makespan, df_slowdown, df_mix_acas, df_tetris, df_random, df_first_fit = get_all_stats_df(
+            range=180)
 
     # dfs = [(RAC, df_completion), (RAM, df_makespan), (RAS, df_slowdown), (algo_random, df_random),
     #        (algo_first_fit, df_first_fit),
     #        (algo_tetris, df_tetris)]
-    dfs_makespans = [(RAC, df_completion), (RAS, df_slowdown), (algo_random, df_random),
+    dfs_makespans = [(RAC, df_completion), (RAS, df_slowdown), (MIX_AC_AS, df_mix_acas), (algo_random, df_random),
                      (algo_first_fit, df_first_fit),
                      (algo_tetris, df_tetris)]
-    dfs_completions = [(RAM, df_makespan), (RAS, df_slowdown), (algo_random, df_random),
+    dfs_completions = [(RAM, df_makespan), (RAS, df_slowdown), (MIX_AC_AS, df_mix_acas), (algo_random, df_random),
                        (algo_first_fit, df_first_fit),
                        (algo_tetris, df_tetris)]
-    dfs_slowdowns = [(RAC, df_completion), (RAM, df_makespan), (algo_random, df_random),
+    dfs_slowdowns = [(RAC, df_completion), (RAM, df_makespan), (MIX_AC_AS, df_mix_acas), (algo_random, df_random),
                      (algo_first_fit, df_first_fit),
                      (algo_tetris, df_tetris)]
+    dfs_mix_acas = [(RAM, df_makespan), (RAC, df_completion), (RAM, df_makespan), (algo_random, df_random),
+                    (algo_first_fit, df_first_fit),
+                    (algo_tetris, df_tetris)]
 
     excludes = []
-    suffix = "_range_180"
+    suffix = ""
+    curr_fig_dir = None
     # avg completions data using different training reward
     plot_stat_difference_for_all_reward_signals(dfs_completions, compare_stat=avg_completions,
                                                 y_label="Average Completions Difference",
-                                                fig_dir=fig_dir, df_compare_to=df_completion,
+                                                curr_fig_dir=curr_fig_dir, df_compare_to=df_completion,
                                                 compare_to_col_name=f"{reward_avg_completions}_{avg_completions}",
                                                 suffix=suffix, x_lable="Job Chunk Number")
     # avg makespans data using different training reward
     plot_stat_difference_for_all_reward_signals(dfs_makespans, compare_stat=avg_makespans,
                                                 y_label="Average Makespans Difference",
-                                                fig_dir=fig_dir, df_compare_to=df_makespan,
+                                                curr_fig_dir=curr_fig_dir, df_compare_to=df_makespan,
                                                 compare_to_col_name=f"{reward_avg_makespans}_{avg_makespans}",
                                                 suffix=suffix, x_lable="Job Chunk Number")
     # # avg slowdosns data using different training reward
     plot_stat_difference_for_all_reward_signals(dfs_slowdowns, compare_stat=avg_slowdowns,
                                                 y_label="Average Slowdowns Difference",
-                                                fig_dir=fig_dir, df_compare_to=df_slowdown,
+                                                curr_fig_dir=curr_fig_dir, df_compare_to=df_slowdown,
                                                 compare_to_col_name=f"{reward_avg_slowdowns}_{avg_slowdowns}",
                                                 suffix=suffix, x_lable="Job Chunk Number")
+    # # # mix acas data using different training reward
+    # plot_stat_difference_for_all_reward_signals(dfs_mix_acas, compare_stat=MIX_AC_AS,
+    #                                             y_label="Average Slowdowns Difference",
+    #                                             curr_fig_dir=curr_fig_dir, df_compare_to=df_mix_acas,
+    #                                             compare_to_col_name=f"{MIX_AC_AS}_{avg_mix_acas}",
+    #                                             suffix=suffix, x_lable="Job Chunk Number")
+
+
+# @exp_fig
+def exp_stats_diff_by_reward_single_reward_comparison_all_plots():
+    """
+    this plots the difference between a single reward and other algorithms
+    :return:
+    """
+    # if fig dir is specified, the figs will be save to the dir
+    # curr_fig_dir = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/experiments/figs/stats_diff"
+    # curr_fig_dir = None
+    range = None
+    if range is None:
+        df_completion, df_makespan, df_slowdown, df_mix_acas, df_tetris, df_random, df_first_fit = get_all_stats_df()
+    else:
+        df_completion, df_makespan, df_slowdown, df_mix_acas, df_tetris, df_random, df_first_fit = get_all_stats_df(
+            range=180)
+
+    # dfs = [(RAC, df_completion), (RAM, df_makespan), (RAS, df_slowdown), (algo_random, df_random),
+    #        (algo_first_fit, df_first_fit),
+    #        (algo_tetris, df_tetris)]
+
+    dfs_other_algo = [
+        # (RAC, df_completion),
+        # (RAM, df_makespan),
+        # (MIX_AC_AS, df_mix_acas),
+        # (RAS, df_slowdown),
+        # (algo_random, df_random),
+        (algo_first_fit, df_first_fit),
+        (algo_tetris, df_tetris)]
+    # dfs_makespans = [
+    #     # (algo_random, df_random),
+    #     # (algo_first_fit, df_first_fit),
+    #     (algo_tetris, df_tetris)]
+    # dfs_completions = [
+    #     # (algo_random, df_random),
+    #     (algo_first_fit, df_first_fit),
+    #     (algo_tetris, df_tetris)]
+    # dfs_slowdowns = [
+    #     # (algo_random, df_random),
+    #     (algo_first_fit, df_first_fit),
+    #     (algo_tetris, df_tetris)]
+
+    excludes = []
+    # suffix = ""
+    # curr_fig_dir = "experiments/figs/stats_diff"
+    curr_fig_dir = None
+    # suffix=f"{RAM}_"
+    df_compare = df_makespan
+    curr_reward = reward_avg_makespans
+    logy = False
+    # avg completions data using different training reward
+    plot_stat_difference_for_all_reward_signals(dfs_other_algo, compare_stat=avg_completions,
+                                                y_label="Average Completions Difference",
+                                                curr_fig_dir=curr_fig_dir, df_compare_to=df_compare,
+                                                compare_to_col_name=f"{curr_reward}_{avg_completions}",
+                                                suffix="_completions", x_lable="Job Chunk Number", logy=logy)
+    # avg makespans data using different training reward
+    plot_stat_difference_for_all_reward_signals(dfs_other_algo, compare_stat=avg_makespans,
+                                                y_label="Average Makespans Difference",
+                                                curr_fig_dir=curr_fig_dir, df_compare_to=df_compare,
+                                                compare_to_col_name=f"{curr_reward}_{avg_makespans}",
+                                                suffix="_makespans", x_lable="Job Chunk Number", logy=logy)
+    # # avg slowdosns data using different training reward
+    plot_stat_difference_for_all_reward_signals(dfs_other_algo, compare_stat=avg_slowdowns,
+                                                y_label="Average Slowdowns Difference",
+                                                curr_fig_dir=curr_fig_dir, df_compare_to=df_compare,
+                                                compare_to_col_name=f"{curr_reward}_{avg_slowdowns}",
+                                                suffix="_slowdowns", x_lable="Job Chunk Number", logy=logy)
 
 
 def get_job_stats(all_in_one_chart=False):
@@ -469,6 +678,168 @@ def get_job_stats(all_in_one_chart=False):
     #     plot_individual_job_stats_from_df(df_jobs, cols=col, save_to=save_dir)
 
 
+def get_df_corr(df, result=None, data_type="", corrtype="pearson", compare_to="", idx_col="Unnamed: 0",
+                return_all=False, sort_corr=False):
+    if not result is None and not df is None:
+        corr_matrix = df.corr(method=corrtype)
+        col_name = f"{data_type}_{corrtype}"
+        if sort_corr:
+            corr_matrix = corr_matrix.sort_index().copy()
+        if return_all:
+            return corr_matrix
+        else:
+            result[col_name] = corr_matrix[compare_to]
+            return result
+
+
+def collect_df_corrs(dfs=None):
+    corrtype = "pearson"
+    stat_name = avg_makespans
+    reward_type = RAM
+    df_all = get_all_stats_df()
+    df_corr = pd.DataFrame()
+    for df in df_all:
+        cols = df.columns.values.tolist()
+        curr_cols = [col for col in cols if col.endswith(stat_name) and col]
+        df_corr[curr_cols] = df[curr_cols]
+    corr_matrix = df_corr.corr(method=corrtype)
+    print(corr_matrix)
+
+
+# @exp_fig
+def temp_exp_results_by_reward_all_plots():
+    """
+    this plots avg_completions, avg_makespans, avg_slowdowns for all reward signals
+    :return:
+    """
+    # if fig dir is specified, the figs will be save to the dir
+    # curr_fig_dir = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/experiments/figs/by_reward/all_stat"
+    path_big="experiments/data/temp/hist_RAM_big.csv"
+    path_my="experiments/data/temp/hist_RAM_my.csv"
+    df_big=load_df(path_big)
+    df_my=load_df(path_my)
+
+    df_tetris = load_df(get_exp_file_path(file_type=algo_tetris))[:100].copy()
+    df_random = load_df(get_exp_file_path(file_type=algo_random))[:100].copy()
+    df_first_fit = load_df(get_exp_file_path(file_type=algo_first_fit))[:100].copy()
+    range = None
+    figname_prefix = "RAC_"
+    curr_fig_dir = "experiments/figs/by_reward/comparisons"
+    # curr_fig_dir="experiments/figs/by_reward/comparisons/with_random"
+    # curr_fig_dir = "experiments/figs/by_reward/comparisons/all_rewards"
+    curr_fig_dir = None
+    if range is None:
+        # dfs = [(RAC, df_completion), (RAM, df_makespan), (RAS, df_slowdown), (MIX_AC_AS, df_mix_acas),
+        #        (algo_random, df_random),
+        #        (algo_first_fit, df_first_fit),
+        #        (algo_tetris, df_tetris)]
+        # dfs = [(RAC, df_completion), (RAM, df_makespan), (RAS, df_slowdown), (MIX_AC_AS, df_mix_acas)]
+        dfs = [
+            # (RAM, df_makespan),
+            ("RAM_Big", df_big),
+            ("RAM_my", df_my),
+            # (RAS, df_slowdown),
+            # (MIX_AC_AS, df_mix_acas),
+            # (algo_random, df_random),
+            # (algo_first_fit, df_first_fit),
+            # (algo_tetris, df_tetris)
+        ]
+    excludes = []
+    y1 = 0
+    y2 = 100
+
+    log_y = False
+    # avg completions data using different training reward
+    plot_single_stat_for_all_reward_signals(dfs, col_name=avg_completions, y_label="Average Completions",
+                                            curr_fig_dir=curr_fig_dir, x_lable="Job Chunk Number", ceiling=None,
+                                            ylim_low=y1, ylim_high=y2, logy=log_y,
+                                            fig_name=figname_prefix + "_completions.png")
+    # avg makespans data using different training reward
+    plot_single_stat_for_all_reward_signals(dfs, col_name=avg_makespans, y_label="Average Makespans",
+                                            curr_fig_dir=curr_fig_dir, ceiling=None,
+                                            x_lable="Job Chunk Number", ylim_low=y1, ylim_high=y2, logy=log_y,
+                                            fig_name=figname_prefix + "_makespans.png")
+    # avg slowdosns data using different training reward
+    plot_single_stat_for_all_reward_signals(dfs, col_name=avg_slowdowns, y_label="Average Slowdowns",
+                                            curr_fig_dir=curr_fig_dir, ceiling=None,
+                                            x_lable="Job Chunk Number", ylim_low=y1, ylim_high=y2, logy=log_y,
+                                            fig_name=figname_prefix + "_slowdowns.png")
+
+
+# @exp_fig
+def temp_exp_stats_diff_by_reward_single_reward_comparison_all_plots():
+    """
+    this plots the difference between a single reward and other algorithms
+    :return:
+    """
+    # if fig dir is specified, the figs will be save to the dir
+    # curr_fig_dir = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/experiments/figs/stats_diff"
+    # curr_fig_dir = None
+    range = None
+    if range is None:
+        df_completion, \
+        df_makespan, \
+        df_slowdown, \
+        df_mix_acas, \
+        df_tetris, df_random, df_first_fit = get_all_stats_df()
+    else:
+        df_completion, df_makespan, df_slowdown, df_mix_acas, df_tetris, df_random, df_first_fit = get_all_stats_df(
+            range=180)
+
+    # dfs = [(RAC, df_completion), (RAM, df_makespan), (RAS, df_slowdown), (algo_random, df_random),
+    #        (algo_first_fit, df_first_fit),
+    #        (algo_tetris, df_tetris)]
+
+    dfs_other_algo = [
+        # (RAC, df_completion),
+        # (RAM, df_makespan),
+        # (MIX_AC_AS, df_mix_acas),
+        # (RAS, df_slowdown),
+        (algo_random, df_random),
+        (algo_first_fit, df_first_fit),
+        (algo_tetris, df_tetris)
+    ]
+    # dfs_makespans = [
+    #     # (algo_random, df_random),
+    #     # (algo_first_fit, df_first_fit),
+    #     (algo_tetris, df_tetris)]
+    # dfs_completions = [
+    #     # (algo_random, df_random),
+    #     (algo_first_fit, df_first_fit),
+    #     (algo_tetris, df_tetris)]
+    # dfs_slowdowns = [
+    #     # (algo_random, df_random),
+    #     (algo_first_fit, df_first_fit),
+    #     (algo_tetris, df_tetris)]
+
+    excludes = []
+    # suffix = ""
+    # curr_fig_dir = "experiments/figs/stats_diff"
+    curr_fig_dir = None
+    # suffix=f"{RAM}_"
+    df_compare = df_completion
+    curr_reward = reward_avg_completions
+    logy = False
+    # avg completions data using different training reward
+    plot_stat_difference_for_all_reward_signals(dfs_other_algo, compare_stat=avg_completions,
+                                                y_label="Average Completions Difference",
+                                                curr_fig_dir=curr_fig_dir, df_compare_to=df_compare,
+                                                compare_to_col_name=f"{curr_reward}_{avg_completions}",
+                                                suffix="_completions", x_lable="Job Chunk Number", logy=logy)
+    # avg makespans data using different training reward
+    plot_stat_difference_for_all_reward_signals(dfs_other_algo, compare_stat=avg_makespans,
+                                                y_label="Average Makespans Difference",
+                                                curr_fig_dir=curr_fig_dir, df_compare_to=df_compare,
+                                                compare_to_col_name=f"{curr_reward}_{avg_makespans}",
+                                                suffix="_makespans", x_lable="Job Chunk Number", logy=logy)
+    # # avg slowdosns data using different training reward
+    plot_stat_difference_for_all_reward_signals(dfs_other_algo, compare_stat=avg_slowdowns,
+                                                y_label="Average Slowdowns Difference",
+                                                curr_fig_dir=curr_fig_dir, df_compare_to=df_compare,
+                                                compare_to_col_name=f"{curr_reward}_{avg_slowdowns}",
+                                                suffix="_slowdowns", x_lable="Job Chunk Number", logy=logy)
+
+
 if __name__ == '__main__':
     # plot_avg_slowdown()
     # exp_results_by_reward_all_plots()
@@ -476,7 +847,9 @@ if __name__ == '__main__':
     # plot_reward_avg_slowdowns()
     # rename_add_reward_type()
     # plot_training_stats_for_reward_all()
-    exp_results_by_reward_all_plots()
+    # exp_results_by_reward_all_plots()
     # get_job_stats()
-    # hist_deepjs_avg()
-    # plot_train_deepjs_stats()
+    # exp_stats_diff_by_reward_all_plots()
+    temp_exp_results_by_reward_all_plots()
+    # exp_results_by_reward_all_plots()
+    # collect_df_corrs()
