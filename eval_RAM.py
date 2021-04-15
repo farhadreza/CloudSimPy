@@ -52,13 +52,14 @@ train_info_dir = 'experiments/data/temp'
 eval_info_dir = "experiments/data/temp"
 trained_agent_brainbig = "curr_agents/RAM_Big/brain_RAM_20.pkl"
 trained_agent_mybrain = "curr_agents/RAM_MyBrain/brain_RAM_20.pkl"
-curr_agent_path = trained_agent_mybrain
+trained_agent_rac_mybrain="experiments/data/temp/rac_mybrain/brain_RAC_50.pkl"
+curr_agent_path = trained_agent_rac_mybrain
 
 # brain = BrainBig(6)
 brain = MyBrain(6)
 reward_giver = MakespanRewardGiver(-1)
 # reward_giver = AverageCompletionRewardGiver()
-curr_reward_signal_name = "RAM_my"
+curr_reward_signal_name = "rac_mybrain"
 
 features_extract_func = features_extract_func
 features_normalize_func = features_normalize_func

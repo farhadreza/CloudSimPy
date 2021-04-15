@@ -714,20 +714,26 @@ def temp_exp_results_by_reward_all_plots():
     """
     # if fig dir is specified, the figs will be save to the dir
     # curr_fig_dir = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/experiments/figs/by_reward/all_stat"
-    path_big="experiments/data/temp/hist_RAM_big.csv"
-    path_my="experiments/data/temp/hist_RAM_my.csv"
-    df_big=load_df(path_big)
-    df_my=load_df(path_my)
+    path_big = "experiments/data/temp/hist_RAM_big.csv"
+    path_my = "experiments/data/temp/hist_RAM_my.csv"
+    df_big = load_df(path_big)
+    df_my = load_df(path_my)
 
-    df_tetris = load_df(get_exp_file_path(file_type=algo_tetris))[:100].copy()
-    df_random = load_df(get_exp_file_path(file_type=algo_random))[:100].copy()
-    df_first_fit = load_df(get_exp_file_path(file_type=algo_first_fit))[:100].copy()
+    df_rac_mybrain = "experiments/data/temp/rac_mybrain/hist_deepjs_train_RAC_0.csv"
+    # df_ram_mybrain =
+
+    df_train_ram_big = load_df("curr_agents/RAM_Big/hist_deepjs_train_RAM_0.csv")
+    df_train_ram_mybrain = load_df("curr_agents/RAM_MyBrain/hist_deepjs_train_RAM_0.csv")
+
+    # df_tetris = load_df(get_exp_file_path(file_type=algo_tetris))[:100].copy()
+    # df_random = load_df(get_exp_file_path(file_type=algo_random))[:100].copy()
+    # df_first_fit = load_df(get_exp_file_path(file_type=algo_first_fit))[:100].copy()
     range = None
-    figname_prefix = "RAC_"
+    figname_prefix = "RAM_brain_compare_"
     curr_fig_dir = "experiments/figs/by_reward/comparisons"
     # curr_fig_dir="experiments/figs/by_reward/comparisons/with_random"
     # curr_fig_dir = "experiments/figs/by_reward/comparisons/all_rewards"
-    curr_fig_dir = None
+    curr_fig_dir = "experiments/data/train_figs"
     if range is None:
         # dfs = [(RAC, df_completion), (RAM, df_makespan), (RAS, df_slowdown), (MIX_AC_AS, df_mix_acas),
         #        (algo_random, df_random),
@@ -736,8 +742,8 @@ def temp_exp_results_by_reward_all_plots():
         # dfs = [(RAC, df_completion), (RAM, df_makespan), (RAS, df_slowdown), (MIX_AC_AS, df_mix_acas)]
         dfs = [
             # (RAM, df_makespan),
-            ("RAM_Big", df_big),
-            ("RAM_my", df_my),
+            ("RAM_Big", df_train_ram_big),
+            ("RAM_my", df_train_ram_mybrain),
             # (RAS, df_slowdown),
             # (MIX_AC_AS, df_mix_acas),
             # (algo_random, df_random),
