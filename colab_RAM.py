@@ -14,7 +14,7 @@ from playground.Non_DAG.algorithm.tetris import Tetris
 from playground.Non_DAG.algorithm.first_fit import FirstFitAlgorithm
 from playground.Non_DAG.algorithm.DeepJS.DRL import RLAlgorithm
 from playground.Non_DAG.algorithm.DeepJS.agent import Agent
-from playground.Non_DAG.algorithm.DeepJS.brain import Brain, BrainSmall
+from playground.Non_DAG.algorithm.DeepJS.brain import Brain, BrainSmall,MyBrain
 
 from playground.Non_DAG.algorithm.DeepJS.reward_giver import MakespanRewardGiver, AverageCompletionRewardGiver, \
     AverageSlowDownRewardGiver
@@ -49,7 +49,7 @@ jobs_csv = 'playground/Non_DAG/jobs_files/jobs.csv'
 # jobs_csv = '../jobs_files/jobs_2017.csv'
 
 # brain = Brain(6)
-brain = BrainSmall(6)
+brain = MyBrain(6)
 reward_giver = MakespanRewardGiver(-1)
 # reward_giver = AverageCompletionRewardGiver()
 curr_reward_signal_name = RAM
@@ -66,13 +66,13 @@ model_dir = './agents/%s' % name
 eval_info_dir = "experiments/data/eval"
 
 # trained_agent_path = "experiments/data/trained_chkpt200/RAM/model.ckpt-200"
-trained_agent_path = "curr_agents/RAM/brain_RAM_20.pkl"
-train_info_dir = "/content/drive/MyDrive/GoogleDrive/MyRepo/curr_agents/RAM"
+trained_agent_path = None
+train_info_dir = "/content/drive/MyDrive/GoogleDrive/MyRepo/curr_agents/RAM_MyBrain"
 # ************************ Parameters Setting End ************************
 
 if not os.path.isdir(model_dir):
     os.makedirs(model_dir)
-restore_point = 21
+restore_point = 0
 # agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
 #               model_save_path='%s/model.ckpt' % model_dir)
 agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
