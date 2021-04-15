@@ -14,10 +14,10 @@ from playground.Non_DAG.algorithm.tetris import Tetris
 from playground.Non_DAG.algorithm.first_fit import FirstFitAlgorithm
 from playground.Non_DAG.algorithm.DeepJS.DRL import RLAlgorithm
 from playground.Non_DAG.algorithm.DeepJS.agent import Agent
-from playground.Non_DAG.algorithm.DeepJS.brain import Brain
+from playground.Non_DAG.algorithm.DeepJS.brain import Brain, BrainSmall, BrainBig, MyBrain
 
 from playground.Non_DAG.algorithm.DeepJS.reward_giver import MakespanRewardGiver, AverageCompletionRewardGiver, \
-    AverageSlowDownRewardGiver
+    AverageSlowDownRewardGiver, MyAverageSlowDownRewardGiver
 
 from playground.Non_DAG.utils.csv_reader import CSVReader
 from playground.Non_DAG.utils.feature_functions import features_extract_func, features_normalize_func
@@ -25,6 +25,8 @@ from playground.Non_DAG.utils.tools import multiprocessing_run, average_completi
 from playground.Non_DAG.utils.episode import Episode
 import pandas as pd
 from collections import defaultdict
+from tensorflow import keras
+import dill
 
 from playground.Non_DAG.utils.common_tokens import *
 
@@ -46,10 +48,12 @@ jobs_csv = 'playground/Non_DAG/jobs_files/jobs.csv'
 # jobs_csv = '../jobs_files/jobs_2017.csv'
 
 brain = Brain(6)
+brain = MyBrain(6)
 # reward_giver = MakespanRewardGiver(-1)
 # reward_giver = AverageCompletionRewardGiver()
-reward_giver = AverageSlowDownRewardGiver()
-curr_reward_signal_name = RAS
+# reward_giver = AverageSlowDownRewardGiver()
+reward_giver = MyAverageSlowDownRewardGiver()
+curr_reward_signal_name = "MyRAS"
 
 features_extract_func = features_extract_func
 features_normalize_func = features_normalize_func
@@ -58,7 +62,8 @@ name = '%s-%s-m%d' % (reward_giver.name, brain.name, machines_number)
 # model_dir = './agents/%s' % name
 
 # train_info_dir = './agents/training/avgCompletionReward'
-train_info_dir = '/content/drive/MyDrive/GoogleDrive/MyRepo/agent_RAS'
+# train_info_dir = '/content/drive/MyDrive/GoogleDrive/MyRepo/agent_RAS'
+train_info_dir = 'curr_agents/MyRAS'
 eval_info_dir = "agents/RAS"
 # train_info_dir = "/content/drive/MyDrive/GoogleDrive/MyRepo/"
 # ************************ Parameters Setting End ************************
@@ -68,11 +73,13 @@ eval_info_dir = "agents/RAS"
 
 # agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
 #               model_save_path='%s/model.ckpt' % model_dir)
-restore_point = 191
+restore_point = 0
+save_chkpt_every = 10
+
 # restore_path = "/content/drive/MyDrive/GoogleDrive/MyRepo/agent_RAS/chkpt_50_RAS.pkl-56"
 # restore_path = "agents/RAS/chkpt_50_RAS.pkl-112"
 # restore_path = "agents/RAS/chkpt_160_RAS.pkl-65"
-restore_path = "agents/trained_agents200/RAS/chkpt_190_RAS.pkl-32"
+restore_path = None
 agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
               model_save_path='%s/model.ckpt' % train_info_dir, restore_path=restore_path)
 
@@ -163,7 +170,6 @@ def save_train_info(agent: Agent, itr: int, reward_type=curr_reward_signal_name)
 #                        avg_completion=average_completion(episode), avg_slowdown=average_slowdown(episode))
 
 
-save_chkpt_every = 10
 
 
 def add_hist(name="", value=None):
@@ -181,53 +187,54 @@ def add_train_stats_to_hist(algo_type, tictime, env_now, global_step, avg_compl,
 
 
 def train_DeepJS_data200():
+    print_progress = False
     for job_chunk in range(restore_point, n_job_chunk):
         jobs_configs = csv_reader.generate(job_chunk * jobs_len, jobs_len, hist=hist)
-
-        tic = time.time()
-        algorithm = RandomAlgorithm()
-        episode = Episode(machine_configs, jobs_configs, algorithm, None)
-        episode.run()
-        # add_train_stats_to_hist(algo_random,)
-        hist["random_tictoc"].append(time.time() - tic)
-        hist["random_avg_makespans"].append(episode.env.now)
-        hist["makespan-random_env_now"].append(episode.env.now)
-        hist["random_global_step"].append(agent.global_step)
-        hist["random_avg_completions"].append(average_completion(episode))
-        hist["random_avg_slowdowns"].append(average_slowdown(episode))
-
-        print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
-        agent.log('makespan-random', episode.env.now, agent.global_step)
-
-        tic = time.time()
-        algorithm = FirstFitAlgorithm()
-        episode = Episode(machine_configs, jobs_configs, algorithm, None)
-        episode.run()
-        hist["first_fit_tictoc"].append(time.time() - tic)
-        hist["first_fit_avg_makespans"].append(episode.env.now)
-        hist["makespan-ff_env_now"].append(episode.env.now)
-        hist["first_fit_global_step"].append(agent.global_step)
-        hist["first_fit_avg_completions"].append(average_completion(episode))
-        hist["first_fit_avg_slowdowns"].append(average_slowdown(episode))
-
-        print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
-        agent.log('makespan-ff', episode.env.now, agent.global_step)
+        #
+        # tic = time.time()
+        # algorithm = RandomAlgorithm()
+        # episode = Episode(machine_configs, jobs_configs, algorithm, None)
+        # episode.run()
+        # # add_train_stats_to_hist(algo_random,)
+        # hist["random_tictoc"].append(time.time() - tic)
+        # hist["random_avg_makespans"].append(episode.env.now)
+        # hist["makespan-random_env_now"].append(episode.env.now)
+        # hist["random_global_step"].append(agent.global_step)
+        # hist["random_avg_completions"].append(average_completion(episode))
+        # hist["random_avg_slowdowns"].append(average_slowdown(episode))
+        # if print_progress:
+        #     # print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
+        #     agent.log('makespan-random', episode.env.now, agent.global_step)
+        #
+        # tic = time.time()
+        # algorithm = FirstFitAlgorithm()
+        # episode = Episode(machine_configs, jobs_configs, algorithm, None)
+        # episode.run()
+        # hist["first_fit_tictoc"].append(time.time() - tic)
+        # hist["first_fit_avg_makespans"].append(episode.env.now)
         # hist["makespan-ff_env_now"].append(episode.env.now)
-        # hist["makespan-ff_global_step"].append(agent.global_step)
-
-        tic = time.time()
-        algorithm = Tetris()
-        episode = Episode(machine_configs, jobs_configs, algorithm, None)
-        episode.run()
-        hist["tetris_tictoc"].append(time.time() - tic)
-        hist["tetris_avg_makespans"].append(episode.env.now)
-        hist["makespan-tetris_env_now"].append(episode.env.now)
-        hist["tetris_global_step"].append(agent.global_step)
-        hist["tetris_avg_completions"].append(average_completion(episode))
-        hist["tetris_avg_slowdowns"].append(average_slowdown(episode))
-
-        print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
-        agent.log('makespan-tetris', episode.env.now, agent.global_step)
+        # hist["first_fit_global_step"].append(agent.global_step)
+        # hist["first_fit_avg_completions"].append(average_completion(episode))
+        # hist["first_fit_avg_slowdowns"].append(average_slowdown(episode))
+        # if print_progress:
+        #     # print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
+        #     agent.log('makespan-ff', episode.env.now, agent.global_step)
+        # # hist["makespan-ff_env_now"].append(episode.env.now)
+        # # hist["makespan-ff_global_step"].append(agent.global_step)
+        #
+        # tic = time.time()
+        # algorithm = Tetris()
+        # episode = Episode(machine_configs, jobs_configs, algorithm, None)
+        # episode.run()
+        # hist["tetris_tictoc"].append(time.time() - tic)
+        # hist["tetris_avg_makespans"].append(episode.env.now)
+        # hist["makespan-tetris_env_now"].append(episode.env.now)
+        # hist["tetris_global_step"].append(agent.global_step)
+        # hist["tetris_avg_completions"].append(average_completion(episode))
+        # hist["tetris_avg_slowdowns"].append(average_slowdown(episode))
+        # if print_progress:
+        #     # print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
+        #     agent.log('makespan-tetris', episode.env.now, agent.global_step)
 
         for itr in range(n_iter):
             tic = time.time()
@@ -255,7 +262,7 @@ def train_DeepJS_data200():
             for p in processes:
                 p.join()
 
-            agent.log('makespan', np.mean(makespans), agent.global_step)
+            # agent.log('makespan', np.mean(makespans), agent.global_step)
             # agent.log('average_completions', np.mean(average_completions), agent.global_step)
             # agent.log('average_slowdowns', np.mean(average_slowdowns), agent.global_step)
             toc = time.time()
@@ -264,7 +271,8 @@ def train_DeepJS_data200():
             hist_deepjs[curr_reward_signal_name + "_avg_slowdowns"].append(np.mean(average_slowdowns))
             hist_deepjs[curr_reward_signal_name + "_global_step"].append(agent.global_step)
             hist_deepjs[curr_reward_signal_name + "_tictoc"].append(toc - tic)
-            print(np.mean(makespans), toc - tic, np.mean(average_completions), np.mean(average_slowdowns))
+            # if print_progress:
+            #     print(np.mean(makespans), toc - tic, np.mean(average_completions), np.mean(average_slowdowns))
 
             all_observations = []
             all_actions = []
@@ -287,12 +295,13 @@ def train_DeepJS_data200():
                 # add_hist(curr_reward_signal_name + '_total_rewards', np.sum(rewards))
                 # add_hist(curr_reward_signal_name + "_avg_rewards", np.mean(rewards))
             all_q_s, all_advantages = agent.estimate_return(all_rewards)
-
             agent.update_parameters(all_observations, all_actions, all_advantages)
-        if job_chunk % save_chkpt_every == 0 or job_chunk == 200:
+        if job_chunk % save_chkpt_every == 0 or job_chunk == 200 or job_chunk == 199:
             save_train_info(agent, job_chunk)
-        # agent.save()
-        save_train_info(agent, 200)
+            agent.dill_brain(save_dir=train_info_dir, reward_type=curr_reward_signal_name, iter_num=job_chunk)
+    # agent.save()
+    save_train_info(agent, 200)
+    agent.dill_brain(save_dir=train_info_dir, reward_type=curr_reward_signal_name, iter_num=200)
 
 
 #
