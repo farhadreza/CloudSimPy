@@ -170,8 +170,6 @@ def save_train_info(agent: Agent, itr: int, reward_type=curr_reward_signal_name)
 #                        avg_completion=average_completion(episode), avg_slowdown=average_slowdown(episode))
 
 
-
-
 def add_hist(name="", value=None):
     hist[name].append(value)
 
@@ -189,6 +187,8 @@ def add_train_stats_to_hist(algo_type, tictime, env_now, global_step, avg_compl,
 def train_DeepJS_data200():
     print_progress = False
     for job_chunk in range(restore_point, n_job_chunk):
+        print(f"********** Jobchunk {job_chunk} ************")
+
         jobs_configs = csv_reader.generate(job_chunk * jobs_len, jobs_len, hist=hist)
         #
         # tic = time.time()
@@ -238,7 +238,6 @@ def train_DeepJS_data200():
 
         for itr in range(n_iter):
             tic = time.time()
-            print("********** Iteration %i ************" % itr)
             processes = []
 
             manager = Manager()
