@@ -1,4 +1,6 @@
 import os, re
+from collections import defaultdict
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -727,17 +729,18 @@ def temp_exp_results_by_reward_all_plots():
     df_train_rac_old = load_df("data/old_data2/train_stats/hist_RAC_deepjs.csv")
     df_train_rac_mybrain = load_df("experiments/data/temp/rac_mybrain/hist_deepjs_train_RAC_0.csv")
     df_train_ras_old = load_df("data/old_data2/train_stats/hist_RAS_deepjs.csv")
-    df_eval_rac_dill = load_df("experiments/data/eval/temp_eval/ram_dill_deepjs.csv")
+    df_eval_rac_dill = load_df("experiments/data/eval/temp_eval/hist_ram_dill_.csv")
+    df_eval_rac_my50 = load_df("experiments/data/eval/temp_eval/hist_RAC_My50_.csv")
 
     df_tetris = load_df("experiments/data/eval/hist_tetris.csv")
     df_random = load_df("experiments/data/eval/hist_random.csv")
     df_first_fit = load_df("experiments/data/eval/hist_first_fit.csv")
     range = None
-    figname_prefix = "RAM_brain_compare_"
+    figname_prefix = "RAC_dill_eval_"
     curr_fig_dir = "experiments/figs/by_reward/comparisons"
     # curr_fig_dir="experiments/figs/by_reward/comparisons/with_random"
     # curr_fig_dir = "experiments/figs/by_reward/comparisons/all_rewards"
-    curr_fig_dir = "experiments/data/train_figs"
+    curr_fig_dir = "experiments/data/eval/temp_figs"
     if range is None:
         # dfs = [(RAC, df_completion), (RAM, df_makespan), (RAS, df_slowdown), (MIX_AC_AS, df_mix_acas),
         #        (algo_random, df_random),
@@ -753,9 +756,11 @@ def temp_exp_results_by_reward_all_plots():
             # ("RAC_mybrain", df_train_rac_mybrain),
             # ("RAS_old", df_train_ras_old),
             ("RAC_dill", df_eval_rac_dill),
+            # ("RAC_My50", df_eval_rac_my50),
+
             # (RAS, df_slowdown),
             # (MIX_AC_AS, df_mix_acas),
-            (algo_random, df_random),
+            # (algo_random, df_random),
             (algo_first_fit, df_first_fit),
             (algo_tetris, df_tetris)
         ]
@@ -790,11 +795,13 @@ def temp_exp_stats_diff_by_reward_single_reward_comparison_all_plots():
     # if fig dir is specified, the figs will be save to the dir
     # curr_fig_dir = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/experiments/figs/stats_diff"
     # curr_fig_dir = None
-    range = None
-    df_eval_rac_dill = load_df("experiments/data/eval/temp_eval/ram_dill_deepjs.csv")
-    df_tetris = load_df("experiments/data/eval/hist_tetris.csv")
-    df_random = load_df("experiments/data/eval/hist_random.csv")
-    df_first_fit = load_df("experiments/data/eval/hist_first_fit.csv")
+    range = 320
+    df_eval_rac_dill = load_df("experiments/data/eval/temp_eval/hist_ram_dill_.csv")[:range].copy()
+    df_eval_rac_my50 = load_df("experiments/data/eval/temp_eval/hist_RAC_My50_.csv")[:range].copy()
+
+    df_tetris = load_df("experiments/data/eval/hist_tetris.csv")[:range].copy()
+    df_random = load_df("experiments/data/eval/hist_random.csv")[:range].copy()
+    df_first_fit = load_df("experiments/data/eval/hist_first_fit.csv")[:range].copy()
     # if range is None:
     #     df_completion, \
     #     df_makespan, \
@@ -814,7 +821,7 @@ def temp_exp_stats_diff_by_reward_single_reward_comparison_all_plots():
         # (RAM, df_makespan),
         # (MIX_AC_AS, df_mix_acas),
         # (RAS, df_slowdown),
-        (algo_random, df_random),
+        # (algo_random, df_random),
         (algo_first_fit, df_first_fit),
         (algo_tetris, df_tetris)
     ]
@@ -834,10 +841,12 @@ def temp_exp_stats_diff_by_reward_single_reward_comparison_all_plots():
     excludes = []
     # suffix = ""
     # curr_fig_dir = "experiments/figs/stats_diff"
-    curr_fig_dir = None
+    curr_fig_dir = "experiments/data/eval/temp_figs"
     # suffix=f"{RAM}_"
-    df_compare = df_eval_rac_dill
-    curr_reward = reward_avg_completions
+    df_compare = df_eval_rac_my50[:range].copy()
+    df_compare = df_eval_rac_dill[:range].copy()
+    curr_reward = "ram_dill_"
+    # curr_reward = "RAC_My50_"
     logy = False
     # avg completions data using different training reward
     plot_stat_difference_for_all_reward_signals(dfs_other_algo, compare_stat=avg_completions,
@@ -859,6 +868,48 @@ def temp_exp_stats_diff_by_reward_single_reward_comparison_all_plots():
                                                 suffix="_slowdowns", x_lable="Job Chunk Number", logy=logy)
 
 
+def count_stats():
+    df_eval_rac_dill = load_df("experiments/data/eval/temp_eval/hist_ram_dill_.csv")
+    df_eval_rac_my50 = load_df("experiments/data/eval/temp_eval/hist_RAC_My50_.csv")
+    df_tetris = load_df("experiments/data/eval/hist_tetris.csv")
+    df_random = load_df("experiments/data/eval/hist_random.csv")
+    df_first_fit = load_df("experiments/data/eval/hist_first_fit.csv")
+    range = -1
+    if range > 0:
+        df_compare = df_eval_rac_dill[:range].copy()
+        df_compare = df_eval_rac_my50[:range].copy()
+        dfs = [
+            df_random[:range].copy(),
+            df_tetris[:range].copy(), df_first_fit[:range].copy()]
+    else:
+        df_compare = df_eval_rac_dill
+        df_compare = df_eval_rac_my50
+        dfs = [
+            df_random,
+            df_tetris, df_first_fit]
+    curr_reward = "ram_dill__"
+    curr_reward = "RAC_My50__"
+    count_dict = defaultdict(list)
+    metrics = [avg_makespans, avg_completions, avg_slowdowns]
+
+    for metric in metrics:
+        for df_curr in dfs:
+            cols = df_curr.columns.values.tolist()
+            curr_col = [curr_col for curr_col in cols if curr_col.endswith(metric)][0]
+            df_bigger = df_curr[df_curr[curr_col] > df_compare[curr_reward + metric]]
+            df_smaller = df_curr[df_curr[curr_col] < df_compare[curr_reward + metric]]
+            df_eq = df_curr[df_curr[curr_col] == df_compare[curr_reward + metric]]
+            count_dict[curr_col + "_bigger"].append(len(df_bigger))
+            count_dict[curr_col + "_smaller"].append(len(df_smaller))
+            count_dict[curr_col + "_eq"].append(len(df_eq))
+            # percent
+            count_dict[curr_col + "_bigger"].append(len(df_bigger) / len(df_curr))
+            count_dict[curr_col + "_smaller"].append(len(df_smaller) / len(df_curr))
+            count_dict[curr_col + "_eq"].append(len(df_eq) / len(df_curr))
+
+    print(count_dict)
+
+
 if __name__ == '__main__':
     # plot_avg_slowdown()
     # exp_results_by_reward_all_plots()
@@ -869,6 +920,41 @@ if __name__ == '__main__':
     # exp_results_by_reward_all_plots()
     # get_job_stats()
     # exp_stats_diff_by_reward_all_plots()
-    temp_exp_results_by_reward_all_plots()
+    # temp_exp_results_by_reward_all_plots()
+    # temp_exp_stats_diff_by_reward_single_reward_comparison_all_plots()
+    count_stats()
     # exp_results_by_reward_all_plots()
     # collect_df_corrs()
+
+# brain RAC dill 200
+{'random_avg_makespans_bigger': [142, 0.44375], 'random_avg_makespans_smaller': [110, 0.34375],
+ 'random_avg_makespans_eq': [68, 0.2125],
+ 'tetris_avg_makespans_bigger': [202, 0.63125],
+ 'tetris_avg_makespans_smaller': [85, 0.265625], 'tetris_avg_makespans_eq': [33, 0.103125],
+ 'first_fit_avg_makespans_bigger': [211, 0.659375], 'first_fit_avg_makespans_smaller': [79, 0.246875],
+ 'first_fit_avg_makespans_eq': [30, 0.09375], 'random_avg_completions_bigger': [143, 0.446875],
+ 'random_avg_completions_smaller': [168, 0.525], 'random_avg_completions_eq': [9, 0.028125],
+ 'tetris_avg_completions_bigger': [50, 0.15625], 'tetris_avg_completions_smaller': [265, 0.828125],
+ 'tetris_avg_completions_eq': [5, 0.015625], 'first_fit_avg_completions_bigger': [13, 0.040625],
+ 'first_fit_avg_completions_smaller': [302, 0.94375], 'first_fit_avg_completions_eq': [5, 0.015625],
+ 'random_avg_slowdowns_bigger': [166, 0.51875], 'random_avg_slowdowns_smaller': [147, 0.459375],
+ 'random_avg_slowdowns_eq': [7, 0.021875], 'tetris_avg_slowdowns_bigger': [69, 0.215625],
+ 'tetris_avg_slowdowns_smaller': [246, 0.76875], 'tetris_avg_slowdowns_eq': [5, 0.015625],
+ 'first_fit_avg_slowdowns_bigger': [27, 0.084375], 'first_fit_avg_slowdowns_smaller': [289, 0.903125],
+ 'first_fit_avg_slowdowns_eq': [4, 0.0125]}
+
+### RAC MyBrain 50 trained
+{'random_avg_makespans_bigger': [138, 0.43125], 'random_avg_makespans_smaller': [114, 0.35625],
+ 'random_avg_makespans_eq': [68, 0.2125], 'tetris_avg_makespans_bigger': [204, 0.6375],
+ 'tetris_avg_makespans_smaller': [81, 0.253125], 'tetris_avg_makespans_eq': [35, 0.109375],
+ 'first_fit_avg_makespans_bigger': [208, 0.65], 'first_fit_avg_makespans_smaller': [79, 0.246875],
+ 'first_fit_avg_makespans_eq': [33, 0.103125], 'random_avg_completions_bigger': [141, 0.440625],
+ 'random_avg_completions_smaller': [170, 0.53125], 'random_avg_completions_eq': [9, 0.028125],
+ 'tetris_avg_completions_bigger': [51, 0.159375], 'tetris_avg_completions_smaller': [264, 0.825],
+ 'tetris_avg_completions_eq': [5, 0.015625], 'first_fit_avg_completions_bigger': [12, 0.0375],
+ 'first_fit_avg_completions_smaller': [303, 0.946875], 'first_fit_avg_completions_eq': [5, 0.015625],
+ 'random_avg_slowdowns_bigger': [168, 0.525], 'random_avg_slowdowns_smaller': [145, 0.453125],
+ 'random_avg_slowdowns_eq': [7, 0.021875], 'tetris_avg_slowdowns_bigger': [71, 0.221875],
+ 'tetris_avg_slowdowns_smaller': [244, 0.7625], 'tetris_avg_slowdowns_eq': [5, 0.015625],
+ 'first_fit_avg_slowdowns_bigger': [26, 0.08125], 'first_fit_avg_slowdowns_smaller': [290, 0.90625],
+ 'first_fit_avg_slowdowns_eq': [4, 0.0125]}
