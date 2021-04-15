@@ -726,10 +726,12 @@ def temp_exp_results_by_reward_all_plots():
     df_train_old = load_df("data/old_data2/train_stats/hist_RAM_deepjs.csv")
     df_train_rac_old = load_df("data/old_data2/train_stats/hist_RAC_deepjs.csv")
     df_train_rac_mybrain = load_df("experiments/data/temp/rac_mybrain/hist_deepjs_train_RAC_0.csv")
-    df_train_ras_old=load_df("data/old_data2/train_stats/hist_RAS_deepjs.csv")
-    # df_tetris = load_df(get_exp_file_path(file_type=algo_tetris))[:100].copy()
-    # df_random = load_df(get_exp_file_path(file_type=algo_random))[:100].copy()
-    # df_first_fit = load_df(get_exp_file_path(file_type=algo_first_fit))[:100].copy()
+    df_train_ras_old = load_df("data/old_data2/train_stats/hist_RAS_deepjs.csv")
+    df_eval_rac_dill = load_df("experiments/data/eval/temp_eval/ram_dill_deepjs.csv")
+
+    df_tetris = load_df("experiments/data/eval/hist_tetris.csv")
+    df_random = load_df("experiments/data/eval/hist_random.csv")
+    df_first_fit = load_df("experiments/data/eval/hist_first_fit.csv")
     range = None
     figname_prefix = "RAM_brain_compare_"
     curr_fig_dir = "experiments/figs/by_reward/comparisons"
@@ -744,18 +746,18 @@ def temp_exp_results_by_reward_all_plots():
         # dfs = [(RAC, df_completion), (RAM, df_makespan), (RAS, df_slowdown), (MIX_AC_AS, df_mix_acas)]
         dfs = [
             # (RAM, df_makespan),
-            ("RAM_Big", df_train_ram_big),
-            ("RAM_my", df_train_ram_mybrain),
-            ("RAM_old", df_train_old),
-            ("RAC_old", df_train_rac_old),
-            ("RAC_mybrain", df_train_rac_mybrain),
-            ("RAS_old", df_train_ras_old),
-
+            # ("RAM_Big", df_train_ram_big),
+            # ("RAM_my", df_train_ram_mybrain),
+            # ("RAM_old", df_train_old),
+            # ("RAC_old", df_train_rac_old),
+            # ("RAC_mybrain", df_train_rac_mybrain),
+            # ("RAS_old", df_train_ras_old),
+            ("RAC_dill", df_eval_rac_dill),
             # (RAS, df_slowdown),
             # (MIX_AC_AS, df_mix_acas),
-            # (algo_random, df_random),
-            # (algo_first_fit, df_first_fit),
-            # (algo_tetris, df_tetris)
+            (algo_random, df_random),
+            (algo_first_fit, df_first_fit),
+            (algo_tetris, df_tetris)
         ]
     excludes = []
     y1 = 0
@@ -789,15 +791,19 @@ def temp_exp_stats_diff_by_reward_single_reward_comparison_all_plots():
     # curr_fig_dir = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/experiments/figs/stats_diff"
     # curr_fig_dir = None
     range = None
-    if range is None:
-        df_completion, \
-        df_makespan, \
-        df_slowdown, \
-        df_mix_acas, \
-        df_tetris, df_random, df_first_fit = get_all_stats_df()
-    else:
-        df_completion, df_makespan, df_slowdown, df_mix_acas, df_tetris, df_random, df_first_fit = get_all_stats_df(
-            range=180)
+    df_eval_rac_dill = load_df("experiments/data/eval/temp_eval/ram_dill_deepjs.csv")
+    df_tetris = load_df("experiments/data/eval/hist_tetris.csv")
+    df_random = load_df("experiments/data/eval/hist_random.csv")
+    df_first_fit = load_df("experiments/data/eval/hist_first_fit.csv")
+    # if range is None:
+    #     df_completion, \
+    #     df_makespan, \
+    #     df_slowdown, \
+    #     df_mix_acas, \
+    #     df_tetris, df_random, df_first_fit = get_all_stats_df()
+    # else:
+    #     df_completion, df_makespan, df_slowdown, df_mix_acas, df_tetris, df_random, df_first_fit = get_all_stats_df(
+    #         range=180)
 
     # dfs = [(RAC, df_completion), (RAM, df_makespan), (RAS, df_slowdown), (algo_random, df_random),
     #        (algo_first_fit, df_first_fit),
@@ -830,7 +836,7 @@ def temp_exp_stats_diff_by_reward_single_reward_comparison_all_plots():
     # curr_fig_dir = "experiments/figs/stats_diff"
     curr_fig_dir = None
     # suffix=f"{RAM}_"
-    df_compare = df_completion
+    df_compare = df_eval_rac_dill
     curr_reward = reward_avg_completions
     logy = False
     # avg completions data using different training reward

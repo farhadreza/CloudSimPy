@@ -37,7 +37,7 @@ tf.random.set_random_seed(41)
 # ************************ Parameters Setting Start ************************
 machines_number = 5
 n_job_chunk = 200
-eval_job_chunk = 300
+eval_job_chunk = 521
 jobs_len = 10
 n_iter = 10
 n_episode = 12
@@ -48,18 +48,20 @@ n_episode = 12
 jobs_csv = 'playground/Non_DAG/jobs_files/jobs.csv'
 # jobs_csv = '../jobs_files/jobs_2017.csv'
 
-train_info_dir = 'experiments/data/temp'
-eval_info_dir = "experiments/data/temp"
+train_info_dir = 'experiments/data/temp/RAC_dill'
+eval_info_dir = "experiments/data/temp/RAC_dill"
 trained_agent_brainbig = "curr_agents/RAM_Big/brain_RAM_20.pkl"
 trained_agent_mybrain = "curr_agents/RAM_MyBrain/brain_RAM_20.pkl"
-trained_agent_rac_mybrain="experiments/data/temp/rac_mybrain/brain_RAC_50.pkl"
-curr_agent_path = trained_agent_rac_mybrain
+trained_agent_rac_mybrain = "experiments/data/temp/rac_mybrain/brain_RAC_50.pkl"
+trained_agent_rac_dill = "experiments/data/trained_chkpt200/RAC_dill/brain_RAC_199.pkl"
+curr_agent_path = trained_agent_rac_dill
 
 # brain = BrainBig(6)
-brain = MyBrain(6)
+# brain = MyBrain(6)
+brain = Brain(6)
 reward_giver = MakespanRewardGiver(-1)
 # reward_giver = AverageCompletionRewardGiver()
-curr_reward_signal_name = "rac_mybrain"
+curr_reward_signal_name = "ram_dill_"
 
 features_extract_func = features_extract_func
 features_normalize_func = features_normalize_func
