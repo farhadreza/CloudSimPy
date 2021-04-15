@@ -724,7 +724,8 @@ def temp_exp_results_by_reward_all_plots():
 
     df_train_ram_big = load_df("curr_agents/RAM_Big/hist_deepjs_train_RAM_0.csv")
     df_train_ram_mybrain = load_df("curr_agents/RAM_MyBrain/hist_deepjs_train_RAM_0.csv")
-
+    df_train_old = load_df("data/old_data2/train_stats/hist_RAM_deepjs.csv")
+    df_train_rac_old=load_df("data/old_data2/train_stats/hist_RAC_reward.csv")
     # df_tetris = load_df(get_exp_file_path(file_type=algo_tetris))[:100].copy()
     # df_random = load_df(get_exp_file_path(file_type=algo_random))[:100].copy()
     # df_first_fit = load_df(get_exp_file_path(file_type=algo_first_fit))[:100].copy()
@@ -744,6 +745,7 @@ def temp_exp_results_by_reward_all_plots():
             # (RAM, df_makespan),
             ("RAM_Big", df_train_ram_big),
             ("RAM_my", df_train_ram_mybrain),
+            ("RAM_old", df_train_old),
             # (RAS, df_slowdown),
             # (MIX_AC_AS, df_mix_acas),
             # (algo_random, df_random),
