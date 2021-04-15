@@ -37,7 +37,7 @@ tf.random.set_random_seed(41)
 # ************************ Parameters Setting Start ************************
 machines_number = 5
 n_job_chunk = 200
-eval_job_chunk = 521
+eval_job_chunk = 300
 jobs_len = 10
 n_iter = 10
 n_episode = 12
@@ -48,11 +48,17 @@ n_episode = 12
 jobs_csv = 'playground/Non_DAG/jobs_files/jobs.csv'
 # jobs_csv = '../jobs_files/jobs_2017.csv'
 
-brain = BrainBig(6)
-# brain = BrainSmall(6)
+train_info_dir = 'experiments/data/temp'
+eval_info_dir = "experiments/data/temp"
+trained_agent_brainbig = "curr_agents/RAM_Big/brain_RAM_20.pkl"
+trained_agent_mybrain = "curr_agents/RAM_MyBrain/brain_RAM_20.pkl"
+curr_agent_path = trained_agent_mybrain
+
+# brain = BrainBig(6)
+brain = MyBrain(6)
 reward_giver = MakespanRewardGiver(-1)
 # reward_giver = AverageCompletionRewardGiver()
-curr_reward_signal_name = RAM
+curr_reward_signal_name = "RAM_my"
 
 features_extract_func = features_extract_func
 features_normalize_func = features_normalize_func
@@ -62,12 +68,7 @@ model_dir = './agents/%s' % name
 
 # train_info_dir = './agents/training/avgCompletionReward'
 # train_info_dir = 'agents/train200'
-train_info_dir = 'curr_agents/RAM_Big'
-eval_info_dir = "experiments/data/eval/raw"
 
-# trained_agent_path = "experiments/data/trained_chkpt200/RAM/model.ckpt-200"
-trained_agent_path = None
-# train_info_dir = "/content/drive/MyDrive/GoogleDrive/MyRepo/"
 # ************************ Parameters Setting End ************************
 
 if not os.path.isdir(model_dir):
@@ -76,7 +77,7 @@ restore_point = 0
 # agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
 #               model_save_path='%s/model.ckpt' % model_dir)
 agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
-              model_save_path='%s/model.ckpt' % train_info_dir, restore_path=trained_agent_path)
+              model_save_path='%s/model.ckpt' % train_info_dir, restore_path=curr_agent_path)
 
 machine_configs = [MachineConfig(64, 1, 1) for i in range(machines_number)]
 csv_reader = CSVReader(jobs_csv)
@@ -350,7 +351,7 @@ def eval_DeepJS_data200(reward_type=curr_reward_signal_name):
     algorithm = RLAlgorithm(agent, reward_giver, features_extract_func=features_extract_func,
                             features_normalize_func=features_normalize_func)
     eval_dict = defaultdict(list)
-    print_progress = False
+    print_progress = True
     for job_chunk in range(start_job_no, eval_job_chunk):
         if print_progress:
             print(f"************* job_chunk: {job_chunk} ***************")
@@ -630,7 +631,7 @@ if __name__ == '__main__':
     # eval_algo_deep_js()
     # set_path()  # for running on command line
     # eval_DeepJS_data200()
-    train_DeepJS_data200()
+    eval_DeepJS_data200()
     # eval_algo_deep_js()
 
 # DeepJS
