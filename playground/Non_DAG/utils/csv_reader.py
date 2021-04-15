@@ -59,20 +59,20 @@ class CSVReader(object):
                 task_instances_cpu.extend([task_config.cpu] * int(task_config.instances_number))
                 task_instances_memory.extend([task_config.memory] * int(task_config.instances_number))
 
-        print('Jobs number: ', len(ret))
-        print('Tasks number:', tasks_number)
-
-        print('Task instances number mean: ', np.mean(task_instances_numbers))
-        print('Task instances number std', np.std(task_instances_numbers))
-
-        print('Task instances cpu mean: ', np.mean(task_instances_cpu))
-        print('Task instances cpu std: ', np.std(task_instances_cpu))
-
-        print('Task instances memory mean: ', np.mean(task_instances_memory))
-        print('Task instances memory std: ', np.std(task_instances_memory))
-
-        print('Task instances duration mean: ', np.mean(task_instances_durations))
-        print('Task instances duration std: ', np.std(task_instances_durations))
+        # print('Jobs number: ', len(ret))
+        # print('Tasks number:', tasks_number)
+        #
+        # print('Task instances number mean: ', np.mean(task_instances_numbers))
+        # print('Task instances number std', np.std(task_instances_numbers))
+        #
+        # print('Task instances cpu mean: ', np.mean(task_instances_cpu))
+        # print('Task instances cpu std: ', np.std(task_instances_cpu))
+        #
+        # print('Task instances memory mean: ', np.mean(task_instances_memory))
+        # print('Task instances memory std: ', np.std(task_instances_memory))
+        #
+        # print('Task instances duration mean: ', np.mean(task_instances_durations))
+        # print('Task instances duration std: ', np.std(task_instances_durations))
         # if not hist is None:
         #     hist["job_no"].append(len(ret))
         #     hist["task_no"].append(tasks_number)
