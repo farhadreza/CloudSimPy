@@ -14,7 +14,7 @@ from playground.Non_DAG.algorithm.tetris import Tetris
 from playground.Non_DAG.algorithm.first_fit import FirstFitAlgorithm
 from playground.Non_DAG.algorithm.DeepJS.DRL import RLAlgorithm
 from playground.Non_DAG.algorithm.DeepJS.agent import Agent
-from playground.Non_DAG.algorithm.DeepJS.brain import Brain, BrainSmall, BrainBig, MyBrain,NewBrain
+from playground.Non_DAG.algorithm.DeepJS.brain import Brain, BrainSmall, BrainBig, MyBrain, NewBrain
 
 from playground.Non_DAG.algorithm.DeepJS.reward_giver import MakespanRewardGiver, AverageCompletionRewardGiver, \
     AverageSlowDownRewardGiver
@@ -57,7 +57,8 @@ trained_agent_rac_dill = "experiments/data/trained_chkpt200/RAC_dill/brain_RAC_1
 
 trained_agent_rac_mybrain50 = "curr_agents/RAC_MyBrain/brain_RAC_50.pkl"
 trained_agent_rac_mybrain70 = "curr_agents/RAC_MyBrain/brain_RAC_70.pkl"
-curr_agent_path = trained_agent_ram_mybrain50
+trained_agent_rac_mybrain130 = "curr_agents/RAC_MyBrain/brain_RAC_130.pkl"
+curr_agent_path = trained_agent_rac_mybrain130
 
 # brain = BrainBig(6)
 # brain = MyBrain(6)
@@ -65,7 +66,7 @@ curr_agent_path = trained_agent_ram_mybrain50
 brain = MyBrain(6)
 # reward_giver = MakespanRewardGiver(-1)
 reward_giver = AverageCompletionRewardGiver()
-curr_reward_signal_name = "RAM_My50"
+curr_reward_signal_name = "RAC_MyBrain130"
 
 features_extract_func = features_extract_func
 features_normalize_func = features_normalize_func

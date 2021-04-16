@@ -64,7 +64,7 @@ model_dir = './agents/%s' % name
 # train_info_dir = 'agents/train200'
 # train_info_dir = 'curr_agents/RAM_Big'
 train_info_dir = 'curr_agents/RAM_NewBrain'
-train_info_dir = '/content/drive/MyDrive/GoogleDrive/MyRepo/RAM_NewBrain'
+# train_info_dir = '/content/drive/MyDrive/GoogleDrive/MyRepo/RAM_NewBrain'
 eval_info_dir = "experiments/data/eval/raw"
 
 # trained_agent_path = "experiments/data/trained_chkpt200/RAM/model.ckpt-200"
@@ -75,6 +75,7 @@ trained_agent_path = None
 if not os.path.isdir(model_dir):
     os.makedirs(model_dir)
 restore_point = 0
+save_chkpt_every = 10
 # agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
 #               model_save_path='%s/model.ckpt' % model_dir)
 agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
@@ -167,7 +168,7 @@ def save_train_info(agent: Agent, itr: int, reward_type=curr_reward_signal_name)
 #                        avg_completion=average_completion(episode), avg_slowdown=average_slowdown(episode))
 
 
-save_chkpt_every = 20
+
 
 
 def add_hist(name="", value=None):
