@@ -936,8 +936,22 @@ def count_stats():
             # count_dict[curr_col + "_diff"].append(sum(df_diff.sum(axis=1)))
             count_dict[curr_col + "_bigger"].append(
                 sum(df_diff.sum(axis=1)))  # third element in the list is total time saved
+            count_dict[curr_col + "_bigger"].append(
+                sum(df_diff.sum(axis=1)) / len(df_diff))  # fourth element is the mean increase
+            # count_dict[curr_col + "_mean"].append(sum(df_diff.sum(axis=1)) / len(df_diff))
+            # diff_stats(df_diff)
 
     print(count_dict)
+
+
+def make_table(count_dict):
+    df_stats = pd.DataFrame()
+
+
+
+def diff_stats(df_diff):
+    if not df_diff is None:
+        print(df_diff.describe())
 
 
 if __name__ == '__main__':
