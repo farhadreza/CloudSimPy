@@ -113,7 +113,7 @@ def save_train_info(agent: Agent, itr: int, reward_type=curr_reward_signal_name)
     hist_path = os.path.join(train_info_dir, hist_name)
     df = pd.DataFrame(hist)
     df.to_csv(hist_path)
-    print(f"save chkpt: {filename} | save hist: {hist_name}")
+    print(f"save chkpt to: {filepath}")
     hist_rewards_name = f"hist_reward_{reward_type}_{restore_point}.csv"
     df_rewards = pd.DataFrame(hist_rewards)
     df_rewards.to_csv(os.path.join(train_info_dir, hist_rewards_name))

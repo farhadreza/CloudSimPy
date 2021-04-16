@@ -53,6 +53,7 @@ class Agent(object):
         if save_dir:
             savename = f"brain_{reward_type}_{str(iter_num)}.pkl"
             save_path = os.path.join(save_dir, savename)
+            print(f"save trained brain to: {save_path}")
             print(f"********** saved brain ****************")
             print(self.brain.variables)
             dill.dump(self.brain, file=open(save_path, "wb"))
