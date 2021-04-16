@@ -49,22 +49,24 @@ jobs_csv = 'playground/Non_DAG/jobs_files/jobs.csv'
 # jobs_csv = '../jobs_files/jobs_2017.csv'
 
 train_info_dir = 'experiments/data/temp/RAC_dill'
-eval_info_dir = "experiments/data/temp/RAC_My50"
+eval_info_dir = "experiments/data/eval/temp_eval"
+
 trained_agent_brainbig = "curr_agents/RAM_Big/brain_RAM_20.pkl"
 trained_agent_mybrain = "curr_agents/RAM_MyBrain/brain_RAM_20.pkl"
 trained_agent_rac_mybrain = "experiments/data/temp/rac_mybrain/brain_RAC_50.pkl"
 trained_agent_rac_dill = "experiments/data/trained_chkpt200/RAC_dill/brain_RAC_199.pkl"
 
 trained_agent_rac_mybrain50="curr_agents/RAC_MyBrain/brain_RAC_50.pkl"
-curr_agent_path = trained_agent_rac_mybrain50
+trained_agent_rac_mybrain70="curr_agents/RAC_MyBrain/brain_RAC_70.pkl"
+curr_agent_path = trained_agent_rac_mybrain70
 
 # brain = BrainBig(6)
 # brain = MyBrain(6)
 # brain = Brain(6)
 brain = MyBrain(6)
-reward_giver = MakespanRewardGiver(-1)
-# reward_giver = AverageCompletionRewardGiver()
-curr_reward_signal_name = "RAC_My50_"
+# reward_giver = MakespanRewardGiver(-1)
+reward_giver = AverageCompletionRewardGiver()
+curr_reward_signal_name = "RAC_My70"
 
 features_extract_func = features_extract_func
 features_normalize_func = features_normalize_func
@@ -357,7 +359,7 @@ def eval_DeepJS_data200(reward_type=curr_reward_signal_name):
     algorithm = RLAlgorithm(agent, reward_giver, features_extract_func=features_extract_func,
                             features_normalize_func=features_normalize_func)
     eval_dict = defaultdict(list)
-    print_progress = False
+    print_progress = True
     for job_chunk in range(start_job_no, eval_job_chunk):
         if print_progress:
             print(f"************* job_chunk: {job_chunk} ***************")
