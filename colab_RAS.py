@@ -62,8 +62,8 @@ name = '%s-%s-m%d' % (reward_giver.name, brain.name, machines_number)
 # model_dir = './agents/%s' % name
 
 # train_info_dir = './agents/training/avgCompletionReward'
-train_info_dir = '/content/drive/MyDrive/GoogleDrive/MyRepo/curr_agnets/RAS_MyBrain'
-# train_info_dir = 'curr_agents/RAS_MyBrain'
+# train_info_dir = '/content/drive/MyDrive/GoogleDrive/MyRepo/curr_agnets/RAS_MyBrain'
+train_info_dir = 'curr_agents/RAS_MyBrain'
 eval_info_dir = "agents/RAS"
 # train_info_dir = "/content/drive/MyDrive/GoogleDrive/MyRepo/"
 # ************************ Parameters Setting End ************************
@@ -188,7 +188,6 @@ def train_DeepJS_data200():
     print_progress = False
     for job_chunk in range(restore_point, n_job_chunk):
         print(f"********** Jobchunk {job_chunk}  ************")
-
         jobs_configs = csv_reader.generate(job_chunk * jobs_len, jobs_len, hist=hist)
         #
         # tic = time.time()
