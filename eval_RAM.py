@@ -14,7 +14,7 @@ from playground.Non_DAG.algorithm.tetris import Tetris
 from playground.Non_DAG.algorithm.first_fit import FirstFitAlgorithm
 from playground.Non_DAG.algorithm.DeepJS.DRL import RLAlgorithm
 from playground.Non_DAG.algorithm.DeepJS.agent import Agent
-from playground.Non_DAG.algorithm.DeepJS.brain import Brain, BrainSmall, BrainBig, MyBrain
+from playground.Non_DAG.algorithm.DeepJS.brain import Brain, BrainSmall, BrainBig, MyBrain,NewBrain
 
 from playground.Non_DAG.algorithm.DeepJS.reward_giver import MakespanRewardGiver, AverageCompletionRewardGiver, \
     AverageSlowDownRewardGiver
@@ -25,7 +25,6 @@ from playground.Non_DAG.utils.tools import multiprocessing_run, average_completi
 from playground.Non_DAG.utils.episode import Episode
 import pandas as pd
 from collections import defaultdict
-from tensorflow import keras
 import dill
 
 from playground.Non_DAG.utils.common_tokens import *
@@ -52,13 +51,13 @@ train_info_dir = 'experiments/data/temp/RAC_dill'
 eval_info_dir = "experiments/data/eval/temp_eval"
 
 trained_agent_brainbig = "curr_agents/RAM_Big/brain_RAM_20.pkl"
-trained_agent_mybrain = "curr_agents/RAM_MyBrain/brain_RAM_20.pkl"
+trained_agent_ram_mybrain50 = "curr_agents/RAM_MyBrain/brain_RAM_50.pkl"
 trained_agent_rac_mybrain = "experiments/data/temp/rac_mybrain/brain_RAC_50.pkl"
 trained_agent_rac_dill = "experiments/data/trained_chkpt200/RAC_dill/brain_RAC_199.pkl"
 
-trained_agent_rac_mybrain50="curr_agents/RAC_MyBrain/brain_RAC_50.pkl"
-trained_agent_rac_mybrain70="curr_agents/RAC_MyBrain/brain_RAC_70.pkl"
-curr_agent_path = trained_agent_rac_mybrain70
+trained_agent_rac_mybrain50 = "curr_agents/RAC_MyBrain/brain_RAC_50.pkl"
+trained_agent_rac_mybrain70 = "curr_agents/RAC_MyBrain/brain_RAC_70.pkl"
+curr_agent_path = trained_agent_ram_mybrain50
 
 # brain = BrainBig(6)
 # brain = MyBrain(6)
@@ -66,7 +65,7 @@ curr_agent_path = trained_agent_rac_mybrain70
 brain = MyBrain(6)
 # reward_giver = MakespanRewardGiver(-1)
 reward_giver = AverageCompletionRewardGiver()
-curr_reward_signal_name = "RAC_My70"
+curr_reward_signal_name = "RAM_My50"
 
 features_extract_func = features_extract_func
 features_normalize_func = features_normalize_func

@@ -14,7 +14,7 @@ from playground.Non_DAG.algorithm.tetris import Tetris
 from playground.Non_DAG.algorithm.first_fit import FirstFitAlgorithm
 from playground.Non_DAG.algorithm.DeepJS.DRL import RLAlgorithm
 from playground.Non_DAG.algorithm.DeepJS.agent import Agent
-from playground.Non_DAG.algorithm.DeepJS.brain import Brain, BrainSmall, BrainBig, MyBrain
+from playground.Non_DAG.algorithm.DeepJS.brain import Brain, BrainSmall, BrainBig, MyBrain,NewBrain
 
 from playground.Non_DAG.algorithm.DeepJS.reward_giver import MakespanRewardGiver, AverageCompletionRewardGiver, \
     AverageSlowDownRewardGiver
@@ -48,11 +48,11 @@ n_episode = 12
 jobs_csv = 'playground/Non_DAG/jobs_files/jobs.csv'
 # jobs_csv = '../jobs_files/jobs_2017.csv'
 
-brain = BrainBig(6)
+brain = NewBrain(6)
 # brain = BrainSmall(6)
 reward_giver = MakespanRewardGiver(-1)
 # reward_giver = AverageCompletionRewardGiver()
-curr_reward_signal_name = RAM
+curr_reward_signal_name = "RAM_NewBrain"
 
 features_extract_func = features_extract_func
 features_normalize_func = features_normalize_func
@@ -62,7 +62,9 @@ model_dir = './agents/%s' % name
 
 # train_info_dir = './agents/training/avgCompletionReward'
 # train_info_dir = 'agents/train200'
-train_info_dir = 'curr_agents/RAM_Big'
+# train_info_dir = 'curr_agents/RAM_Big'
+train_info_dir = 'curr_agents/RAM_NewBrain'
+train_info_dir = '/content/drive/MyDrive/GoogleDrive/MyRepo/RAM_NewBrain'
 eval_info_dir = "experiments/data/eval/raw"
 
 # trained_agent_path = "experiments/data/trained_chkpt200/RAM/model.ckpt-200"

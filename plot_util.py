@@ -871,6 +871,9 @@ def temp_exp_stats_diff_by_reward_single_reward_comparison_all_plots():
 def count_stats():
     df_eval_rac_dill = load_df("experiments/data/eval/temp_eval/hist_ram_dill_.csv")
     df_eval_rac_my50 = load_df("experiments/data/eval/temp_eval/hist_RAC_My50_.csv")
+    df_eval_rac_my70 = load_df("experiments/data/eval/temp_eval/hist_RAC_My70.csv")
+    df_eval_ram_50 = load_df("experiments/data/eval/temp_eval/hist_RAM_My50.csv")
+
     df_tetris = load_df("experiments/data/eval/hist_tetris.csv")
     df_random = load_df("experiments/data/eval/hist_random.csv")
     df_first_fit = load_df("experiments/data/eval/hist_first_fit.csv")
@@ -884,11 +887,16 @@ def count_stats():
     else:
         df_compare = df_eval_rac_dill
         df_compare = df_eval_rac_my50
+        df_compare = df_eval_rac_my70
+        df_compare = df_eval_ram_50
+
         dfs = [
             df_random,
             df_tetris, df_first_fit]
     curr_reward = "ram_dill__"
     curr_reward = "RAC_My50__"
+    curr_reward = "RAC_My70_"
+    curr_reward = "RAM_My50_"
     count_dict = defaultdict(list)
     metrics = [avg_makespans, avg_completions, avg_slowdowns]
 
@@ -945,7 +953,8 @@ if __name__ == '__main__':
 
 ### RAC MyBrain 50 trained
 {'random_avg_makespans_bigger': [138, 0.43125], 'random_avg_makespans_smaller': [114, 0.35625],
- 'random_avg_makespans_eq': [68, 0.2125], 'tetris_avg_makespans_bigger': [204, 0.6375],
+ 'random_avg_makespans_eq': [68, 0.2125],
+ 'tetris_avg_makespans_bigger': [204, 0.6375],
  'tetris_avg_makespans_smaller': [81, 0.253125], 'tetris_avg_makespans_eq': [35, 0.109375],
  'first_fit_avg_makespans_bigger': [208, 0.65], 'first_fit_avg_makespans_smaller': [79, 0.246875],
  'first_fit_avg_makespans_eq': [33, 0.103125], 'random_avg_completions_bigger': [141, 0.440625],
@@ -957,4 +966,37 @@ if __name__ == '__main__':
  'random_avg_slowdowns_eq': [7, 0.021875], 'tetris_avg_slowdowns_bigger': [71, 0.221875],
  'tetris_avg_slowdowns_smaller': [244, 0.7625], 'tetris_avg_slowdowns_eq': [5, 0.015625],
  'first_fit_avg_slowdowns_bigger': [26, 0.08125], 'first_fit_avg_slowdowns_smaller': [290, 0.90625],
+ 'first_fit_avg_slowdowns_eq': [4, 0.0125]}
+## RAC_my brain 70
+{'random_avg_makespans_bigger': [143, 0.446875], 'random_avg_makespans_smaller': [109, 0.340625],
+ 'random_avg_makespans_eq': [68, 0.2125],
+ 'tetris_avg_makespans_bigger': [202, 0.63125],
+ 'tetris_avg_makespans_smaller': [82, 0.25625], 'tetris_avg_makespans_eq': [36, 0.1125],
+ 'first_fit_avg_makespans_bigger': [211, 0.659375], 'first_fit_avg_makespans_smaller': [80, 0.25],
+ 'first_fit_avg_makespans_eq': [29, 0.090625], 'random_avg_completions_bigger': [141, 0.440625],
+ 'random_avg_completions_smaller': [171, 0.534375], 'random_avg_completions_eq': [8, 0.025],
+ 'tetris_avg_completions_bigger': [50, 0.15625], 'tetris_avg_completions_smaller': [265, 0.828125],
+ 'tetris_avg_completions_eq': [5, 0.015625], 'first_fit_avg_completions_bigger': [12, 0.0375],
+ 'first_fit_avg_completions_smaller': [303, 0.946875], 'first_fit_avg_completions_eq': [5, 0.015625],
+ 'random_avg_slowdowns_bigger': [166, 0.51875], 'random_avg_slowdowns_smaller': [147, 0.459375],
+ 'random_avg_slowdowns_eq': [7, 0.021875], 'tetris_avg_slowdowns_bigger': [71, 0.221875],
+ 'tetris_avg_slowdowns_smaller': [244, 0.7625], 'tetris_avg_slowdowns_eq': [5, 0.015625],
+ 'first_fit_avg_slowdowns_bigger': [28, 0.0875], 'first_fit_avg_slowdowns_smaller': [288, 0.9],
+ 'first_fit_avg_slowdowns_eq': [4, 0.0125]}
+
+### RAM_50
+{'random_avg_makespans_bigger': [140, 0.4375], 'random_avg_makespans_smaller': [109, 0.340625],
+ 'random_avg_makespans_eq': [71, 0.221875],
+ 'tetris_avg_makespans_bigger': [204, 0.6375],
+ 'tetris_avg_makespans_smaller': [82, 0.25625], 'tetris_avg_makespans_eq': [34, 0.10625],
+ 'first_fit_avg_makespans_bigger': [204, 0.6375], 'first_fit_avg_makespans_smaller': [84, 0.2625],
+ 'first_fit_avg_makespans_eq': [32, 0.1], 'random_avg_completions_bigger': [160, 0.5],
+ 'random_avg_completions_smaller': [152, 0.475], 'random_avg_completions_eq': [8, 0.025],
+ 'tetris_avg_completions_bigger': [51, 0.159375], 'tetris_avg_completions_smaller': [265, 0.828125],
+ 'tetris_avg_completions_eq': [4, 0.0125], 'first_fit_avg_completions_bigger': [13, 0.040625],
+ 'first_fit_avg_completions_smaller': [303, 0.946875], 'first_fit_avg_completions_eq': [4, 0.0125],
+ 'random_avg_slowdowns_bigger': [189, 0.590625], 'random_avg_slowdowns_smaller': [124, 0.3875],
+ 'random_avg_slowdowns_eq': [7, 0.021875], 'tetris_avg_slowdowns_bigger': [73, 0.228125],
+ 'tetris_avg_slowdowns_smaller': [243, 0.759375], 'tetris_avg_slowdowns_eq': [4, 0.0125],
+ 'first_fit_avg_slowdowns_bigger': [30, 0.09375], 'first_fit_avg_slowdowns_smaller': [286, 0.89375],
  'first_fit_avg_slowdowns_eq': [4, 0.0125]}
