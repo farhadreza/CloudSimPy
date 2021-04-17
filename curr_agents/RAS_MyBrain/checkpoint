@@ -1,2 +1,2 @@
-model_checkpoint_path: "chkpt_50_RAS_MyBrain.pkl-6"
-all_model_checkpoint_paths: "chkpt_50_RAS_MyBrain.pkl-6"
+model_checkpoint_path: "chkpt_80_RAS_MyBrain.pkl-3"
+all_model_checkpoint_paths: "chkpt_80_RAS_MyBrain.pkl-3"

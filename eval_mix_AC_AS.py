@@ -14,10 +14,10 @@ from playground.Non_DAG.algorithm.tetris import Tetris
 from playground.Non_DAG.algorithm.first_fit import FirstFitAlgorithm
 from playground.Non_DAG.algorithm.DeepJS.DRL import RLAlgorithm
 from playground.Non_DAG.algorithm.DeepJS.agent import Agent
-from playground.Non_DAG.algorithm.DeepJS.brain import Brain
+from playground.Non_DAG.algorithm.DeepJS.brain import Brain, MyBrain
 
 from playground.Non_DAG.algorithm.DeepJS.reward_giver import MakespanRewardGiver, AverageCompletionRewardGiver, \
-    AverageSlowDownRewardGiver
+    AverageSlowDownRewardGiver, AverageMix_RAC_RAS
 
 from playground.Non_DAG.utils.csv_reader import CSVReader
 from playground.Non_DAG.utils.feature_functions import features_extract_func, features_normalize_func
@@ -46,10 +46,12 @@ n_episode = 12
 jobs_csv = 'playground/Non_DAG/jobs_files/jobs.csv'
 # jobs_csv = '../jobs_files/jobs_2017.csv'
 
-brain = Brain(6)
-reward_giver = MakespanRewardGiver(-1)
+# brain = Brain(6)
+brain = MyBrain(6)
+# reward_giver = MakespanRewardGiver(-1)
+reward_giver = AverageMix_RAC_RAS()
 # reward_giver = AverageCompletionRewardGiver()
-curr_reward_signal_name = MIX_AC_AS
+curr_reward_signal_name = "MIX_ACAS_MyBrain60"
 
 features_extract_func = features_extract_func
 features_normalize_func = features_normalize_func
@@ -59,9 +61,9 @@ model_dir = './agents/%s' % name
 
 # train_info_dir = './agents/training/avgCompletionReward'
 train_info_dir = './agents/train80/avgMakespan'
-eval_info_dir = "experiments/data/eval/raw"
+eval_info_dir = "experiments/data/eval/temp_eval"
 
-trained_agent_path = "experiments/data/trained_chkpt200/MIX_AC_AS/chkpt_200_MIX_AC_AS.pkl-13"
+trained_agent_path = "curr_agents/MIX_ACAS/brain_MIX_AC_AS_MyBrain_60.pkl"
 # train_info_dir = "/content/drive/MyDrive/GoogleDrive/MyRepo/"
 # ************************ Parameters Setting End ************************
 
@@ -161,7 +163,7 @@ def save_eval_info(reward_type=curr_reward_signal_name):
 #                        avg_completion=average_completion(episode), avg_slowdown=average_slowdown(episode))
 
 
-save_chkpt_every = 20
+save_chkpt_every = 10
 
 
 def add_hist(name="", value=None):
@@ -290,7 +292,7 @@ def train_DeepJS_data200():
         agent.save()
 
 
-def eval_other_algos_data200(algo_name="", algorithm=None, save_dir=None, print_progress=False):
+def eval_other_algos_data200(algo_name="", algorithm=None, save_dir=None, print_progress=True):
     start_job_no = 201
     report_every = 10
     eval_dict = defaultdict(list)
@@ -338,7 +340,7 @@ def eval_DeepJS_data200(reward_type=curr_reward_signal_name):
     algorithm = RLAlgorithm(agent, reward_giver, features_extract_func=features_extract_func,
                             features_normalize_func=features_normalize_func)
     eval_dict = defaultdict(list)
-    print_progress = False
+    print_progress = True
     for job_chunk in range(start_job_no, eval_job_chunk):
         if print_progress:
             print(f"************* job_chunk: {job_chunk} ***************")
