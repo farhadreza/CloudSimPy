@@ -74,9 +74,9 @@ train_info_dir = "curr_agents/RAM_MyBrain"
 
 if not os.path.isdir(model_dir):
     os.makedirs(model_dir)
-restore_point = 51
+restore_point = 91
 save_chkpt_every = 10
-trained_agent_path = "curr_agents/RAM_MyBrain/brain_RAM_50.pkl"
+trained_agent_path = "curr_agents/RAM_MyBrain/brain_RAM_90.pkl"
 
 # agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
 #               model_save_path='%s/model.ckpt' % model_dir)

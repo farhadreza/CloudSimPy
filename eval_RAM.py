@@ -58,7 +58,8 @@ trained_agent_rac_dill = "experiments/data/trained_chkpt200/RAC_dill/brain_RAC_1
 trained_agent_rac_mybrain50 = "curr_agents/RAC_MyBrain/brain_RAC_50.pkl"
 trained_agent_rac_mybrain70 = "curr_agents/RAC_MyBrain/brain_RAC_70.pkl"
 trained_agent_rac_mybrain130 = "curr_agents/RAC_MyBrain/brain_RAC_130.pkl"
-curr_agent_path = trained_agent_rac_mybrain130
+trained_agent_rac_mybrain160 = "curr_agents/RAC_MyBrain/brain_RAC_160.pkl"
+curr_agent_path = trained_agent_rac_mybrain160
 
 # brain = BrainBig(6)
 # brain = MyBrain(6)
@@ -66,7 +67,7 @@ curr_agent_path = trained_agent_rac_mybrain130
 brain = MyBrain(6)
 # reward_giver = MakespanRewardGiver(-1)
 reward_giver = AverageCompletionRewardGiver()
-curr_reward_signal_name = "RAC_MyBrain130"
+curr_reward_signal_name = "RAC_MyBrain160"
 
 features_extract_func = features_extract_func
 features_normalize_func = features_normalize_func

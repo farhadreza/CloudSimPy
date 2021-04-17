@@ -875,6 +875,10 @@ def count_stats():
     df_eval_ram_50 = load_df("experiments/data/eval/temp_eval/hist_RAM_My50.csv")
     df_eval_ras_my50 = load_df("experiments/data/eval/temp_eval/hist_RAS_MyBrain50.csv")
     df_eval_rac_my130 = load_df("experiments/data/eval/temp_eval/hist_RAC_MyBrain130.csv")
+    df_eval_rac_my160 = load_df("experiments/data/eval/temp_eval/hist_RAC_MyBrain160.csv")
+    df_eval_mixacas_my60 = load_df("experiments/data/eval/temp_eval/hist_MIX_ACAS_MyBrain60.csv")
+    df_eval_ras_mybrain90=load_df("experiments/data/eval/temp_eval/hist_RAS_MyBrain90.csv")
+
 
     df_tetris = load_df("experiments/data/eval/hist_tetris.csv")
     df_random = load_df("experiments/data/eval/hist_random.csv")
@@ -903,6 +907,9 @@ def count_stats():
     df_compare = df_eval_ram_50[:range].copy()
     df_compare = df_eval_ras_my50[:range].copy()
     df_compare = df_eval_rac_my130[:range].copy()
+    df_compare = df_eval_rac_my160[:range].copy()
+    df_compare = df_eval_mixacas_my60[:range].copy()
+    df_compare = df_eval_ras_mybrain90[:range].copy()
     dfs = [
         df_random[:range].copy(),
         df_tetris[:range].copy(), df_first_fit[:range].copy()]
@@ -912,6 +919,9 @@ def count_stats():
     curr_reward = "RAM_My50_"
     curr_reward = "RAS_MyBrain50_"
     curr_reward = "RAC_MyBrain130_"
+    curr_reward = "RAC_MyBrain160_"
+    curr_reward = "MIX_ACAS_MyBrain60_"
+    curr_reward = "RAS_MyBrain90_"
 
     count_dict = defaultdict(list)
     metrics = [avg_makespans, avg_completions, avg_slowdowns]
@@ -924,12 +934,12 @@ def count_stats():
             df_smaller = df_curr[df_curr[curr_col] < df_compare[curr_reward + metric]]
             df_eq = df_curr[df_curr[curr_col] == df_compare[curr_reward + metric]]
             count_dict[curr_col + "_bigger"].append(len(df_bigger))
-            # count_dict[curr_col + "_smaller"].append(len(df_smaller))
-            # count_dict[curr_col + "_eq"].append(len(df_eq))
+            count_dict[curr_col + "_smaller"].append(len(df_smaller))
+            count_dict[curr_col + "_eq"].append(len(df_eq))
             # percent
             count_dict[curr_col + "_bigger"].append(len(df_bigger) / len(df_curr))
-            # count_dict[curr_col + "_smaller"].append(len(df_smaller) / len(df_curr))
-            # count_dict[curr_col + "_eq"].append(len(df_eq) / len(df_curr))
+            count_dict[curr_col + "_smaller"].append(len(df_smaller) / len(df_curr))
+            count_dict[curr_col + "_eq"].append(len(df_eq) / len(df_curr))
             # total time difference
             total_diff = df_curr[curr_col] - df_compare[curr_reward + metric]
             df_diff = pd.DataFrame(total_diff, columns=[curr_col + "_diff"])
@@ -942,11 +952,38 @@ def count_stats():
             # diff_stats(df_diff)
 
     print(count_dict)
+    print_latex_row(count_dict=count_dict, algo=algo_tetris)
+    print_latex_row(count_dict=count_dict, algo=algo_first_fit)
 
 
 def make_table(count_dict):
     df_stats = pd.DataFrame()
+    prefixes = [RAM, RAC, RAS, MIX_AC_AS]
+    suffixes = ["_smaller", "_eq"]
+    ## >, <, =, >percent, total, mean
+    # keys = ["tetris_avg_makespans_bigger", "first_fit_avg_makespans_bigger"]
+    # tetris_ls = count_dict[keys[0]]
+    # firstfit_ls = count_dict[keys[1]]
+    # tetris_latex = " & ".join(str(round(stat, ndigits=3)) for stat in tetris_ls)
+    # firstfit_latex = " & ".join(str(round(stat, ndigits=3)) for stat in firstfit_ls)
+    #
+    # print("tetries: ")
+    # print(tetris_latex)
+    # print("firstfit: ")
+    # print(firstfit_latex)
 
+
+def print_latex_row(count_dict, algo="tetris"):
+    suffix_bigger = "_avg_makespans_bigger"
+    suffix_smaller = "_avg_makespans_smaller"
+    suffix_eq = "_avg_makespans_eq"
+    bigger_ls = count_dict[algo + suffix_bigger]
+    smaller_ls = count_dict[algo + suffix_smaller]
+    eq_ls = count_dict[algo + suffix_eq]
+    ## >, <, =, >percent, total, mean
+    row_latex = f"{algo.capitalize()} & {bigger_ls[0]} & {smaller_ls[0]} & {eq_ls[0]} & {round(bigger_ls[2], ndigits=3)} & {round(bigger_ls[3], ndigits=3)}"
+    # print(algo.capitalize())
+    print(row_latex)
 
 
 def diff_stats(df_diff):
