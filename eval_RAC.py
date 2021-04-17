@@ -14,7 +14,7 @@ from playground.Non_DAG.algorithm.tetris import Tetris
 from playground.Non_DAG.algorithm.first_fit import FirstFitAlgorithm
 from playground.Non_DAG.algorithm.DeepJS.DRL import RLAlgorithm
 from playground.Non_DAG.algorithm.DeepJS.agent import Agent
-from playground.Non_DAG.algorithm.DeepJS.brain import Brain, BrainSmall
+from playground.Non_DAG.algorithm.DeepJS.brain import Brain, BrainSmall, MyBrain
 
 from playground.Non_DAG.algorithm.DeepJS.reward_giver import MakespanRewardGiver, AverageCompletionRewardGiver, \
     AverageSlowDownRewardGiver
@@ -47,10 +47,11 @@ jobs_csv = 'playground/Non_DAG/jobs_files/jobs.csv'
 # jobs_csv = '../jobs_files/jobs_2017.csv'
 
 # brain = Brain(6)
-brain = BrainSmall(6)
+# brain = BrainSmall(6)
+brain = MyBrain(6)
 reward_giver = AverageCompletionRewardGiver()
 # reward_giver = AverageCompletionRewardGiver()
-curr_reward_signal_name = RAC
+curr_reward_signal_name = "RAC_MyBrain50"
 
 features_extract_func = features_extract_func
 features_normalize_func = features_normalize_func
@@ -60,9 +61,9 @@ model_dir = './agents/%s' % name
 
 # train_info_dir = './agents/training/avgCompletionReward'
 train_info_dir = 'curr_agents/RAC'
-eval_info_dir = "experiments/data/eval"
+eval_info_dir = "curr_experiments/eval"
 
-trained_agent_path = "experiments/data/trained_chkpt200/brain_RAC_200.pkl"
+trained_agent_path = "curr_experiments/trained_agent/RAC_MyBrain_50.pkl"
 # train_info_dir = "/content/drive/MyDrive/GoogleDrive/MyRepo/"
 # ************************ Parameters Setting End ************************
 
@@ -339,7 +340,7 @@ def eval_DeepJS_data200(reward_type=curr_reward_signal_name):
     algorithm = RLAlgorithm(agent, reward_giver, features_extract_func=features_extract_func,
                             features_normalize_func=features_normalize_func)
     eval_dict = defaultdict(list)
-    print_progress = False
+    print_progress = True
     print(f"******* start evaluating *********")
     for job_chunk in range(start_job_no, eval_job_chunk):
         if print_progress:

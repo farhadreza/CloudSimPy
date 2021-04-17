@@ -51,7 +51,7 @@ brain = MyBrain(6)
 # reward_giver = MakespanRewardGiver(-1)
 reward_giver = AverageMix_RAC_RAS()
 # reward_giver = AverageCompletionRewardGiver()
-curr_reward_signal_name = "MIX_ACAS_MyBrain60"
+curr_reward_signal_name = "MIX_ACAS_MyBrain50"
 
 features_extract_func = features_extract_func
 features_normalize_func = features_normalize_func
@@ -61,9 +61,9 @@ model_dir = './agents/%s' % name
 
 # train_info_dir = './agents/training/avgCompletionReward'
 train_info_dir = './agents/train80/avgMakespan'
-eval_info_dir = "experiments/data/eval/temp_eval"
+eval_info_dir = "curr_experiments/eval"
 
-trained_agent_path = "curr_agents/MIX_ACAS/brain_MIX_AC_AS_MyBrain_60.pkl"
+trained_agent_path = "curr_experiments/trained_agent/MIX_AC_AS_MyBrain_50.pkl"
 # train_info_dir = "/content/drive/MyDrive/GoogleDrive/MyRepo/"
 # ************************ Parameters Setting End ************************
 

@@ -51,7 +51,7 @@ train_info_dir = 'experiments/data/temp/RAC_dill'
 eval_info_dir = "experiments/data/eval/temp_eval"
 
 trained_agent_brainbig = "curr_agents/RAM_Big/brain_RAM_20.pkl"
-trained_agent_ram_mybrain50 = "curr_agents/RAM_MyBrain/brain_RAM_50.pkl"
+# trained_agent_ram_mybrain50 = "curr_agents/RAM_MyBrain/brain_RAM_50.pkl"
 trained_agent_rac_mybrain = "experiments/data/temp/rac_mybrain/brain_RAC_50.pkl"
 trained_agent_rac_dill = "experiments/data/trained_chkpt200/RAC_dill/brain_RAC_199.pkl"
 
@@ -59,15 +59,16 @@ trained_agent_rac_mybrain50 = "curr_agents/RAC_MyBrain/brain_RAC_50.pkl"
 trained_agent_rac_mybrain70 = "curr_agents/RAC_MyBrain/brain_RAC_70.pkl"
 trained_agent_rac_mybrain130 = "curr_agents/RAC_MyBrain/brain_RAC_130.pkl"
 trained_agent_rac_mybrain160 = "curr_agents/RAC_MyBrain/brain_RAC_160.pkl"
-curr_agent_path = trained_agent_rac_mybrain160
+trained_agent_ram_mybrain50 = "curr_experiments/trained_agent/RAM_MyBrain_50.pkl"
+curr_agent_path = trained_agent_ram_mybrain50
 
 # brain = BrainBig(6)
 # brain = MyBrain(6)
 # brain = Brain(6)
 brain = MyBrain(6)
-# reward_giver = MakespanRewardGiver(-1)
-reward_giver = AverageCompletionRewardGiver()
-curr_reward_signal_name = "RAC_MyBrain160"
+reward_giver = MakespanRewardGiver(-1)
+# reward_giver = AverageCompletionRewardGiver()
+curr_reward_signal_name = "RAM_MyBrain50"
 
 features_extract_func = features_extract_func
 features_normalize_func = features_normalize_func
