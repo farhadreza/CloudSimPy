@@ -68,14 +68,15 @@ eval_info_dir = "experiments/data/eval"
 # trained_agent_path = "experiments/data/trained_chkpt200/RAM/model.ckpt-200"
 
 
-train_info_dir = "/content/drive/MyDrive/GoogleDrive/MyRepo/curr_agents/RAM_MyBrain"
+# train_info_dir = "/content/drive/MyDrive/GoogleDrive/My/Repo/curr_agents/RAM_MyBrain"
+train_info_dir = "curr_agents/RAM_MyBrain"
 # ************************ Parameters Setting End ************************
 
 if not os.path.isdir(model_dir):
     os.makedirs(model_dir)
-restore_point = 0
+restore_point = 51
 save_chkpt_every = 10
-trained_agent_path = None
+trained_agent_path = "curr_agents/RAM_MyBrain/brain_RAM_50.pkl"
 
 # agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
 #               model_save_path='%s/model.ckpt' % model_dir)
@@ -190,51 +191,51 @@ def train_DeepJS_data200():
     for job_chunk in range(restore_point, n_job_chunk):
         print(f"************ Job_chunk: {job_chunk} ***************")
         jobs_configs = csv_reader.generate(job_chunk * jobs_len, jobs_len, hist=hist)
-
-        tic = time.time()
-        algorithm = RandomAlgorithm()
-        episode = Episode(machine_configs, jobs_configs, algorithm, None)
-        episode.run()
-        # add_train_stats_to_hist(algo_random,)
-        hist["random_tictoc"].append(time.time() - tic)
-        hist["random_avg_makespans"].append(episode.env.now)
-        hist["makespan-random_env_now"].append(episode.env.now)
-        hist["random_global_step"].append(agent.global_step)
-        hist["random_avg_completions"].append(average_completion(episode))
-        hist["random_avg_slowdowns"].append(average_slowdown(episode))
-        if print_progress:
-            # print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
-            agent.log('makespan-random', episode.env.now, agent.global_step)
-
-        tic = time.time()
-        algorithm = FirstFitAlgorithm()
-        episode = Episode(machine_configs, jobs_configs, algorithm, None)
-        episode.run()
-        hist["first_fit_tictoc"].append(time.time() - tic)
-        hist["first_fit_avg_makespans"].append(episode.env.now)
-        hist["makespan-ff_env_now"].append(episode.env.now)
-        hist["first_fit_global_step"].append(agent.global_step)
-        hist["first_fit_avg_completions"].append(average_completion(episode))
-        hist["first_fit_avg_slowdowns"].append(average_slowdown(episode))
-        if print_progress:
-            # print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
-            agent.log('makespan-ff', episode.env.now, agent.global_step)
+        #
+        # tic = time.time()
+        # algorithm = RandomAlgorithm()
+        # episode = Episode(machine_configs, jobs_configs, algorithm, None)
+        # episode.run()
+        # # add_train_stats_to_hist(algo_random,)
+        # hist["random_tictoc"].append(time.time() - tic)
+        # hist["random_avg_makespans"].append(episode.env.now)
+        # hist["makespan-random_env_now"].append(episode.env.now)
+        # hist["random_global_step"].append(agent.global_step)
+        # hist["random_avg_completions"].append(average_completion(episode))
+        # hist["random_avg_slowdowns"].append(average_slowdown(episode))
+        # if print_progress:
+        #     # print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
+        #     agent.log('makespan-random', episode.env.now, agent.global_step)
+        #
+        # tic = time.time()
+        # algorithm = FirstFitAlgorithm()
+        # episode = Episode(machine_configs, jobs_configs, algorithm, None)
+        # episode.run()
+        # hist["first_fit_tictoc"].append(time.time() - tic)
+        # hist["first_fit_avg_makespans"].append(episode.env.now)
         # hist["makespan-ff_env_now"].append(episode.env.now)
-        # hist["makespan-ff_global_step"].append(agent.global_step)
-
-        tic = time.time()
-        algorithm = Tetris()
-        episode = Episode(machine_configs, jobs_configs, algorithm, None)
-        episode.run()
-        hist["tetris_tictoc"].append(time.time() - tic)
-        hist["tetris_avg_makespans"].append(episode.env.now)
-        hist["makespan-tetris_env_now"].append(episode.env.now)
-        hist["tetris_global_step"].append(agent.global_step)
-        hist["tetris_avg_completions"].append(average_completion(episode))
-        hist["tetris_avg_slowdowns"].append(average_slowdown(episode))
-        if print_progress:
-            # print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
-            agent.log('makespan-tetris', episode.env.now, agent.global_step)
+        # hist["first_fit_global_step"].append(agent.global_step)
+        # hist["first_fit_avg_completions"].append(average_completion(episode))
+        # hist["first_fit_avg_slowdowns"].append(average_slowdown(episode))
+        # if print_progress:
+        #     # print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
+        #     agent.log('makespan-ff', episode.env.now, agent.global_step)
+        # # hist["makespan-ff_env_now"].append(episode.env.now)
+        # # hist["makespan-ff_global_step"].append(agent.global_step)
+        #
+        # tic = time.time()
+        # algorithm = Tetris()
+        # episode = Episode(machine_configs, jobs_configs, algorithm, None)
+        # episode.run()
+        # hist["tetris_tictoc"].append(time.time() - tic)
+        # hist["tetris_avg_makespans"].append(episode.env.now)
+        # hist["makespan-tetris_env_now"].append(episode.env.now)
+        # hist["tetris_global_step"].append(agent.global_step)
+        # hist["tetris_avg_completions"].append(average_completion(episode))
+        # hist["tetris_avg_slowdowns"].append(average_slowdown(episode))
+        # if print_progress:
+        #     # print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
+        #     agent.log('makespan-tetris', episode.env.now, agent.global_step)
 
         for itr in range(n_iter):
             tic = time.time()
