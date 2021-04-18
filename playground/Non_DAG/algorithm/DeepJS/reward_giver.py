@@ -72,7 +72,7 @@ class MyAverageCompletionRewardGiver(RewardGiver):
         cluster = self.simulation.cluster
         unfinished_task_len = len(cluster.unfinished_tasks)
         reward = 0
-        for task in cluster.unfinished_task:
+        for task in cluster.unfinished_tasks:
             reward += 1 / (task.finished_timestamp - task.started_timestamp)
         return reward
 
