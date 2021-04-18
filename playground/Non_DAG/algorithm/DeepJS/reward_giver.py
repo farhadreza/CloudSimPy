@@ -64,6 +64,19 @@ class AverageCompletionRewardGiver(RewardGiver):
         return - unfinished_task_len
 
 
+class MyAverageCompletionRewardGiver(RewardGiver):
+    name = 'My_AC'
+
+    def get_reward(self):
+        super().get_reward()
+        cluster = self.simulation.cluster
+        unfinished_task_len = len(cluster.unfinished_tasks)
+        reward = 0
+        for task in cluster.unfinished_task:
+            reward += 1 / (task.finished_timestamp - task.started_timestamp)
+        return reward
+
+
 class AverageMix_RAC_RAS(RewardGiver):
     name = "Mix_AC_AS"
 
@@ -74,6 +87,21 @@ class AverageMix_RAC_RAS(RewardGiver):
         reward = 0
         for task in unfinished_tasks:
             reward += (- 1 / task.task_config.duration)
+        unfinished_task_len = len(cluster.unfinished_tasks)
+        reward -= unfinished_task_len
+        return reward
+
+
+class MyAverageMix_RAC_RAS(RewardGiver):
+    name = "My_Mix_AC_AS"
+
+    def get_reward(self):
+        super().get_reward()
+        cluster = self.simulation.cluster
+        unfinished_tasks = cluster.unfinished_tasks
+        reward = 0
+        for task in unfinished_tasks:
+            reward += (1 / task.task_config.duration)
         unfinished_task_len = len(cluster.unfinished_tasks)
         reward -= unfinished_task_len
         return reward

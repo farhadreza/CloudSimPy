@@ -48,10 +48,11 @@ jobs_csv = 'playground/Non_DAG/jobs_files/jobs.csv'
 
 # brain = Brain(6)
 brain = MyBrain(6)
-reward_giver = AverageSlowDownRewardGiver()
+# reward_giver = AverageSlowDownRewardGiver()
+reward_giver = MyAverageSlowDownRewardGiver()
 # reward_giver = MyAverageSlowDownRewardGiver()
 # reward_giver = AverageCompletionRewardGiver()
-curr_reward_signal_name = "RAS_MyBrain100"
+curr_reward_signal_name = "RAS_MyRAS_Signal"
 
 features_extract_func = features_extract_func
 features_normalize_func = features_normalize_func
@@ -61,10 +62,10 @@ model_dir = './agents/%s' % name
 
 # train_info_dir = './agents/training/avgCompletionReward'
 train_info_dir = './agents/train80/avgMakespan'
-eval_info_dir = "curr_experiments/eval"
-eval_info_dir = "curr_experiments/eval/brain100"
+# eval_info_dir = "curr_experiments/eval"
+eval_info_dir = "curr_agents/MyRAS_Signal"
 
-trained_agent_path = "curr_agents/RAS_MyBrain/brain_RAS_MyBrain_100.pkl"
+trained_agent_path = "curr_agents/MyRAS_Signal/brain_My_RAS_30.pkl"
 # trained_agent_path = "experiments/data/trained_chkpt200/RAS/chkpt_190_RAS.pkl-32"
 # train_info_dir = "/content/drive/MyDrive/GoogleDrive/MyRepo/"
 # ************************ Parameters Setting End ************************
@@ -75,7 +76,7 @@ if not os.path.isdir(model_dir):
 # agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
 #               model_save_path='%s/model.ckpt' % model_dir)
 agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
-              model_save_path='%s/model.ckpt' % train_info_dir,restore_path=trained_agent_path)
+              model_save_path='%s/model.ckpt' % train_info_dir, restore_path=trained_agent_path)
 
 machine_configs = [MachineConfig(64, 1, 1) for i in range(machines_number)]
 csv_reader = CSVReader(jobs_csv)

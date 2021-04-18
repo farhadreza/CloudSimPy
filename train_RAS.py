@@ -53,7 +53,7 @@ brain = MyBrain(6)
 # reward_giver = AverageCompletionRewardGiver()
 reward_giver = AverageSlowDownRewardGiver()
 # reward_giver = MyAverageSlowDownRewardGiver()
-curr_reward_signal_name = "RAS_MyBrain"
+curr_reward_signal_name = "RAS_MyRAS_Signal"
 
 features_extract_func = features_extract_func
 features_normalize_func = features_normalize_func
@@ -63,7 +63,7 @@ name = '%s-%s-m%d' % (reward_giver.name, brain.name, machines_number)
 
 # train_info_dir = './agents/training/avgCompletionReward'
 # train_info_dir = '/content/drive/MyDrive/GoogleDrive/MyRepo/agent_RAS'
-train_info_dir = 'curr_agents/RAS_MyBrain'
+train_info_dir = 'curr_agents/MyRAS_Signal'
 eval_info_dir = "agents/RAS"
 # train_info_dir = "/content/drive/MyDrive/GoogleDrive/MyRepo/"
 # ************************ Parameters Setting End ************************
@@ -73,13 +73,13 @@ eval_info_dir = "agents/RAS"
 
 # agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
 #               model_save_path='%s/model.ckpt' % model_dir)
-restore_point = 51
+restore_point = 31
 save_chkpt_every = 10
 
 # restore_path = "/content/drive/MyDrive/GoogleDrive/MyRepo/agent_RAS/chkpt_50_RAS.pkl-56"
 # restore_path = "agents/RAS/chkpt_50_RAS.pkl-112"
 # restore_path = "agents/RAS/chkpt_160_RAS.pkl-65"
-restore_path = "curr_agents/RAS_MyBrain/brain_RAS_MyBrain_50.pkl"
+restore_path = "curr_agents/MyRAS_Signal/brain_My_RAS_30.pkl"
 agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
               model_save_path='%s/model.ckpt' % train_info_dir, restore_path=restore_path)
 

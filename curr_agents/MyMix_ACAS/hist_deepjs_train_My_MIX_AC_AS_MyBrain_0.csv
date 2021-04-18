@@ -1,0 +1,11 @@
+,My_MIX_AC_AS_MyBrain_avg_makespans,My_MIX_AC_AS_MyBrain_avg_completions,My_MIX_AC_AS_MyBrain_avg_slowdowns,My_MIX_AC_AS_MyBrain_global_step,My_MIX_AC_AS_MyBrain_tictoc
+0,653.4166666666666,152.27997513029274,2.9907753567200053,"<tf.Variable 'global_step:0' shape=() dtype=int64, numpy=600>",9.327934265136719
+1,650.25,154.91527978979096,3.043248647366095,"<tf.Variable 'global_step:0' shape=() dtype=int64, numpy=600>",10.087625980377197
+2,649.75,154.3928783560992,3.0282505855158646,"<tf.Variable 'global_step:0' shape=() dtype=int64, numpy=600>",9.166461944580078
+3,651.25,154.41796796183397,3.0296759607619577,"<tf.Variable 'global_step:0' shape=() dtype=int64, numpy=600>",10.0106520652771
+4,648.9166666666666,153.2029141983931,2.9896062572495707,"<tf.Variable 'global_step:0' shape=() dtype=int64, numpy=600>",8.812891960144043
+5,650.25,154.18409699409202,3.0165302979494797,"<tf.Variable 'global_step:0' shape=() dtype=int64, numpy=600>",8.10462498664856
+6,649.25,154.30596079337516,3.0270650808734523,"<tf.Variable 'global_step:0' shape=() dtype=int64, numpy=600>",9.051426887512207
+7,649.25,156.0882188578913,3.0760410919750374,"<tf.Variable 'global_step:0' shape=() dtype=int64, numpy=600>",13.72612977027893
+8,649.1666666666666,155.3534518328017,3.0786874983778154,"<tf.Variable 'global_step:0' shape=() dtype=int64, numpy=600>",8.470232725143433
+9,647.3333333333334,155.18857728083037,3.0857243581795033,"<tf.Variable 'global_step:0' shape=() dtype=int64, numpy=600>",8.563010931015015

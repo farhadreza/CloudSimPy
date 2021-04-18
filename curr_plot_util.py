@@ -992,7 +992,8 @@ def count_stats100():
     df_tetris, df_first_fit = get_df_eval_other()
     df_random = load_df("curr_experiments/eval/hist_random.csv")
 
-    df_curr=load_df("curr_experiments/eval/brain100/hist_RAS_MyBrain100.csv")
+    # df_curr=load_df("curr_experiments/eval/brain100/hist_RAS_MyBrain100.csv")
+    df_curr=load_df("curr_agents/MyRAS_Signal/hist_RAS_MyRAS_Signal.csv")
 
     # df_compare = df_ram50
     # df_compare = df_rac50
@@ -1007,6 +1008,7 @@ def count_stats100():
 
     curr_reward = "RAS_MyBrain100_"
     # curr_reward = "MIX_ACAS_MyBrain50_"
+    curr_reward = "RAS_MyRAS_Signal_"
 
     count_dict = defaultdict(list)
     metrics = [avg_makespans, avg_completions, avg_slowdowns]

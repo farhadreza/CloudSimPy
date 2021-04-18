@@ -17,7 +17,7 @@ from playground.Non_DAG.algorithm.DeepJS.agent import Agent
 from playground.Non_DAG.algorithm.DeepJS.brain import Brain, MyBrain, NewBrain
 
 from playground.Non_DAG.algorithm.DeepJS.reward_giver import MakespanRewardGiver, AverageCompletionRewardGiver, \
-    AverageSlowDownRewardGiver, AverageMix_RAC_RAS
+    AverageSlowDownRewardGiver, AverageMix_RAC_RAS,MyAverageMix_RAC_RAS
 
 from playground.Non_DAG.utils.csv_reader import CSVReader
 from playground.Non_DAG.utils.feature_functions import features_extract_func, features_normalize_func
@@ -48,8 +48,9 @@ jobs_csv = 'playground/Non_DAG/jobs_files/jobs.csv'
 # brain = Brain(6)
 brain = MyBrain(6)
 # reward_giver = MakespanRewardGiver(-1)
-reward_giver = AverageMix_RAC_RAS()
-curr_reward_signal_name = "MIX_AC_AS_MyBrain"
+# reward_giver = AverageMix_RAC_RAS()
+reward_giver = MyAverageMix_RAC_RAS()
+curr_reward_signal_name = "My_MIX_AC_AS_MyBrain"
 
 features_extract_func = features_extract_func
 features_normalize_func = features_normalize_func
@@ -57,7 +58,7 @@ features_normalize_func = features_normalize_func
 name = '%s-%s-m%d' % (reward_giver.name, brain.name, machines_number)
 # model_dir = './agents/%s' % name
 
-train_info_dir = 'curr_agents/MIX_ACAS'
+train_info_dir = 'curr_agents/MyMix_ACAS'
 # train_info_dir = '/content/drive/MyDrive/MIX_RAC_RAS'
 eval_info_dir = "agents/MIX_AC_AS"
 # train_info_dir = "/content/drive/MyDrive/GoogleDrive/MyRepo/"
@@ -68,10 +69,10 @@ eval_info_dir = "agents/MIX_AC_AS"
 
 # agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
 #               model_save_path='%s/model.ckpt' % model_dir)
-restore_point = 71
+restore_point = 0
 # restore_path = "/content/drive/MyDrive/GoogleDrive/MyRepo/agent_RAC/chkpt_60_RAC.pkl-67"  # restore last trained checkpoint
 # restore_path = "agents/RAC/chkpt_60_RAC.pkl-67"
-restore_path = "curr_agents/MIX_ACAS/brain_MIX_AC_AS_MyBrain_70.pkl"
+restore_path = None
 agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
               model_save_path='%s/model.ckpt' % train_info_dir, restore_path=restore_path)
 
