@@ -48,11 +48,11 @@ n_episode = 12
 jobs_csv = 'playground/Non_DAG/jobs_files/jobs.csv'
 # jobs_csv = '../jobs_files/jobs_2017.csv'
 
-brain = NewBrain(6)
+brain = MyBrain(6)
 # brain = BrainSmall(6)
 reward_giver = MakespanRewardGiver(-1)
 # reward_giver = AverageCompletionRewardGiver()
-curr_reward_signal_name = "RAM_NewBrain"
+curr_reward_signal_name = "RAM_MyBrain"
 
 features_extract_func = features_extract_func
 features_normalize_func = features_normalize_func
@@ -63,18 +63,18 @@ model_dir = './agents/%s' % name
 # train_info_dir = './agents/training/avgCompletionReward'
 # train_info_dir = 'agents/train200'
 # train_info_dir = 'curr_agents/RAM_Big'
-train_info_dir = 'curr_agents/RAM_NewBrain'
-# train_info_dir = '/content/drive/MyDrive/GoogleDrive/MyRepo/RAM_NewBrain'
+# train_info_dir = 'curr_agents/RAM_NewBrain'
+train_info_dir = '/content/drive/MyDrive/GoogleDrive/MyRepo/RAM_MyBrain'
 eval_info_dir = "experiments/data/eval/raw"
 
 # trained_agent_path = "experiments/data/trained_chkpt200/RAM/model.ckpt-200"
-trained_agent_path = None
+trained_agent_path = "curr_agents/RAM_MyBrain/brain_RAM_90.pkl"
 # train_info_dir = "/content/drive/MyDrive/GoogleDrive/MyRepo/"
 # ************************ Parameters Setting End ************************
 
 if not os.path.isdir(model_dir):
     os.makedirs(model_dir)
-restore_point = 0
+restore_point = 91
 save_chkpt_every = 10
 # agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
 #               model_save_path='%s/model.ckpt' % model_dir)

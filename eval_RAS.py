@@ -52,7 +52,7 @@ brain = MyBrain(6)
 reward_giver = MyAverageSlowDownRewardGiver()
 # reward_giver = MyAverageSlowDownRewardGiver()
 # reward_giver = AverageCompletionRewardGiver()
-curr_reward_signal_name = "RAS_MyRAS_Signal"
+curr_reward_signal_name = "RAS_MyRAS_Signal40"
 
 features_extract_func = features_extract_func
 features_normalize_func = features_normalize_func
@@ -65,7 +65,7 @@ train_info_dir = './agents/train80/avgMakespan'
 # eval_info_dir = "curr_experiments/eval"
 eval_info_dir = "curr_agents/MyRAS_Signal"
 
-trained_agent_path = "curr_agents/MyRAS_Signal/brain_My_RAS_30.pkl"
+trained_agent_path = "curr_agents/MyRAS_Signal/brain_RAS_MyRAS_Signal_40.pkl"
 # trained_agent_path = "experiments/data/trained_chkpt200/RAS/chkpt_190_RAS.pkl-32"
 # train_info_dir = "/content/drive/MyDrive/GoogleDrive/MyRepo/"
 # ************************ Parameters Setting End ************************
