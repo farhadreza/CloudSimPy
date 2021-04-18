@@ -987,6 +987,60 @@ def count_stats():
 #     # print("firstfit: ")
 #     # print(firstfit_latex)
 
+def count_stats100():
+    df_ram50, df_rac50, df_ras50, df_mixacas50 = get_df_eval50()
+    df_tetris, df_first_fit = get_df_eval_other()
+    df_random = load_df("curr_experiments/eval/hist_random.csv")
+
+    df_curr=load_df("curr_experiments/eval/brain100/hist_RAS_MyBrain100.csv")
+
+    # df_compare = df_ram50
+    # df_compare = df_rac50
+    # df_compare = df_ras50
+    df_compare = df_curr
+    dfs = [
+        df_random,
+        df_tetris, df_first_fit
+    ]
+    curr_reward = "RAM_MyBrain50_"
+    curr_reward = "RAC_MyBrain50_"
+
+    curr_reward = "RAS_MyBrain100_"
+    # curr_reward = "MIX_ACAS_MyBrain50_"
+
+    count_dict = defaultdict(list)
+    metrics = [avg_makespans, avg_completions, avg_slowdowns]
+
+    for metric in metrics:
+        for df_curr in dfs:
+            cols = df_curr.columns.values.tolist()
+            curr_col = [curr_col for curr_col in cols if curr_col.endswith(metric)][0]
+            df_bigger = df_curr[df_curr[curr_col] > df_compare[curr_reward + metric]]
+            df_smaller = df_curr[df_curr[curr_col] < df_compare[curr_reward + metric]]
+            df_eq = df_curr[df_curr[curr_col] == df_compare[curr_reward + metric]]
+            count_dict[curr_col + "_bigger"].append(len(df_bigger))
+            count_dict[curr_col + "_smaller"].append(len(df_smaller))
+            count_dict[curr_col + "_eq"].append(len(df_eq))
+            # percent
+            count_dict[curr_col + "_bigger"].append(len(df_bigger) / len(df_curr))
+            count_dict[curr_col + "_smaller"].append(len(df_smaller) / len(df_curr))
+            count_dict[curr_col + "_eq"].append(len(df_eq) / len(df_curr))
+            # total time difference
+            total_diff = df_curr[curr_col] - df_compare[curr_reward + metric]
+            df_diff = pd.DataFrame(total_diff, columns=[curr_col + "_diff"])
+            # count_dict[curr_col + "_diff"].append(sum(df_diff.sum(axis=1)))
+            count_dict[curr_col + "_bigger"].append(
+                sum(df_diff.sum(axis=1)))  # third element in the list is total time saved
+            count_dict[curr_col + "_bigger"].append(
+                sum(df_diff.sum(axis=1)) / len(df_diff))  # fourth element is the mean increase
+            # count_dict[curr_col + "_mean"].append(sum(df_diff.sum(axis=1)) / len(df_diff))
+            # diff_stats(df_diff)
+
+    print(count_dict)
+    print_latex_row(count_dict=count_dict, algo=algo_tetris)
+    print_latex_row(count_dict=count_dict, algo=algo_first_fit)
+
+
 
 def print_latex_row(count_dict, algo="tetris"):
     suffix_bigger = "_avg_makespans_bigger"
@@ -1018,6 +1072,7 @@ if __name__ == '__main__':
     # exp_stats_diff_by_reward_all_plots()
     # temp_exp_results_by_reward_all_plots()
     # temp_exp_stats_diff_by_reward_single_reward_comparison_all_plots()
-    temp_exp_stats_diff_by_reward_single_reward_comparison_all_plots()
+    # temp_exp_stats_diff_by_reward_single_reward_comparison_all_plots()
     # exp_results_by_reward_all_plots()
     # collect_df_corrs()
+    count_stats100()
