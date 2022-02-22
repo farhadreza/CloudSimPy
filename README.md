@@ -70,8 +70,7 @@ The strategy mode is also used in `layground/DAG/algorithm/DeepJS/reward_giver.p
 
 ## Papers using CloudSimPy
 1. Md Farhadur Reza and Bo Zhao, “Deep Reinforcement Learning with Different Rewards for Scheduling in High-Performance Computing Systems”, In Proceedings of 64th IEEE International Midwest Symposium on Circuits & Systems (MWSCAS), USA, August 2021 (https://ieeexplore.ieee.org/abstract/document/9531852)
-2. 
-3. [DeepJS: Job Scheduling Based on Deep Reinforcement Learning in Cloud Data Center](./playground/paper/F0049-4.19.pdf)
+2. [DeepJS: Job Scheduling Based on Deep Reinforcement Learning in Cloud Data Center](./playground/paper/F0049-4.19.pdf)
 
 ## Run examples
 #### Requirements
