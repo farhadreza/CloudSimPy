@@ -76,7 +76,7 @@ The strategy mode is also used in `layground/DAG/algorithm/DeepJS/reward_giver.p
 #### Requirements
 1. Python 3.6
 2. SimPy 3.0.11
-3. TensorFlow 1.12.0
+3. TensorFlow 1.13.1
 4. Numpy 1.15.3
 5. Pandas 0.23.4
 #### Install and run
