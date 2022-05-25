@@ -31,8 +31,8 @@ tf.random.set_random_seed(41)
 machines_number = 1
 jobs_len = 1
 n_iter = 30
-#jobs_csv = 'playground/DAG/jobs_files/jobs.csv'
-jobs_csv = 'playground/Non_DAG/jobs_files/jobs.csv'
+jobs_csv = 'playground/DAG/jobs_files/jobs.csv'
+#jobs_csv = 'playground/Non_DAG/jobs_files/jobs.csv'
 #jobs_csv = '../jobs_files/job.csv'
 
 brain = BrainSmall(14)
