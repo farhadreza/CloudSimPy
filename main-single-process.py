@@ -2,6 +2,7 @@ import os
 import time
 import numpy as np
 import tensorflow as tf
+from multiprocessing import Process, Manager
 import sys
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = '3'
@@ -23,7 +24,8 @@ from playground.DAG.algorithm.DeepJS.reward_giver import MakespanRewardGiver, Av
 
 from playground.DAG.utils.csv_reader import CSVReader
 from playground.DAG.utils.feature_functions import features_extract_func_ac, features_normalize_func_ac
-from playground.auxiliary.tools import average_completion, average_slowdown
+from playground.auxiliary.tools import average_completion, average_slowdown, multiprocessing_run
+#from playground.Non_DAG.utils.tools import multiprocessing_run, average_completion, average_slowdown
 from playground.DAG.adapter.episode import Episode
 
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
@@ -99,10 +101,18 @@ def algo_deep_js():
         all_actions = []
         all_rewards = []
 
-        makespans = []
-        average_completions = []
-        average_slowdowns = []
-        trajectories = []
+        #makespans = []
+        #average_completions = []
+        #average_slowdowns = []
+        #trajectories = []
+        
+        processes = []
+
+        manager = Manager()
+        trajectories = manager.list([])
+        makespans = manager.list([])
+        average_completions = manager.list([])
+        average_slowdowns = manager.list([])
 
         tic = time.time()
         for i in range(12):
@@ -110,12 +120,23 @@ def algo_deep_js():
                                     features_normalize_func=features_normalize_func)
             episode = Episode(machine_configs, jobs_configs, algorithm, None)
             algorithm.reward_giver.attach(episode.simulation)
-            episode.run()
-            trajectories.append(episode.simulation.scheduler.algorithm.current_trajectory)
-            makespans.append(episode.simulation.env.now)
-            average_completions.append(average_completion(episode))
-            average_slowdowns.append(average_slowdown(episode))
+            #episode.run()
+            #trajectories.append(episode.simulation.scheduler.algorithm.current_trajectory)
+            #makespans.append(episode.simulation.env.now)
+            #average_completions.append(average_completion(episode))
+            #average_slowdowns.append(average_slowdown(episode))
+            
+            p = Process(target=multiprocessing_run,
+                args=(episode, trajectories, makespans, average_completions, average_slowdowns))
 
+              processes.append(p)
+
+        for p in processes:
+            p.start()
+
+        for p in processes:
+            p.join()
+            
         agent.log('makespan', np.mean(makespans), agent.global_step)
         agent.log('average_completions', np.mean(average_completions), agent.global_step)
         agent.log('average_slowdowns', np.mean(average_slowdowns), agent.global_step)
