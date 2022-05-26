@@ -16,7 +16,10 @@ from playground.DAG.algorithm.heuristics.max_weight import MaxWeightAlgorithm
 from playground.DAG.algorithm.DeepJS.DRL import RLAlgorithm
 from playground.DAG.algorithm.DeepJS.agent import Agent
 from playground.DAG.algorithm.DeepJS.brain import BrainSmall
-from playground.DAG.algorithm.DeepJS.reward_giver import MakespanRewardGiver
+#from playground.DAG.algorithm.DeepJS.reward_giver import MakespanRewardGiver
+
+from playground.DAG.algorithm.DeepJS.reward_giver import MakespanRewardGiver, AverageCompletionRewardGiver, \
+    AverageSlowDownRewardGiver, AverageMix_RAC_RAS
 
 from playground.DAG.utils.csv_reader import CSVReader
 from playground.DAG.utils.feature_functions import features_extract_func_ac, features_normalize_func_ac
