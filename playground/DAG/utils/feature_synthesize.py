@@ -2,7 +2,8 @@
 def father_task_indices(task_id, task_type):
     father_indices = []
 
-    if task_id.str.find('task_') != -1:
+    #if task_id.str.find('task_') != -1:
+    if task_id != -1:
         task_index = task_type + '_' + 'task_id'
         return task_index, father_indices
 
