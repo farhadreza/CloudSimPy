@@ -16,7 +16,10 @@ from playground.DAG.algorithm.heuristics.max_weight import MaxWeightAlgorithm
 from playground.DAG.algorithm.DeepJS.DRL import RLAlgorithm
 from playground.DAG.algorithm.DeepJS.agent import Agent
 from playground.DAG.algorithm.DeepJS.brain import BrainSmall
-from playground.DAG.algorithm.DeepJS.reward_giver import MakespanRewardGiver
+#from playground.DAG.algorithm.DeepJS.reward_giver import MakespanRewardGiver
+
+from playground.DAG.algorithm.DeepJS.reward_giver import MakespanRewardGiver, AverageCompletionRewardGiver, \
+    AverageSlowDownRewardGiver, AverageMix_RAC_RAS
 
 from playground.DAG.utils.csv_reader import CSVReader
 from playground.DAG.utils.feature_functions import features_extract_func_ac, features_normalize_func_ac
@@ -28,13 +31,17 @@ os.environ['CUDA_VISIBLE_DEVICES'] = ''
 np.random.seed(41)
 tf.random.set_random_seed(41)
 # ************************ Parameters Setting Start ************************
-machines_number = 1
-jobs_len = 1
-n_iter = 30
-jobs_csv = '../jobs_files/job.csv'
+machines_number = 25
+jobs_len = 10
+n_iter = 50
+jobs_csv = 'playground/DAG/jobs_files/Alibaba_Dataset_Jobs_DAG.csv'
+#jobs_csv = 'playground/DAG/jobs_files/jobs.csv'
+#jobs_csv = 'playground/Non_DAG/jobs_files/jobs.csv'
+#jobs_csv = '../jobs_files/job.csv'
 
 brain = BrainSmall(14)
-reward_giver = MakespanRewardGiver(-1)
+#reward_giver = MakespanRewardGiver(-1)
+reward_giver = AverageSlowDownRewardGiver()
 features_extract_func = features_extract_func_ac
 features_normalize_func = features_normalize_func_ac
 
@@ -48,7 +55,7 @@ if not os.path.isdir(model_dir):
 agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
               model_save_path='%s/model.ckpt' % model_dir)
 
-machine_configs = [MachineConfig(2, 1, 1) for i in range(machines_number)]
+machine_configs = [MachineConfig(64, 1, 1) for i in range(machines_number)]
 csv_reader = CSVReader(jobs_csv)
 jobs_configs = csv_reader.generate(0, jobs_len)
 
