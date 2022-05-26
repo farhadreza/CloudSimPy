@@ -384,7 +384,7 @@ def eval_algo_deep_js():
     # chkpt_path="/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/checkpoint-180"
     # chkpt_path = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/chkpt_180.pkl-7"
     # chkpt_path = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/chkpt_120.pkl-5"
-    chkpt_path = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/avgCompletionReward/chkpt_180_mkspan.pkl-10"
+    chkpt_path = "/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/avgCompletionReward/chkpt_180_mkspan.pkl-10"
     agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
                   model_save_path='%s/model.ckpt' % eval_info_dir, restore_path=chkpt_path)
     tic = time.time()
@@ -431,7 +431,7 @@ def run_other_algo():
     algo_first_fit()
     algo_tetris()
     # train_algo_deep_js()
-    save_to = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/otherAlgo/hist_other_algo.csv"
+    save_to = "/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/otherAlgo/hist_other_algo.csv"
     df = pd.DataFrame(hist)
     df.to_csv(save_to)
     print(f"saved hist.")
@@ -471,7 +471,7 @@ def run_other_algo_multiple_times():
     for idx in range(num_times):
         print(f"running tetris algo")
         algo_tetris()
-    save_dir = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/experiments/data/renamed_reward_files"
+    save_dir = "/CloudSimPy/experiments/data/renamed_reward_files"
     save_other_algo_hist_to_csv(save_dir=save_dir)
     print(f"saved hist.")
 
