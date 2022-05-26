@@ -129,7 +129,7 @@ def algo_deep_js():
             p = Process(target=multiprocessing_run,
                 args=(episode, trajectories, makespans, average_completions, average_slowdowns))
 
-              processes.append(p)
+            processes.append(p)
 
         for p in processes:
             p.start()
