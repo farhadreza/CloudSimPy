@@ -16,7 +16,11 @@ from playground.DAG.algorithm.heuristics.max_weight import MaxWeightAlgorithm
 from playground.DAG.algorithm.DeepJS.DRL import RLAlgorithm
 from playground.DAG.algorithm.DeepJS.agent import Agent
 from playground.DAG.algorithm.DeepJS.brain import BrainSmall
-from playground.DAG.algorithm.DeepJS.reward_giver import MakespanRewardGiver
+
+#from playground.DAG.algorithm.DeepJS.reward_giver import MakespanRewardGiver
+
+from playground.Non_DAG.algorithm.DeepJS.reward_giver import MakespanRewardGiver, AverageCompletionRewardGiver, \
+    AverageSlowDownRewardGiver, AverageMix_RAC_RAS
 
 from playground.DAG.utils.csv_reader import CSVReader
 from playground.DAG.utils.feature_functions import features_extract_func_ac, features_normalize_func_ac
@@ -38,7 +42,7 @@ jobs_csv = 'playground/DAG/jobs_files/Alibaba_Dataset_Jobs_DAG.csv'
 
 brain = BrainSmall(14)
 #reward_giver = MakespanRewardGiver(-1)
-reward_giver = AverageCompletionRewardGiver()
+reward_giver = AverageCompletionRewardGiver(-1)
 features_extract_func = features_extract_func_ac
 features_normalize_func = features_normalize_func_ac
 
