@@ -28,9 +28,9 @@ os.environ['CUDA_VISIBLE_DEVICES'] = ''
 np.random.seed(41)
 tf.random.set_random_seed(41)
 # ************************ Parameters Setting Start ************************
-machines_number = 1
-jobs_len = 1
-n_iter = 30
+machines_number = 5
+jobs_len = 10
+n_iter = 50
 jobs_csv = 'playground/DAG/jobs_files/Alibaba_Dataset_Jobs_DAG.csv'
 #jobs_csv = 'playground/DAG/jobs_files/jobs.csv'
 #jobs_csv = 'playground/Non_DAG/jobs_files/jobs.csv'
@@ -51,7 +51,7 @@ if not os.path.isdir(model_dir):
 agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
               model_save_path='%s/model.ckpt' % model_dir)
 
-machine_configs = [MachineConfig(2, 1, 1) for i in range(machines_number)]
+machine_configs = [MachineConfig(64, 1, 1) for i in range(machines_number)]
 csv_reader = CSVReader(jobs_csv)
 jobs_configs = csv_reader.generate(0, jobs_len)
 
