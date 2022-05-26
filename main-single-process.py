@@ -28,7 +28,7 @@ os.environ['CUDA_VISIBLE_DEVICES'] = ''
 np.random.seed(41)
 tf.random.set_random_seed(41)
 # ************************ Parameters Setting Start ************************
-machines_number = 5
+machines_number = 25
 jobs_len = 10
 n_iter = 50
 jobs_csv = 'playground/DAG/jobs_files/Alibaba_Dataset_Jobs_DAG.csv'
