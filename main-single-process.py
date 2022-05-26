@@ -19,7 +19,7 @@ from playground.DAG.algorithm.DeepJS.brain import BrainSmall
 
 #from playground.DAG.algorithm.DeepJS.reward_giver import MakespanRewardGiver
 
-from playground.Non_DAG.algorithm.DeepJS.reward_giver import MakespanRewardGiver, AverageCompletionRewardGiver, \
+from playground.DAG.algorithm.DeepJS.reward_giver import MakespanRewardGiver, AverageCompletionRewardGiver, \
     AverageSlowDownRewardGiver, AverageMix_RAC_RAS
 
 from playground.DAG.utils.csv_reader import CSVReader
