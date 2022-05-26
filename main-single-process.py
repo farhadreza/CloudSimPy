@@ -37,7 +37,8 @@ jobs_csv = 'playground/DAG/jobs_files/Alibaba_Dataset_Jobs_DAG.csv'
 #jobs_csv = '../jobs_files/job.csv'
 
 brain = BrainSmall(14)
-reward_giver = MakespanRewardGiver(-1)
+#reward_giver = MakespanRewardGiver(-1)
+reward_giver = AverageCompletionRewardGiver()
 features_extract_func = features_extract_func_ac
 features_normalize_func = features_normalize_func_ac
 
