@@ -36,7 +36,7 @@ np.random.seed(41)
 tf.random.set_random_seed(41)
 # ************************ Parameters Setting Start ************************
 machines_number = 5
-n_job_chunk = 10
+n_job_chunk = 5
 #n_job_chunk = 200
 jobs_len = 10
 n_iter = 1
@@ -391,7 +391,8 @@ def eval_algo_deep_js():
     #chkpt_path= "/content/CloudSimPy/agents/RAS/chkpt_160_RAS.pkl-65"
     #chkpt_path= "/content/CloudSimPy/agents/RAS/chkpt_160_RAS.pkl-65"
     
-    chkpt_path= "/content/CloudSimPy/curr_agents/MyRAS/brain_My_RAS_30.pkl"
+    #chkpt_path= "/content/CloudSimPy/curr_agents/MyRAS/brain_My_RAS_30.pkl"
+    chkpt_path= None
     agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
                   model_save_path='%s/model.ckpt' % eval_info_dir, restore_path=chkpt_path)
     tic = time.time()
@@ -440,7 +441,7 @@ def run_other_algo():
     # train_algo_deep_js()
     #save_to = "/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/otherAlgo/hist_other_algo.csv"
     #save_to = "/CloudSimPy/playground/Non_DAG/launch_scripts/hist_other_algo.csv"
-    save_to = "/content/drive/MyDrive/GoogleDrive/MyRepo/hist_other_algo.csv"
+    #save_to = "/content/drive/MyDrive/GoogleDrive/MyRepo/hist_other_algo.csv"
     save_to= "agents/RAS/hist_other_algo.csv"
     df = pd.DataFrame(hist)
     df.to_csv(save_to)
@@ -491,9 +492,9 @@ def run_other_algo_multiple_times():
 if __name__ == '__main__':
      #run_other_algo()
     # algo_deep_js()
-     eval_algo_deep_js()
+     #eval_algo_deep_js()
     # set_path()  # for running on command line
-    #train_DeepJS_data200()
+    train_DeepJS_data200()
 
 # DeepJS
 # before makespans ([654])
