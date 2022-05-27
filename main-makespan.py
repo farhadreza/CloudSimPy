@@ -36,7 +36,8 @@ np.random.seed(41)
 tf.random.set_random_seed(41)
 # ************************ Parameters Setting Start ************************
 machines_number = 5
-n_job_chunk = 200
+#n_job_chunk = 200
+n_job_chunk = 50
 jobs_len = 10
 n_iter = 1
 
@@ -69,11 +70,13 @@ eval_info_dir = "agents/RAC"
 
 # agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
 #               model_save_path='%s/model.ckpt' % model_dir)
-restore_point = 41
+#restore_point = 41
+restore_point = 0
 # restore_path = "/content/drive/MyDrive/GoogleDrive/MyRepo/agent_RAC/chkpt_60_RAC.pkl-67"  # restore last trained checkpoint
 # restore_path = "agents/RAC/chkpt_60_RAC.pkl-67"
 # restore_path = "agents/RAC/chkpt_80_RAC.pkl-21"
-restore_path = "curr_agents/RAC/brain_RAC_40.pkl"
+#restore_path = "curr_agents/RAC/brain_RAC_40.pkl"
+restore_path = None
 agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
               model_save_path='%s/model.ckpt' % train_info_dir, restore_path=restore_path)
 
