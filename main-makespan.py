@@ -39,7 +39,7 @@ machines_number = 5
 n_job_chunk = 10
 #n_job_chunk = 200
 jobs_len = 10
-n_iter = 10
+n_iter = 1
 
 #jobs_len = 10
 #n_iter = 10
