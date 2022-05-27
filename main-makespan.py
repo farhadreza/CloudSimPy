@@ -47,8 +47,8 @@ n_episode = 12
 jobs_csv = 'playground/Non_DAG/jobs_files/jobs.csv'
 # jobs_csv = '../jobs_files/jobs_2017.csv'
 
-# brain = Brain(6)
-brain = BrainSmall(6)
+brain = Brain(6)
+#brain = BrainSmall(6)
 # reward_giver = MakespanRewardGiver(-1)
 reward_giver = AverageCompletionRewardGiver()
 curr_reward_signal_name = RAC
