@@ -387,7 +387,8 @@ def eval_algo_deep_js():
     #chkpt_path = "/CloudSimPy/playground/Non_DAG/launch_scripts/chkpt_180_mkspan.pkl-10"
     #chkpt_path = "/CloudSimPy/playground/Non_DAG/launch_scripts/"
     
-    chkpt_path = "/content/drive/MyDrive/GoogleDrive/MyRepo/"
+    #chkpt_path = "/content/drive/MyDrive/GoogleDrive/MyRepo/"
+    chkpt_path= "agents/RAS"
     agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
                   model_save_path='%s/model.ckpt' % eval_info_dir, restore_path=chkpt_path)
     tic = time.time()
@@ -437,6 +438,7 @@ def run_other_algo():
     #save_to = "/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/otherAlgo/hist_other_algo.csv"
     #save_to = "/CloudSimPy/playground/Non_DAG/launch_scripts/hist_other_algo.csv"
     save_to = "/content/drive/MyDrive/GoogleDrive/MyRepo/hist_other_algo.csv"
+    save_to= "agents/RAS/hist_other_algo.csv"
     df = pd.DataFrame(hist)
     df.to_csv(save_to)
     print(f"saved hist.")
@@ -477,7 +479,8 @@ def run_other_algo_multiple_times():
         print(f"running tetris algo")
         algo_tetris()
     #save_dir = "/CloudSimPy/experiments/data/renamed_reward_files"
-    save_dir = "/CloudSimPy/experiments/renamed_reward_files"
+    #save_dir = "/CloudSimPy/experiments/renamed_reward_files"
+    save_dir= "agents/RAS/"
     save_other_algo_hist_to_csv(save_dir=save_dir)
     print(f"saved hist.")
 
