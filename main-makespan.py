@@ -146,8 +146,8 @@ def add_result_to_hist(algo_type, env_now, toctic, avg_completion, avg_slowdown)
     hist[algo_type + "_avg_slowdowns"].append(avg_slowdown)
 
 
-#def algorithm_random(print_stats=False):
-def algorithm_random():
+def algorithm_random(print_stats=False):
+#def algorithm_random():
     tic = time.time()
     algorithm = RandomAlgorithm()
     episode = Episode(machine_configs, single_jobs_configs, algorithm, None)
@@ -160,8 +160,8 @@ def algorithm_random():
                         avg_completion=average_completion(episode), avg_slowdown=average_slowdown(episode))
 
 
-#def algorithm_first_fit(print_stats=False):
-def algorithm_first_fit():
+def algorithm_first_fit(print_stats=False):
+#def algorithm_first_fit():
     tic = time.time()
     algorithm = FirstFitAlgorithm()
     episode = Episode(machine_configs, single_jobs_configs, algorithm, None)
@@ -174,8 +174,8 @@ def algorithm_first_fit():
                         avg_completion=average_completion(episode), avg_slowdown=average_slowdown(episode))
 
 
-#def algorithm_tetris(print_stats=False):
 def algorithm_tetris(print_stats=False):
+#def algorithm_tetris(print_stats=False):
     tic = time.time()
     algorithm = Tetris()
     episode = Episode(machine_configs, single_jobs_configs, algorithm, None)
