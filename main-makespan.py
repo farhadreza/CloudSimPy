@@ -479,7 +479,7 @@ def run_other_algo_multiple_times():
 
 
 if __name__ == '__main__':
-     run_all_algo()
+     run_other_algo()
     # algo_deep_js()
      eval_algo_deep_js()
     # set_path()  # for running on command line
