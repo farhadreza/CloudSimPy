@@ -139,49 +139,49 @@ def save_train_info(agent: Agent, itr: int, reward_type=curr_reward_signal_name)
     print(f"save hist_deepjs: {hist_deepjs_name}")
 
 
- def add_result_to_hist(algo_type, env_now, toctic, avg_completion, avg_slowdown):
-     hist[algo_type + "_env_now"].append(env_now)
-     hist[algo_type + "_tictoc"].append(toctic)
-     hist[algo_type + "_avg_completions"].append(avg_completion)
-     hist[algo_type + "_avg_slowdowns"].append(avg_slowdown)
+def add_result_to_hist(algo_type, env_now, toctic, avg_completion, avg_slowdown):
+    hist[algo_type + "_env_now"].append(env_now)
+    hist[algo_type + "_tictoc"].append(toctic)
+    hist[algo_type + "_avg_completions"].append(avg_completion)
+    hist[algo_type + "_avg_slowdowns"].append(avg_slowdown)
 
 
- def algorithm_random(print_stats=False):
-     tic = time.time()
-     algorithm = RandomAlgorithm()
-     episode = Episode(machine_configs, single_jobs_configs, algorithm, None)
-     episode.run()
-     if print_stats:
-         print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
-         print(
-             f"episode_env_now: {episode.env.now} | 'toc-tic: {time.time() - tic} | avg_completions: {average_completion(episode)} | avg_slowdowns: {average_slowdown(episode)}")
-     add_result_to_hist(algo_type="random", env_now=episode.env.now, toctic=time.time() - tic,
+def algorithm_random(print_stats=False):
+    tic = time.time()
+    algorithm = RandomAlgorithm()
+    episode = Episode(machine_configs, single_jobs_configs, algorithm, None)
+    episode.run()
+    if print_stats:
+        print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
+        print(
+            f"episode_env_now: {episode.env.now} | 'toc-tic: {time.time() - tic} | avg_completions: {average_completion(episode)} | avg_slowdowns: {average_slowdown(episode)}")
+    add_result_to_hist(algo_type="random", env_now=episode.env.now, toctic=time.time() - tic,
                         avg_completion=average_completion(episode), avg_slowdown=average_slowdown(episode))
 
 
- def algorithm_first_fit(print_stats=False):
-     tic = time.time()
-     algorithm = FirstFitAlgorithm()
-     episode = Episode(machine_configs, single_jobs_configs, algorithm, None)
-     episode.run()
-     if print_stats:
-         print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
-         print(
+def algorithm_first_fit(print_stats=False):
+    tic = time.time()
+    algorithm = FirstFitAlgorithm()
+    episode = Episode(machine_configs, single_jobs_configs, algorithm, None)
+    episode.run()
+    if print_stats:
+        print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
+        print(
              f"episode_env_now: {episode.env.now} | 'toc-tic: {time.time() - tic} | avg_completions: {average_completion(episode)} | avg_slowdowns: {average_slowdown(episode)}")
-     add_result_to_hist(algo_type="first_fit", env_now=episode.env.now, toctic=time.time() - tic,
+    add_result_to_hist(algo_type="first_fit", env_now=episode.env.now, toctic=time.time() - tic,
                         avg_completion=average_completion(episode), avg_slowdown=average_slowdown(episode))
 
 
- def algorithm_tetris(print_stats=False):
-     tic = time.time()
-     algorithm = Tetris()
-     episode = Episode(machine_configs, single_jobs_configs, algorithm, None)
-     episode.run()
-     if print_stats:
-         print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
-         print(
+def algorithm_tetris(print_stats=False):
+    tic = time.time()
+    algorithm = Tetris()
+    episode = Episode(machine_configs, single_jobs_configs, algorithm, None)
+    episode.run()
+    if print_stats:
+        print(episode.env.now, time.time() - tic, average_completion(episode), average_slowdown(episode))
+        print(
              f"episode_env_now: {episode.env.now} | 'toc-tic: {time.time() - tic} | avg_completions: {average_completion(episode)} | avg_slowdowns: {average_slowdown(episode)}")
-     add_result_to_hist(algo_type="tetris", env_now=episode.env.now, toctic=time.time() - tic,
+    add_result_to_hist(algo_type="tetris", env_now=episode.env.now, toctic=time.time() - tic,
                         avg_completion=average_completion(episode), avg_slowdown=average_slowdown(episode))
 
 
