@@ -450,7 +450,8 @@ def run_other_algo():
     algo_first_fit()
     algo_tetris()
     # train_algo_deep_js()
-    save_to = "/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/otherAlgo/hist_other_algo.csv"
+    #save_to = "/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/otherAlgo/hist_other_algo.csv"
+    save_to = "agents/RAC/hist_other_algo.csv"
     df = pd.DataFrame(hist)
     df.to_csv(save_to)
     print(f"saved hist.")
@@ -500,12 +501,12 @@ if __name__ == '__main__':
     # algo_deep_js()
     #eval_algo_deep_js()
     # set_path()  # for running on command line
-    #train_DeepJS_data200()
+    train_DeepJS_data200()
     # eval_algo_deep_js()
     # test_save()
-    algorithm_random()
-    algorithm_first_fit()
-    algorithm_tetris()
+    #algorithm_random()
+    #algorithm_first_fit()
+    #algorithm_tetris()
     
 
 # DeepJS
