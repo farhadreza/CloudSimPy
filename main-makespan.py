@@ -389,7 +389,9 @@ def eval_algo_deep_js():
     
     #chkpt_path = "/content/drive/MyDrive/GoogleDrive/MyRepo/chkpt_180_mkspan.pkl-10"
     #chkpt_path= "/content/CloudSimPy/agents/RAS/chkpt_160_RAS.pkl-65"
-    chkpt_path= "/content/CloudSimPy/agents/RAS/chkpt_160_RAS.pkl-65"
+    #chkpt_path= "/content/CloudSimPy/agents/RAS/chkpt_160_RAS.pkl-65"
+    
+    chkpt_path= "/content/CloudSimPy/curr_agents/MyRAS/brain_My_RAS_30.pkl"
     agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
                   model_save_path='%s/model.ckpt' % eval_info_dir, restore_path=chkpt_path)
     tic = time.time()
