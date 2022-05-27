@@ -384,7 +384,8 @@ def eval_algo_deep_js():
     # chkpt_path="/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/checkpoint-180"
     # chkpt_path = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/chkpt_180.pkl-7"
     # chkpt_path = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/chkpt_120.pkl-5"
-    chkpt_path = "/CloudSimPy/playground/Non_DAG/launch_scripts/chkpt_180_mkspan.pkl-10"
+    #chkpt_path = "/CloudSimPy/playground/Non_DAG/launch_scripts/chkpt_180_mkspan.pkl-10"
+    chkpt_path = "/CloudSimPy/playground/Non_DAG/launch_scripts/"
     agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
                   model_save_path='%s/model.ckpt' % eval_info_dir, restore_path=chkpt_path)
     tic = time.time()
