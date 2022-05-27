@@ -36,9 +36,9 @@ np.random.seed(41)
 tf.random.set_random_seed(41)
 # ************************ Parameters Setting Start ************************
 machines_number = 5
-n_job_chunk = 10
+n_job_chunk = 200
 jobs_len = 10
-n_iter = 5
+n_iter = 1
 
 # n_iter = 200
 # n_iter = 2
