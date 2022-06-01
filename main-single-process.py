@@ -36,7 +36,8 @@ tf.random.set_random_seed(41)
 machines_number = 25
 jobs_len = 10
 n_iter = 50
-jobs_csv = 'playground/DAG/jobs_files/Alibaba_Dataset_Jobs_DAG.csv'
+jobs_csv = 'playground/DAG/jobs_files/batch_task3.csv'
+#jobs_csv = 'playground/DAG/jobs_files/Alibaba_Dataset_Jobs_DAG.csv'
 #jobs_csv = 'playground/DAG/jobs_files/jobs.csv'
 #jobs_csv = 'playground/Non_DAG/jobs_files/jobs.csv'
 #jobs_csv = '../jobs_files/job.csv'
