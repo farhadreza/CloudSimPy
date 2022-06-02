@@ -33,9 +33,9 @@ os.environ['CUDA_VISIBLE_DEVICES'] = ''
 np.random.seed(41)
 tf.random.set_random_seed(41)
 # ************************ Parameters Setting Start ************************
-machines_number = 25
+machines_number = 5
 jobs_len = 10
-n_iter = 50
+n_iter = 2
 #jobs_csv = 'playground/DAG/jobs_files/batch_task3.csv'
 #jobs_csv = 'playground/DAG/jobs_files/batch_task4.csv'
 jobs_csv = 'playground/DAG/jobs_files/batch_task6.csv'
