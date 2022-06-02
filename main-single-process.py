@@ -166,10 +166,10 @@ def algo_deep_js():
     agent.save()
 
 def run_all_algo():
-    algo_random()
-    algo_first_fit()
-    algo_tetris()
-    algo_max_weight()
+    #algo_random()
+    #algo_first_fit()
+    #algo_tetris()
+    #algo_max_weight()
     algo_deep_js()
 
 if __name__ == '__main__':
