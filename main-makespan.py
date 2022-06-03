@@ -48,8 +48,7 @@ n_iter = 1
 # n_iter = 200
 # n_iter = 2
 n_episode = 12
-jobs_csv = 'playground/Non_DAG/jobs_files/batch_task6.csv'
-#jobs_csv = 'playground/Non_DAG/jobs_files/jobs.csv'
+jobs_csv = 'playground/Non_DAG/jobs_files/jobs.csv'
 # jobs_csv = '../jobs_files/jobs_2017.csv'
 
 # brain = Brain(6)
