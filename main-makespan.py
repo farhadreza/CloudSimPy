@@ -37,7 +37,7 @@ tf.random.set_random_seed(41)
 # ************************ Parameters Setting Start ************************
 machines_number = 5
 #n_job_chunk = 200
-n_job_chunk = 5
+n_job_chunk = 25
 jobs_len = 10
 n_iter = 1
 
@@ -493,7 +493,8 @@ def run_other_algo_multiple_times():
     for idx in range(num_times):
         print(f"running tetris algo")
         algo_tetris()
-    save_dir = "/CloudSimPy/experiments/data/renamed_reward_files"
+    #save_dir = "/CloudSimPy/experiments/data/renamed_reward_files"
+    save_dir = "experiments/"
     save_other_algo_hist_to_csv(save_dir=save_dir)
     print(f"saved hist.")
 
@@ -503,8 +504,8 @@ if __name__ == '__main__':
     # algo_deep_js()
     #eval_algo_deep_js()
     # set_path()  # for running on command line
-    #train_DeepJS_data200()
-    eval_algo_deep_js()
+    train_DeepJS_data200()
+    #eval_algo_deep_js()
     # test_save()
     #algorithm_random()
     #algorithm_first_fit()
