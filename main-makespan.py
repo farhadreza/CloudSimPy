@@ -503,8 +503,8 @@ if __name__ == '__main__':
     # algo_deep_js()
     #eval_algo_deep_js()
     # set_path()  # for running on command line
-    train_DeepJS_data200()
-    #eval_algo_deep_js()
+    #train_DeepJS_data200()
+    eval_algo_deep_js()
     # test_save()
     #algorithm_random()
     #algorithm_first_fit()
