@@ -37,7 +37,7 @@ tf.random.set_random_seed(41)
 # ************************ Parameters Setting Start ************************
 machines_number = 5
 #n_job_chunk = 200
-n_job_chunk = 25
+n_job_chunk = 60
 jobs_len = 10
 n_iter = 1
 
@@ -506,8 +506,8 @@ if __name__ == '__main__':
     #train_algo_deep_js()
     #eval_algo_deep_js()
     # set_path()  # for running on command line
-    #train_DeepJS_data200()
-    eval_algo_deep_js()
+    train_DeepJS_data200()
+    #eval_algo_deep_js()
     # test_save()
     #algorithm_random()
     #algorithm_first_fit()
