@@ -404,7 +404,8 @@ def eval_algo_deep_js():
     # chkpt_path = "/Users/jackz/Documents/P_Macbook/Laptop/Git_Workspace/DataScience/MachineLearning/MyForks/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/chkpt_120.pkl-5"
     #chkpt_path = "/CloudSimPy/playground/Non_DAG/launch_scripts/agents/training/avgCompletionReward/chkpt_180_mkspan.pkl-10"
     #chkpt_path= "/content/CloudSimPy/curr_agents/MyRAS/brain_My_RAS_30.pkl"
-    chkpt_path= "curr_agents/RAC/brain_RAC_20.pkl"
+    #chkpt_path= "curr_agents/RAC/brain_RAC_20.pkl"
+    chkpt_path= "curr_agents/RAC/chkpt_0_RAC.pkl-1"
     #chkpt_path= None
     agent = Agent(name, brain, 1, reward_to_go=True, nn_baseline=True, normalize_advantages=True,
                   model_save_path='%s/model.ckpt' % eval_info_dir, restore_path=chkpt_path)
@@ -502,11 +503,11 @@ def run_other_algo_multiple_times():
 if __name__ == '__main__':
     # run_all_algo()
     #algo_deep_js()
-    train_algo_deep_js()
+    #train_algo_deep_js()
     #eval_algo_deep_js()
     # set_path()  # for running on command line
     #train_DeepJS_data200()
-    #eval_algo_deep_js()
+    eval_algo_deep_js()
     # test_save()
     #algorithm_random()
     #algorithm_first_fit()
